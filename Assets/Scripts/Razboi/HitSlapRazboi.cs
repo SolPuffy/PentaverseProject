@@ -4,7 +4,12 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-
+using System;
+[Serializable]
+public class ListInList
+{
+    public List<CardValueType> instance = new List<CardValueType>();
+}
 public class HitSlapRazboi : MonoBehaviour
 {
     public DeckControllerRazboi RefToController;
@@ -27,7 +32,6 @@ public class HitSlapRazboi : MonoBehaviour
     public int IndexOfActivePlayer = 0;
     public int SlapsLeft = 3;
     public bool RoundEndTriggered = false;
-    public bool GameIsBotPlayable = true;
 
     public List<MeshRenderer> PlayerSpheres = new List<MeshRenderer>();
     public List<TextMeshProUGUI> PlayerCardCount = new List<TextMeshProUGUI>();
@@ -35,14 +39,12 @@ public class HitSlapRazboi : MonoBehaviour
     public TextMeshProUGUI slapCounter;
     public List<GameObject> PlayerVisualDecks = new List<GameObject>();
 
-    public List<CardValueType> Player0Deck = new List<CardValueType>();
-    public List<CardValueType> Player1Deck = new List<CardValueType>();
-    public List<CardValueType> Player2Deck = new List<CardValueType>();
-    public List<CardValueType> Player3Deck = new List<CardValueType>();
-    public List<CardValueType> Player4Deck = new List<CardValueType>();
+    public List<ListInList> PlayerDecks = new List<ListInList>();
 
     public List<CardValueType> CardsOnGround = new List<CardValueType>();
     public List<CardValueType> CardsLostToSlap = new List<CardValueType>();
+
+    public List<GameObject> PlayerObjects = new List<GameObject>();
 
     private void Start()
     {
@@ -52,88 +54,22 @@ public class HitSlapRazboi : MonoBehaviour
     }
     private void DisperseCardsBetweenPlayers()
     {
-        int PlayerToReceiveCards = 0;
         for (int i = 0; i < RefToController.AssambledDeck.Count; i++)
         {
-            switch (PlayerToReceiveCards)
-            {
-                case 0:
-                    {
-                        Player0Deck.Add(RefToController.AssambledDeck[i]);
-                        PlayerToReceiveCards++;
-                        break;
-                    }
-                case 1:
-                    {
-                        Player1Deck.Add(RefToController.AssambledDeck[i]);
-                        PlayerToReceiveCards++;
-                        break;
-                    }
-                case 2:
-                    {
-                        Player2Deck.Add(RefToController.AssambledDeck[i]);
-                        PlayerToReceiveCards++;
-                        break;
-                    }
-                case 3:
-                    {
-                        Player3Deck.Add(RefToController.AssambledDeck[i]);
-                        PlayerToReceiveCards++;
-                        break;
-                    }
-                case 4:
-                    {
-                        Player4Deck.Add(RefToController.AssambledDeck[i]);
-                        PlayerToReceiveCards++;
-                        break;
-                    }
-                default:
-                    {
-                        Player0Deck.Add(RefToController.AssambledDeck[i]);
-                        PlayerToReceiveCards = 1;
-                        break;
-                    }
-            }
+            //Player0Deck.Add(RefToController.AssambledDeck[i]);
+            //PlayerToReceiveCards++;
+            PlayerDecks[i % PlayerDecks.Count].instance.Add(RefToController.AssambledDeck[i]);
         }
     }
-    public void HitCards()
+    public void HitCards(int indexLocalPlayer)
     {
         HitButton.interactable = false;
         CardsToHit--;
-        switch (IndexOfActivePlayer)
-        {
-            case 0:
-                {
-                    CardsOnGround.Add(Player0Deck[0]);
-                    Player0Deck.RemoveAt(0);
-                    break;
-                }
-            case 1:
-                {
-                    CardsOnGround.Add(Player1Deck[0]);
-                    Player1Deck.RemoveAt(0);
-                    break;
-                }
-            case 2:
-                {
-                    CardsOnGround.Add(Player2Deck[0]);
-                    Player2Deck.RemoveAt(0);
-                    break;
-                }
-            case 3:
-                {
-                    CardsOnGround.Add(Player3Deck[0]);
-                    Player3Deck.RemoveAt(0);
-                    break;
-                }
-            case 4:
-                {
-                    CardsOnGround.Add(Player4Deck[0]);
-                    Player4Deck.RemoveAt(0);
-                    break;
-                }
-        }
+        //card pile on ground, primeste top card-ul playerului care apasa butonul
+        CardsOnGround.Add(PlayerDecks[indexLocalPlayer].instance[0]);
+        PlayerDecks[indexLocalPlayer].instance.RemoveAt(0);
         //display card on table and shift others to left if case allows
+        
         switch (CardsOnGround.Count)
         {
             case 1:
@@ -169,7 +105,7 @@ public class HitSlapRazboi : MonoBehaviour
                 case 15: { CardsToHit = 4; break; }
             }
             RoundEndTriggered = true;
-            NextPlayer();
+            NextPlayer(indexLocalPlayer);
         }
         else
         {
@@ -177,12 +113,12 @@ public class HitSlapRazboi : MonoBehaviour
             {
                 if (RoundEndTriggered)
                 {
-                    LoseRound();
+                    WinRound(indexLocalPlayer);
                 }
                 else
                 {
                     CardsToHit = 1;
-                    NextPlayer();
+                    NextPlayer(indexLocalPlayer);
                 }
             }
             else
@@ -192,9 +128,8 @@ public class HitSlapRazboi : MonoBehaviour
         }
         //
     }
-    public async void LoseRound()
+    public void WinRound(int indexLocalPlayer)
     {
-        await Task.Delay(1000);
         try
         {
             CardSlot2.sprite = BlankSprite;
@@ -205,29 +140,19 @@ public class HitSlapRazboi : MonoBehaviour
         catch
         { }
         //Didn't hit a +10 and someone before did
-        switch (IndexOfPlayerWhoTriggeredRoundEnd)
-        {
-            case 0: { Player0Deck.AddRange(CardsOnGround); Player0Deck.AddRange(CardsLostToSlap);
-                    ShuffleDeck0(); break; }
-            case 1: { Player1Deck.AddRange(CardsOnGround); Player1Deck.AddRange(CardsLostToSlap);
-                    ShuffleDeck1(); break; }
-            case 2: { Player2Deck.AddRange(CardsOnGround); Player2Deck.AddRange(CardsLostToSlap);
-                    ShuffleDeck2(); break; }
-            case 3: { Player3Deck.AddRange(CardsOnGround); Player3Deck.AddRange(CardsLostToSlap);
-                    ShuffleDeck3(); break; }
-            case 4: { Player4Deck.AddRange(CardsOnGround); Player4Deck.AddRange(CardsLostToSlap);
-                    ShuffleDeck4(); break; }
-        }
+        PlayerDecks[indexLocalPlayer].instance.AddRange(CardsOnGround);
+        PlayerDecks[indexLocalPlayer].instance.AddRange(CardsLostToSlap);
+        ShuffleDeck(indexLocalPlayer);
         CardsOnGround.Clear();
         CardsLostToSlap.Clear();
-        CheckPlayerVictory();
+        CheckPlayerVictory(indexLocalPlayer);
         SlapsLeft = 3;
         RoundEndTriggered = false;
         IndexOfActivePlayer = IndexOfPlayerWhoTriggeredRoundEnd;
         if (IndexOfActivePlayer == 0)
         {
             HitButton.interactable = true;
-            if(Player0Deck.Count > 0)
+            if(PlayerDecks[indexLocalPlayer].instance.Count > 0)
             {
                 SlapButton.interactable = true;
             }
@@ -236,75 +161,39 @@ public class HitSlapRazboi : MonoBehaviour
         else
         {
             HitButton.interactable = false;
-            if (Player0Deck.Count > 0)
+            if (PlayerDecks[indexLocalPlayer].instance.Count > 0)
             {
                 SlapButton.interactable = true;
             }
-            TriggerBot();
         }
     }
-    public async void NextPlayer()
+    public void NextPlayer(int indexLocalPlayer)
     {
         IndexOfActivePlayer++;
         if (IndexOfActivePlayer > 4)
         {
             IndexOfActivePlayer = 0;
         }
-        SkipPlayersWithNoCards();
+        SkipPlayersWithNoCards(indexLocalPlayer);
         if (IndexOfActivePlayer == 0)
         {
-            await Task.Delay(1000);
             HitButton.interactable = true;
             return;
         }
         else
         {
-            HitButton.interactable = false;
-            TriggerBot();
+            //HitButton.interactable = false;
         }
 
     }
-    public void CheckPlayerVictory()
+    public void CheckPlayerVictory(int indexLocalPlayer)
     {
-        if (Player0Deck.Count == RefToController.AssambledDeck.Count)
+        if (PlayerDecks[indexLocalPlayer].instance.Count == RefToController.AssambledDeck.Count)
         {
-            GameIsBotPlayable = false;
-            HitButton.interactable = false;
+            //HitButton.interactable = false;
             SlapButton.interactable = false;
             return;
             //Player0Wins
-        }
-        if (Player1Deck.Count == RefToController.AssambledDeck.Count)
-        {
-            GameIsBotPlayable = false;
-            HitButton.interactable = false;
-            SlapButton.interactable = false;
-            return;
-            //Player1Wins
-        }
-        if (Player2Deck.Count == RefToController.AssambledDeck.Count)
-        {
-            GameIsBotPlayable = false;
-            HitButton.interactable = false;
-            SlapButton.interactable = false;
-            return;
-            //Player2Wins
-        }
-        if (Player3Deck.Count == RefToController.AssambledDeck.Count)
-        {
-            GameIsBotPlayable = false;
-            HitButton.interactable = false;
-            SlapButton.interactable = false;
-            return;
-            //Player3Wins
-        }
-        if (Player4Deck.Count == RefToController.AssambledDeck.Count)
-        {
-            GameIsBotPlayable = false;
-            HitButton.interactable = false;
-            SlapButton.interactable = false;
-            return;
-            //Player4Wins
         }
     }
     private void Update()
@@ -317,7 +206,7 @@ public class HitSlapRazboi : MonoBehaviour
         //DoNothingIfUrNotABot
         if (IndexOfActivePlayer > 0)
         {
-            TriggerBot();
+
         }
         else
         {
@@ -346,163 +235,41 @@ public class HitSlapRazboi : MonoBehaviour
     }
     public void CardCountUpdate()
     {
-        PlayerCardCount[0].text = Player0Deck.Count.ToString();
-        PlayerCardCount[1].text = Player1Deck.Count.ToString();
-        PlayerCardCount[2].text = Player2Deck.Count.ToString();
-        PlayerCardCount[3].text = Player3Deck.Count.ToString();
-        PlayerCardCount[4].text = Player4Deck.Count.ToString();
-
+        for(int i=0;i<PlayerDecks.Count;i++)
+        {
+            PlayerCardCount[i].text = PlayerDecks[i].instance.Count.ToString();
+        }
         hitCounter.text = CardsToHit.ToString();
         slapCounter.text = SlapsLeft.ToString();
     }
-    public void ShuffleDeck0()
+    //shuffle deck after taking cards from table
+    public void ShuffleDeck(int indexLocalPlayer)
     {
         CardValueType auxShuffleValue;
         int cacheRandomResult;
         int cacheRandomResult2;
         for (int i = 0; i < RefToController.ShuffleToggles.ShufflesCount / 5; i++)
         {
-            cacheRandomResult = UnityEngine.Random.Range(0, Player0Deck.Count - 1);
-            cacheRandomResult2 = UnityEngine.Random.Range(0, Player0Deck.Count - 1);
+            cacheRandomResult = UnityEngine.Random.Range(0, PlayerDecks[indexLocalPlayer].instance.Count - 1);
+            cacheRandomResult2 = UnityEngine.Random.Range(0, PlayerDecks[indexLocalPlayer].instance.Count - 1);
 
-            auxShuffleValue = Player0Deck[cacheRandomResult];
-            Player0Deck[cacheRandomResult] = Player0Deck[cacheRandomResult2];
-            Player0Deck[cacheRandomResult2] = auxShuffleValue;
+            auxShuffleValue = PlayerDecks[indexLocalPlayer].instance[cacheRandomResult];
+            PlayerDecks[indexLocalPlayer].instance[cacheRandomResult] = PlayerDecks[indexLocalPlayer].instance[cacheRandomResult2];
+            PlayerDecks[indexLocalPlayer].instance[cacheRandomResult2] = auxShuffleValue;
         }
     }
-    public void ShuffleDeck1()
+    public void SkipPlayersWithNoCards(int indexLocalPlayer)
     {
-        CardValueType auxShuffleValue;
-        int cacheRandomResult;
-        int cacheRandomResult2;
-        for (int i = 0; i < RefToController.ShuffleToggles.ShufflesCount / 5; i++)
+        if (PlayerDecks[indexLocalPlayer].instance.Count < 1)
         {
-            cacheRandomResult = UnityEngine.Random.Range(0, Player1Deck.Count - 1);
-            cacheRandomResult2 = UnityEngine.Random.Range(0, Player1Deck.Count - 1);
-
-            auxShuffleValue = Player1Deck[cacheRandomResult];
-
-            Player1Deck[cacheRandomResult] = Player1Deck[cacheRandomResult2];
-            Player1Deck[cacheRandomResult2] = auxShuffleValue;
+            PlayerVisualDecks[0].SetActive(false);
+            SlapButton.interactable = false;
+            HitButton.interactable = false;
+            NextPlayer(indexLocalPlayer);
         }
     }
-    public void ShuffleDeck2()
-    {
-        CardValueType auxShuffleValue;
-        int cacheRandomResult;
-        int cacheRandomResult2;
-        for (int i = 0; i < RefToController.ShuffleToggles.ShufflesCount / 5; i++)
-        {
-            cacheRandomResult = UnityEngine.Random.Range(0, Player2Deck.Count - 1);
-            cacheRandomResult2 = UnityEngine.Random.Range(0, Player2Deck.Count - 1);
 
-            auxShuffleValue = Player2Deck[cacheRandomResult];
-
-            Player2Deck[cacheRandomResult] = Player2Deck[cacheRandomResult2];
-            Player2Deck[cacheRandomResult2] = auxShuffleValue;
-        }
-    }
-    public void ShuffleDeck3()
-    {
-        CardValueType auxShuffleValue;
-        int cacheRandomResult;
-        int cacheRandomResult2;
-        for (int i = 0; i < RefToController.ShuffleToggles.ShufflesCount / 5; i++)
-        {
-            cacheRandomResult = UnityEngine.Random.Range(0, Player3Deck.Count - 1);
-            cacheRandomResult2 = UnityEngine.Random.Range(0, Player3Deck.Count - 1);
-
-            auxShuffleValue = Player3Deck[cacheRandomResult];
-
-            Player3Deck[cacheRandomResult] = Player3Deck[cacheRandomResult2];
-            Player3Deck[cacheRandomResult2] = auxShuffleValue;
-        }
-    }
-    public void ShuffleDeck4()
-    {
-        CardValueType auxShuffleValue;
-        int cacheRandomResult;
-        int cacheRandomResult2;
-        for (int i = 0; i < RefToController.ShuffleToggles.ShufflesCount / 5; i++)
-        {
-            cacheRandomResult = UnityEngine.Random.Range(0, Player4Deck.Count - 1);
-            cacheRandomResult2 = UnityEngine.Random.Range(0, Player4Deck.Count - 1);
-
-            auxShuffleValue = Player4Deck[cacheRandomResult];
-
-            Player4Deck[cacheRandomResult] = Player4Deck[cacheRandomResult2];
-            Player4Deck[cacheRandomResult2] = auxShuffleValue;
-        }
-    }
-    public void SkipPlayersWithNoCards()
-    {
-        switch(IndexOfActivePlayer)
-        {
-            case 0: { 
-                    if (Player0Deck.Count < 1)
-                    {
-                        PlayerVisualDecks[0].SetActive(false);
-                        SlapButton.interactable = false;
-                        HitButton.interactable = false;
-                        NextPlayer();
-                    } 
-                    break; }
-            case 1:
-                {
-                    if (Player1Deck.Count < 1)
-                    {
-                        PlayerVisualDecks[1].SetActive(false);
-                        NextPlayer();
-                    }
-                    break;
-                }
-            case 2:
-                {
-                    if (Player2Deck.Count < 1)
-                    {
-                        PlayerVisualDecks[2].SetActive(false);
-                        NextPlayer();
-                    }
-                    break;
-                }
-            case 3:
-                {
-                    if (Player3Deck.Count < 1)
-                    {
-                        PlayerVisualDecks[3].SetActive(false);
-                        NextPlayer();
-                    }
-                    break;
-                }
-            case 4:
-                {
-                    if (Player4Deck.Count < 1)
-                    {
-                        PlayerVisualDecks[4].SetActive(false);
-                        NextPlayer();
-                    }
-                    break;
-                }
-        }
-    }
-    public async void TriggerBot()
-    {
-        await Task.Delay(1000);
-        if (GameIsBotPlayable)
-        {
-            try
-            {
-                HitCards();
-            }
-            catch
-            {
-                SkipPlayersWithNoCards();
-            }
-        }
-        
-    }
-
-    public async void SlapCards(int IndexOfSlappingPlayer)
+    public void SlapCards(int IndexOfSlappingPlayer)
     {
         if (SlapsLeft > 0)
         {
@@ -510,101 +277,28 @@ public class HitSlapRazboi : MonoBehaviour
             if (CheckSlapRules())
             {
                 //successfully slapped, take cards wait for bots (delay && conditions to be removed for actual players)
-                GameIsBotPlayable = false;
                 SlapButton.interactable = false;
                 HitButton.interactable = false;
                 RoundEndTriggered = true;
                 IndexOfPlayerWhoTriggeredRoundEnd = IndexOfSlappingPlayer;
-                LoseRound();
-                await Task.Delay(1000);
-                GameIsBotPlayable = true;
+                WinRound(IndexOfSlappingPlayer);
             }
             else
             {
                 //lose 1 card, continue game
                 try
                 {
-                    switch (IndexOfSlappingPlayer)
-                    {
-                        case 0:
-                            {
-                                SlapImage.sprite = Player0Deck[0].CardSprite;
-                                CardsLostToSlap.Insert(0, Player0Deck[0]);
-                                Player0Deck.RemoveAt(0);
-                                break;
-                            }
-                        case 1:
-                            {
-                                SlapImage.sprite = Player1Deck[0].CardSprite;
-                                CardsLostToSlap.Insert(0, Player1Deck[0]);
-                                Player1Deck.RemoveAt(0);
-                                break;
-                            }
-                        case 2:
-                            {
-                                SlapImage.sprite = Player2Deck[0].CardSprite;
-                                CardsLostToSlap.Insert(0, Player2Deck[0]);
-                                Player2Deck.RemoveAt(0);
-                                break;
-                            }
-                        case 3:
-                            {
-                                SlapImage.sprite = Player3Deck[0].CardSprite;
-                                CardsLostToSlap.Insert(0, Player3Deck[0]);
-                                Player3Deck.RemoveAt(0);
-                                break;
-                            }
-                        case 4:
-                            {
-                                SlapImage.sprite = Player4Deck[0].CardSprite;
-                                CardsLostToSlap.Insert(0, Player4Deck[0]);
-                                Player4Deck.RemoveAt(0);
-                                break;
-                            }
-                    }
+                    SlapImage.sprite = PlayerDecks[IndexOfSlappingPlayer].instance[0].CardSprite;
+                    CardsLostToSlap.Insert(0, PlayerDecks[IndexOfSlappingPlayer].instance[0]);
+                    PlayerDecks[IndexOfSlappingPlayer].instance.RemoveAt(0);
                 }
                 catch
                 {
-                    switch (IndexOfSlappingPlayer)
-                    {
-                        case 0:
-                            {
-                                SlapImage.sprite = Player0Deck[0].CardSprite;
-                                CardsLostToSlap.Add(Player0Deck[0]);
-                                Player0Deck.RemoveAt(0);
-                                break;
-                            }
-                        case 1:
-                            {
-                                SlapImage.sprite = Player1Deck[0].CardSprite;
-                                CardsLostToSlap.Add(Player1Deck[0]);
-                                Player1Deck.RemoveAt(0);
-                                break;
-                            }
-                        case 2:
-                            {
-                                SlapImage.sprite = Player2Deck[0].CardSprite;
-                                CardsLostToSlap.Add(Player2Deck[0]);
-                                Player2Deck.RemoveAt(0);
-                                break;
-                            }
-                        case 3:
-                            {
-                                SlapImage.sprite = Player3Deck[0].CardSprite;
-                                CardsLostToSlap.Add(Player3Deck[0]);
-                                Player3Deck.RemoveAt(0);
-                                break;
-                            }
-                        case 4:
-                            {
-                                SlapImage.sprite = Player4Deck[0].CardSprite;
-                                CardsLostToSlap.Add(Player4Deck[0]);
-                                Player4Deck.RemoveAt(0);
-                                break;
-                            }
-                    }
+                    SlapImage.sprite = PlayerDecks[IndexOfSlappingPlayer].instance[0].CardSprite;
+                    CardsLostToSlap.Add(PlayerDecks[IndexOfSlappingPlayer].instance[0]);
+                    PlayerDecks[IndexOfSlappingPlayer].instance.RemoveAt(0);
                 }
-                SkipPlayersWithNoCards();
+                SkipPlayersWithNoCards(IndexOfSlappingPlayer);
             }
         }
         if (SlapsLeft < 1)

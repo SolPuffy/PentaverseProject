@@ -1897,7 +1897,7 @@ MonoBehaviour:
       - m_Target: {fileID: 2131420261}
         m_TargetAssemblyTypeName: HitSlapRazboi, Assembly-CSharp
         m_MethodName: HitCards
-        m_Mode: 1
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -4127,7 +4127,6 @@ MonoBehaviour:
   IndexOfActivePlayer: 0
   SlapsLeft: 3
   RoundEndTriggered: 0
-  GameIsBotPlayable: 1
   PlayerSpheres:
   - {fileID: 49602920}
   - {fileID: 38398117}
@@ -4148,13 +4147,16 @@ MonoBehaviour:
   - {fileID: 276532980}
   - {fileID: 2135580535}
   - {fileID: 69171377}
-  Player0Deck: []
-  Player1Deck: []
-  Player2Deck: []
-  Player3Deck: []
-  Player4Deck: []
+  PlayerDecks:
+  - instance: []
+  - instance: []
+  - instance: []
+  - instance: []
+  - instance: []
   CardsOnGround: []
   CardsLostToSlap: []
+  PlayerObjects:
+  - {fileID: 0}
 --- !u!1 &2135580535
 GameObject:
   m_ObjectHideFlags: 0
