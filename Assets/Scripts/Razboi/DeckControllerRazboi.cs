@@ -59,12 +59,16 @@ public class DeckControllerRazboi : MonoBehaviour
     {
         CardValueType auxShuffleValue;
         int cacheRandomResult;
+        int cacheRandomResult2;
         for(int i=0;i<ShuffleToggles.ShufflesCount;i++)
         {
             cacheRandomResult = UnityEngine.Random.Range(0, AssambledDeck.Count - 1);
+            cacheRandomResult2 = UnityEngine.Random.Range(0, AssambledDeck.Count - 1);
+
             auxShuffleValue = AssambledDeck[cacheRandomResult];
-            AssambledDeck[cacheRandomResult] = AssambledDeck[AssambledDeck.Count - 1];
-            AssambledDeck[AssambledDeck.Count - 1] = auxShuffleValue;
+
+            AssambledDeck[cacheRandomResult] = AssambledDeck[cacheRandomResult2];
+            AssambledDeck[cacheRandomResult2] = auxShuffleValue;
         }    
     }
     private void RemoveTwoLowCards()
