@@ -129,5 +129,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   syncMode: 0
-  syncInterval: 0.1
-  playerIndex: 0
+  syncInterval: 0
+  playerIndex: 20

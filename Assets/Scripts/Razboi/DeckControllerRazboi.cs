@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.Threading.Tasks;
+using Mirror;
 
-public class DeckControllerRazboi : MonoBehaviour
+public class DeckControllerRazboi : NetworkBehaviour
 {
     //J Q K A, 
     // A - deal 4
@@ -13,30 +14,40 @@ public class DeckControllerRazboi : MonoBehaviour
     // J - deal 1
 
     //CurrentDeck
-    public List<CardValueType> AssambledDeck = new List<CardValueType>();
+    public readonly SyncListCards AssambledDeck = new SyncListCards();
     [Header("Decks")]
     public List<CardValueType> Jokers = new List<CardValueType>();
     public List<CardValueType> Hearts = new List<CardValueType>();
     public List<CardValueType> Spades = new List<CardValueType>();
     public List<CardValueType> Diamonds = new List<CardValueType>();
     public List<CardValueType> Clubs = new List<CardValueType>();
+    public List<Sprite> HeartsImages = new List<Sprite>();
+    public List<Sprite> ClubsImages = new List<Sprite>();
+    public List<Sprite> SpadesImages = new List<Sprite>();
+    public List<Sprite> DiamondsImages = new List<Sprite>();
     [Header("Toggles")]
     public _DeckToggles DeckToggles;
     public _ShuffleToggles ShuffleToggles;
     public _RulesToggles SpecialRulesToggles;
+    [SyncVar] public int cardcount;
+    [SyncVar] public bool done = false;
+    public static DeckControllerRazboi instance;
 
     private void Awake()
     {
-        CheckTogglesAndAddEnabled();
-        ShuffleDeckCountTimes();
-        RemoveTwoLowCards();
+        instance = this;        
     }
 
+    public void BuildDeck() 
+    {
+        Debug.Log("Building deck");
+        CheckTogglesAndAddEnabled();
+    }    
     private void CheckTogglesAndAddEnabled()
     {
         if(DeckToggles.IncludeJokers)
         {
-            AssambledDeck.AddRange(Jokers);
+            //AssambledDeck.AddRange(Jokers);
         }    
         if(DeckToggles.IncludeHearts)
         {
@@ -54,6 +65,7 @@ public class DeckControllerRazboi : MonoBehaviour
         {
             AssambledDeck.AddRange(Clubs);
         }
+        ShuffleDeckCountTimes();
     }
     private void ShuffleDeckCountTimes()
     {
@@ -72,8 +84,10 @@ public class DeckControllerRazboi : MonoBehaviour
                 AssambledDeck[cacheRandomResult] = AssambledDeck[cacheRandomResult2];
                 AssambledDeck[cacheRandomResult2] = auxShuffleValue;
             }
-        }    
-        
+        }
+
+        RemoveTwoLowCards();
+
     }
     private void RemoveTwoLowCards()
     {
@@ -90,6 +104,23 @@ public class DeckControllerRazboi : MonoBehaviour
                 break;
             }
         }
+        ShowDeck();
+
+        done = true;
+    }    
+    public void ShowDeck()
+    {
+        string _string = "";
+        foreach (CardValueType card in AssambledDeck)
+        {
+            _string += card.CardValue.ToString() + "; ";
+        }
+        Debug.Log(_string);
+        cardcount = AssambledDeck.Count;
+    }
+    private void OnDestroy()
+    {
+        done = false;
     }
 }
 [Serializable]

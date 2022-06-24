@@ -5,13 +5,44 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System;
+using Mirror;
+using UnityEngine.SceneManagement;
+
+[System.Serializable]
+public class SyncListGameObject : SyncList<GameObject> { }
+
+[System.Serializable]
+public class SyncListCards : SyncList<CardValueType> { }
+
+[System.Serializable]
+public class SyncListDecks : List<SyncListCards> { }
+
+
+
+
+
 [Serializable]
 public class ListInList
 {
-    public List<CardValueType> instance = new List<CardValueType>();
+     public SyncList<CardValueType> instance = new SyncList<CardValueType>();
+    //public SyncListGameObject players = new SyncListGameObject();
+
+    public ListInList()
+    {
+     
+    }
+
 }
-public class HitSlapRazboi : MonoBehaviour
+
+public class HitSlapRazboi : NetworkBehaviour
 {
+    [SerializeField]
+    public Dictionary<Tuple<int, string>, Sprite> CardImages = new Dictionary<Tuple<int, string>, Sprite>();
+
+    public static HitSlapRazboi instance;   
+
+    public readonly SyncListCards SimpleCards = new SyncListCards();
+
     public DeckControllerRazboi RefToController;
 
     public Button HitButton;
@@ -27,9 +58,10 @@ public class HitSlapRazboi : MonoBehaviour
 
     public Sprite BlankSprite;
 
-    public int CardsToHit;
-    public int IndexOfPlayerWhoTriggeredRoundEnd;
-    public int IndexOfActivePlayer = 0;
+    [SyncVar] public int CardsToHit;
+    [SyncVar] public int IndexOfPlayerWhoTriggeredRoundEnd;
+    [SyncVar] public int IndexOfActivePlayer = 0;
+    [SyncVar] public int IndexOfSlappingPlayer = 0;
     public int SlapsLeft = 3;
     public bool RoundEndTriggered = false;
 
@@ -39,58 +71,109 @@ public class HitSlapRazboi : MonoBehaviour
     public TextMeshProUGUI slapCounter;
     public List<GameObject> PlayerVisualDecks = new List<GameObject>();
 
-    public List<ListInList> PlayerDecks = new List<ListInList>();
+    public List<List<CardValueType>> PlayerDecks = new List<List<CardValueType>>();
 
-    public List<CardValueType> CardsOnGround = new List<CardValueType>();
-    public List<CardValueType> CardsLostToSlap = new List<CardValueType>();
+    [SyncVar] CardValueType SlapCard = null;
 
-    public List<GameObject> PlayerObjects = new List<GameObject>();
+    public SyncListCards CardsOnGround = new SyncListCards();
+    public SyncListCards CardsLostToSlap = new SyncListCards();
+
+    CardPlayer firstPlayer { get 
+        {
+            GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+            if(players.Length > 0)
+            {
+                return players[0].GetComponent<CardPlayer>();
+            }
+            else
+            {
+                return null;
+            }
+        } 
+        set { } }
+
+    private void Awake()
+    {
+        if(NetworkManager.singleton == null)
+        {
+            SceneManager.LoadScene("ConnectScene");
+        }
+        if(!Application.isBatchMode)
+            FillMegaDictionary();
+    }
+
 
     private void Start()
     {
+        instance = this;
         AssignColors();
-        DisperseCardsBetweenPlayers();
         EnableSlapIfRules();
+        if (Application.isBatchMode)
+        {
+            Debug.Log("I am SERVER");
+            StartCoroutine(Setup());
+        }
+        else 
+        {
+           StartCoroutine(WaitForLocal());
+        }
         //
         //
+    }
+
+    IEnumerator WaitForLocal()
+    {
+        Debug.Log("waiting for local");
+        while(CardPlayer.localPlayer == null || CardPlayer.localPlayer.playerIndex > 10)
+        {
+            //Debug.Log(CardPlayer.localPlayer.playerIndex);
+            yield return null;
+        }
+        Debug.Log("I have local player and index");
+        if (CardPlayer.localPlayer.playerIndex == 0)
+        {
+            Debug.Log("I am HOST");
+            CardPlayer.localPlayer.BuildDeck();
+        }
+    }
+
+    IEnumerator Setup()
+    {
+        while (PlayerDecks.Count == 0 || !DeckControllerRazboi.instance.done)
+        {
+            //Debug.Log("waiting for decks");
+            yield return null;
+        }
+        Debug.Log("dispersing cards");
+        DisperseCardsBetweenPlayers();
+        SlapCard = null;
+        
     }
     private void Update()
     {
+        if(Application.isBatchMode) { return; }
         AssignColors();
         CardCountUpdate();
+        CardsOnGroundVisual();
     }
     #region HandlePlayerInput
+
+
     public void HitCards(int indexLocalPlayer)
     {
-        HitButton.interactable = false;
+        string _string = $"Deck for player {indexLocalPlayer} :";
+        foreach (CardValueType card in PlayerDecks[indexLocalPlayer])
+        {
+            _string += card.CardValue.ToString() + "; ";
+        }
+        Debug.Log(_string);
+
+        //HitButton.interactable = false;
         CardsToHit--;
         //card pile on ground, primeste top card-ul playerului care apasa butonul
-        CardsOnGround.Add(PlayerDecks[indexLocalPlayer].instance[0]);
-        PlayerDecks[indexLocalPlayer].instance.RemoveAt(0);
-        //display card on table and shift others to left if case allows
-
-        switch (CardsOnGround.Count)
-        {
-            case 1:
-                {
-                    CardSlot2.sprite = CardsOnGround[CardsOnGround.Count - 1].CardSprite;
-                    break;
-                }
-            case 2:
-                {
-                    CardSlot2.sprite = CardsOnGround[CardsOnGround.Count - 1].CardSprite;
-                    CardSlot1.sprite = CardsOnGround[CardsOnGround.Count - 2].CardSprite;
-                    break;
-                }
-            default:
-                {
-                    CardSlot2.sprite = CardsOnGround[CardsOnGround.Count - 1].CardSprite;
-                    CardSlot1.sprite = CardsOnGround[CardsOnGround.Count - 2].CardSprite;
-                    CardSlot0.sprite = CardsOnGround[CardsOnGround.Count - 3].CardSprite;
-                    break;
-                }
-        }
-        //
+        CardsOnGround.Add(PlayerDecks[indexLocalPlayer][0]);
+        PlayerDecks[indexLocalPlayer].RemoveAt(0);
+       
         //check if card > 10 , Yes = trigger round end, No = continue
         if (CardsOnGround[CardsOnGround.Count - 1].CardValue > 10 /* 9 */)
         {
@@ -104,7 +187,7 @@ public class HitSlapRazboi : MonoBehaviour
                 case 15: { CardsToHit = 4; break; }
             }
             RoundEndTriggered = true;
-            NextPlayer(indexLocalPlayer);
+            NextPlayer();
         }
         else
         {
@@ -117,7 +200,7 @@ public class HitSlapRazboi : MonoBehaviour
                 else
                 {
                     CardsToHit = 1;
-                    NextPlayer(indexLocalPlayer);
+                    NextPlayer();
                 }
             }
             else
@@ -129,6 +212,7 @@ public class HitSlapRazboi : MonoBehaviour
     }
     public void SlapCards(int IndexOfSlappingPlayer)
     {
+        instance.IndexOfSlappingPlayer = IndexOfSlappingPlayer;
         if (SlapsLeft > 0)
         {
             SlapsLeft--;
@@ -146,15 +230,17 @@ public class HitSlapRazboi : MonoBehaviour
                 //lose 1 card, continue game
                 try
                 {
-                    SlapImage.sprite = PlayerDecks[IndexOfSlappingPlayer].instance[0].CardSprite;
-                    CardsLostToSlap.Insert(0, PlayerDecks[IndexOfSlappingPlayer].instance[0]);
-                    PlayerDecks[IndexOfSlappingPlayer].instance.RemoveAt(0);
+                    //SlapImage.sprite = CardImages[new Tuple<int, string>(PlayerDecks[IndexOfSlappingPlayer][0].CardValue, PlayerDecks[IndexOfSlappingPlayer][0].CardType)];
+                    SlapCard = PlayerDecks[IndexOfSlappingPlayer][0];
+                    CardsLostToSlap.Insert(0, PlayerDecks[IndexOfSlappingPlayer][0]);
+                    PlayerDecks[IndexOfSlappingPlayer].RemoveAt(0);                    
                 }
                 catch
                 {
-                    SlapImage.sprite = PlayerDecks[IndexOfSlappingPlayer].instance[0].CardSprite;
-                    CardsLostToSlap.Add(PlayerDecks[IndexOfSlappingPlayer].instance[0]);
-                    PlayerDecks[IndexOfSlappingPlayer].instance.RemoveAt(0);
+                    //SlapImage.sprite = CardImages[new Tuple<int, string>(PlayerDecks[IndexOfSlappingPlayer][0].CardValue, PlayerDecks[IndexOfSlappingPlayer][0].CardType)];
+                    SlapCard = PlayerDecks[IndexOfSlappingPlayer][0];
+                    CardsLostToSlap.Add(PlayerDecks[IndexOfSlappingPlayer][0]);
+                    PlayerDecks[IndexOfSlappingPlayer].RemoveAt(0);                   
                 }
                 SkipPlayersWithNoCards(IndexOfSlappingPlayer);
             }
@@ -178,24 +264,20 @@ public class HitSlapRazboi : MonoBehaviour
     {
         for (int i = 0; i < PlayerDecks.Count; i++)
         {
-            PlayerCardCount[i].text = PlayerDecks[i].instance.Count.ToString();
+            PlayerCardCount[i].text = PlayerDecks[i].Count.ToString();
         }
         hitCounter.text = CardsToHit.ToString();
         slapCounter.text = SlapsLeft.ToString();
     }
-    #endregion
-    #region Other
-    private void DisperseCardsBetweenPlayers()
+
+    public void CheckUIButtons(int indexACtivePlayer)
     {
-        for (int i = 0; i < RefToController.AssambledDeck.Count; i++)
+        if(indexACtivePlayer == CardPlayer.localPlayer.playerIndex)
         {
-            //Player0Deck.Add(RefToController.AssambledDeck[i]);
-            //PlayerToReceiveCards++;
-            PlayerDecks[i % PlayerDecks.Count].instance.Add(RefToController.AssambledDeck[i]);
+            HitButton.interactable = true;
         }
     }
-
-    public void WinRound(int indexLocalPlayer)
+    public void CardsOnGroundVisual()
     {
         try
         {
@@ -206,39 +288,111 @@ public class HitSlapRazboi : MonoBehaviour
         }
         catch
         { }
+
+        switch (CardsOnGround.Count)
+        {
+            case 1:
+                {
+                    CardSlot2.sprite = CardImages[new Tuple<int, string>(CardsOnGround[CardsOnGround.Count - 1].CardValue, CardsOnGround[CardsOnGround.Count - 1].CardType)];
+
+
+                    break;
+                }
+            case 2:
+                {
+                    CardSlot2.sprite = CardImages[new Tuple<int, string>(CardsOnGround[CardsOnGround.Count - 1].CardValue, CardsOnGround[CardsOnGround.Count - 1].CardType)];
+                    CardSlot1.sprite = CardImages[new Tuple<int, string>(CardsOnGround[CardsOnGround.Count - 2].CardValue, CardsOnGround[CardsOnGround.Count - 2].CardType)];
+                    break;
+                }
+            case 3:
+                {
+                    CardSlot2.sprite = CardImages[new Tuple<int, string>(CardsOnGround[CardsOnGround.Count - 1].CardValue, CardsOnGround[CardsOnGround.Count - 1].CardType)];
+                    CardSlot1.sprite = CardImages[new Tuple<int, string>(CardsOnGround[CardsOnGround.Count - 2].CardValue, CardsOnGround[CardsOnGround.Count - 2].CardType)];
+                    CardSlot0.sprite = CardImages[new Tuple<int, string>(CardsOnGround[CardsOnGround.Count - 3].CardValue, CardsOnGround[CardsOnGround.Count - 3].CardType)];
+                    break;
+                }
+            case 0:
+                {
+                    break;
+                }
+            default:
+                {
+                    break;
+                }
+        }
+
+        if(SlapCard != null)
+        {
+            SlapImage.sprite = CardImages[new Tuple<int, string>(PlayerDecks[IndexOfSlappingPlayer][0].CardValue, PlayerDecks[IndexOfSlappingPlayer][0].CardType)];
+        }
+    }
+    #endregion
+    #region Other
+    private void DisperseCardsBetweenPlayers()
+    {
+        //SCUUUFED
+        Debug.Log($"Deck count : {PlayerDecks.Count}");
+        for (int i = 0; i < RefToController.AssambledDeck.Count; i++)
+        {           
+            PlayerDecks[i % PlayerDecks.Count].Add(RefToController.AssambledDeck[i]);
+        }
+
+        Debug.Log($"created {PlayerDecks[PlayerDecks.Count - 1].Count}");
+        string _string = $"Deck for player {PlayerDecks.Count - 1} :";
+        foreach (CardValueType card in PlayerDecks[PlayerDecks.Count - 1])
+        {
+            _string += card.CardValue.ToString() + "; ";
+        }
+        Debug.Log(_string);
+        
+        //SCUUUFED
+        firstPlayer.ChangeDecks(PlayerDecks);
+
+    }
+
+    public void WinRound(int indexLocalPlayer)
+    {       
         //Didn't hit a +10 and someone before did
-        PlayerDecks[indexLocalPlayer].instance.AddRange(CardsOnGround);
-        PlayerDecks[indexLocalPlayer].instance.AddRange(CardsLostToSlap);
+        PlayerDecks[indexLocalPlayer].AddRange(CardsOnGround);
+        PlayerDecks[indexLocalPlayer].AddRange(CardsLostToSlap);
+        SlapCard = null;
         ShuffleDeck(indexLocalPlayer);
         CardsOnGround.Clear();
         CardsLostToSlap.Clear();
-        CheckPlayerVictory(indexLocalPlayer);
+        //CheckPlayerVictory(indexLocalPlayer);
         SlapsLeft = 3;
         RoundEndTriggered = false;
         IndexOfActivePlayer = IndexOfPlayerWhoTriggeredRoundEnd;
-        if (IndexOfActivePlayer == 0)
+
+        firstPlayer.CheckTurn(IndexOfActivePlayer);
+
+    }
+
+    void IncrementActivePlayer()
+    {
+        IndexOfActivePlayer++;
+        if (IndexOfActivePlayer >= PlayerDecks.Count)
         {
-            HitButton.interactable = true;
-            if (PlayerDecks[indexLocalPlayer].instance.Count > 0)
-            {
-                SlapButton.interactable = true;
-            }
-            return;
-        }
-        else
-        {
-            HitButton.interactable = false;
-            if (PlayerDecks[indexLocalPlayer].instance.Count > 0)
-            {
-                SlapButton.interactable = true;
-            }
+            IndexOfActivePlayer = 0;
         }
     }
-    public void NextPlayer(int indexLocalPlayer)
+    public void NextPlayer()
     {
+        IncrementActivePlayer();
 
-        IndexOfActivePlayer++;
+        int whilecounter = 0;
+        while (PlayerDecks[IndexOfActivePlayer].Count == 0)
+        {
+            IncrementActivePlayer();
+            whilecounter++;
+            if(whilecounter > 10)
+            {
+                Debug.LogWarning("no valid decks found");
+                return;                
+            }
+        }
 
+        firstPlayer.CheckTurn(IndexOfActivePlayer);
         //DEACTIVATE controlls current player
         //ENABle CONTROLS next player
 
@@ -261,7 +415,7 @@ public class HitSlapRazboi : MonoBehaviour
     }
     public void CheckPlayerVictory(int indexLocalPlayer)
     {
-        if (PlayerDecks[indexLocalPlayer].instance.Count == RefToController.AssambledDeck.Count)
+        if (PlayerDecks[indexLocalPlayer].Count == RefToController.AssambledDeck.Count)
         {
             HitButton.interactable = false;
             SlapButton.interactable = false;
@@ -272,14 +426,11 @@ public class HitSlapRazboi : MonoBehaviour
 
     public void StaySamePlayer()
     {
-        //DoNothingIfUrNotABot
-        if (IndexOfActivePlayer > 0)
-        {
-            //TriggerBot();
-        }
+        if (PlayerDecks[IndexOfActivePlayer].Count == 0)
+            NextPlayer();
         else
         {
-            HitButton.interactable = true;
+            firstPlayer.CheckTurn(IndexOfActivePlayer);
         }
     }
     public void EnableSlapIfRules()
@@ -301,22 +452,22 @@ public class HitSlapRazboi : MonoBehaviour
         int cacheRandomResult2;
         for (int i = 0; i < RefToController.ShuffleToggles.ShufflesCount / 5; i++)
         {
-            cacheRandomResult = UnityEngine.Random.Range(0, PlayerDecks[indexLocalPlayer].instance.Count - 1);
-            cacheRandomResult2 = UnityEngine.Random.Range(0, PlayerDecks[indexLocalPlayer].instance.Count - 1);
+            cacheRandomResult = UnityEngine.Random.Range(0, PlayerDecks[indexLocalPlayer].Count - 1);
+            cacheRandomResult2 = UnityEngine.Random.Range(0, PlayerDecks[indexLocalPlayer].Count - 1);
 
-            auxShuffleValue = PlayerDecks[indexLocalPlayer].instance[cacheRandomResult];
-            PlayerDecks[indexLocalPlayer].instance[cacheRandomResult] = PlayerDecks[indexLocalPlayer].instance[cacheRandomResult2];
-            PlayerDecks[indexLocalPlayer].instance[cacheRandomResult2] = auxShuffleValue;
+            auxShuffleValue = PlayerDecks[indexLocalPlayer][cacheRandomResult];
+            PlayerDecks[indexLocalPlayer][cacheRandomResult] = PlayerDecks[indexLocalPlayer][cacheRandomResult2];
+            PlayerDecks[indexLocalPlayer][cacheRandomResult2] = auxShuffleValue;
         }
     }
     public void SkipPlayersWithNoCards(int indexLocalPlayer)
     {
-        if (PlayerDecks[indexLocalPlayer].instance.Count < 1)
+        if (PlayerDecks[indexLocalPlayer].Count < 1)
         {
             PlayerVisualDecks[0].SetActive(false);
             SlapButton.interactable = false;
             HitButton.interactable = false;
-            NextPlayer(indexLocalPlayer);
+            NextPlayer();
         }
     }
 
@@ -355,6 +506,68 @@ public class HitSlapRazboi : MonoBehaviour
             //Failed since there aren't atleast 3 cards on the table
         }
         return false;
+    }
+
+    void FillMegaDictionary()
+    {
+        // OMEGA SCUFFED
+        CardImages.Add(new Tuple<int, string>(15, "Heart"), DeckControllerRazboi.instance.HeartsImages[0]);
+        CardImages.Add(new Tuple<int, string>(2, "Heart"), DeckControllerRazboi.instance.HeartsImages[1]);
+        CardImages.Add(new Tuple<int, string>(3, "Heart"), DeckControllerRazboi.instance.HeartsImages[2]);
+        CardImages.Add(new Tuple<int, string>(4, "Heart"), DeckControllerRazboi.instance.HeartsImages[3]);
+        CardImages.Add(new Tuple<int, string>(5, "Heart"), DeckControllerRazboi.instance.HeartsImages[4]);
+        CardImages.Add(new Tuple<int, string>(6, "Heart"), DeckControllerRazboi.instance.HeartsImages[5]);
+        CardImages.Add(new Tuple<int, string>(7, "Heart"), DeckControllerRazboi.instance.HeartsImages[6]);
+        CardImages.Add(new Tuple<int, string>(8, "Heart"), DeckControllerRazboi.instance.HeartsImages[7]);
+        CardImages.Add(new Tuple<int, string>(9, "Heart"), DeckControllerRazboi.instance.HeartsImages[8]);
+        CardImages.Add(new Tuple<int, string>(10, "Heart"), DeckControllerRazboi.instance.HeartsImages[9]);
+        CardImages.Add(new Tuple<int, string>(12, "Heart"), DeckControllerRazboi.instance.HeartsImages[10]);
+        CardImages.Add(new Tuple<int, string>(13, "Heart"), DeckControllerRazboi.instance.HeartsImages[11]);
+        CardImages.Add(new Tuple<int, string>(14, "Heart"), DeckControllerRazboi.instance.HeartsImages[12]);
+
+        CardImages.Add(new Tuple<int, string>(15, "Spade"), DeckControllerRazboi.instance.SpadesImages[0]);
+        CardImages.Add(new Tuple<int, string>(2, "Spade"), DeckControllerRazboi.instance.SpadesImages[1]);
+        CardImages.Add(new Tuple<int, string>(3, "Spade"), DeckControllerRazboi.instance.SpadesImages[2]);
+        CardImages.Add(new Tuple<int, string>(4, "Spade"), DeckControllerRazboi.instance.SpadesImages[3]);
+        CardImages.Add(new Tuple<int, string>(5, "Spade"), DeckControllerRazboi.instance.SpadesImages[4]);
+        CardImages.Add(new Tuple<int, string>(6, "Spade"), DeckControllerRazboi.instance.SpadesImages[5]);
+        CardImages.Add(new Tuple<int, string>(7, "Spade"), DeckControllerRazboi.instance.SpadesImages[6]);
+        CardImages.Add(new Tuple<int, string>(8, "Spade"), DeckControllerRazboi.instance.SpadesImages[7]);
+        CardImages.Add(new Tuple<int, string>(9, "Spade"), DeckControllerRazboi.instance.SpadesImages[8]);
+        CardImages.Add(new Tuple<int, string>(10, "Spade"), DeckControllerRazboi.instance.SpadesImages[9]);
+        CardImages.Add(new Tuple<int, string>(12, "Spade"), DeckControllerRazboi.instance.SpadesImages[10]);
+        CardImages.Add(new Tuple<int, string>(13, "Spade"), DeckControllerRazboi.instance.SpadesImages[11]);
+        CardImages.Add(new Tuple<int, string>(14, "Spade"), DeckControllerRazboi.instance.SpadesImages[12]);
+
+        CardImages.Add(new Tuple<int, string>(15, "Diamond"), DeckControllerRazboi.instance.DiamondsImages[0]);
+        CardImages.Add(new Tuple<int, string>(2, "Diamond"), DeckControllerRazboi.instance.DiamondsImages[1]);
+        CardImages.Add(new Tuple<int, string>(3, "Diamond"), DeckControllerRazboi.instance.DiamondsImages[2]);
+        CardImages.Add(new Tuple<int, string>(4, "Diamond"), DeckControllerRazboi.instance.DiamondsImages[3]);
+        CardImages.Add(new Tuple<int, string>(5, "Diamond"), DeckControllerRazboi.instance.DiamondsImages[4]);
+        CardImages.Add(new Tuple<int, string>(6, "Diamond"), DeckControllerRazboi.instance.DiamondsImages[5]);
+        CardImages.Add(new Tuple<int, string>(7, "Diamond"), DeckControllerRazboi.instance.DiamondsImages[6]);
+        CardImages.Add(new Tuple<int, string>(8, "Diamond"), DeckControllerRazboi.instance.DiamondsImages[7]);
+        CardImages.Add(new Tuple<int, string>(9, "Diamond"), DeckControllerRazboi.instance.DiamondsImages[8]);
+        CardImages.Add(new Tuple<int, string>(10, "Diamond"), DeckControllerRazboi.instance.DiamondsImages[9]);
+        CardImages.Add(new Tuple<int, string>(12, "Diamond"), DeckControllerRazboi.instance.DiamondsImages[10]);
+        CardImages.Add(new Tuple<int, string>(13, "Diamond"), DeckControllerRazboi.instance.DiamondsImages[11]);
+        CardImages.Add(new Tuple<int, string>(14, "Diamond"), DeckControllerRazboi.instance.DiamondsImages[12]);
+
+        CardImages.Add(new Tuple<int, string>(15, "Club"), DeckControllerRazboi.instance.ClubsImages[0]);
+        CardImages.Add(new Tuple<int, string>(2, "Club"), DeckControllerRazboi.instance.ClubsImages[1]);
+        CardImages.Add(new Tuple<int, string>(3, "Club"), DeckControllerRazboi.instance.ClubsImages[2]);
+        CardImages.Add(new Tuple<int, string>(4, "Club"), DeckControllerRazboi.instance.ClubsImages[3]);
+        CardImages.Add(new Tuple<int, string>(5, "Club"), DeckControllerRazboi.instance.ClubsImages[4]);
+        CardImages.Add(new Tuple<int, string>(6, "Club"), DeckControllerRazboi.instance.ClubsImages[5]);
+        CardImages.Add(new Tuple<int, string>(7, "Club"), DeckControllerRazboi.instance.ClubsImages[6]);
+        CardImages.Add(new Tuple<int, string>(8, "Club"), DeckControllerRazboi.instance.ClubsImages[7]);
+        CardImages.Add(new Tuple<int, string>(9, "Club"), DeckControllerRazboi.instance.ClubsImages[8]);
+        CardImages.Add(new Tuple<int, string>(10, "Club"), DeckControllerRazboi.instance.ClubsImages[9]);
+        CardImages.Add(new Tuple<int, string>(12, "Club"), DeckControllerRazboi.instance.ClubsImages[10]);
+        CardImages.Add(new Tuple<int, string>(13, "Club"), DeckControllerRazboi.instance.ClubsImages[11]);
+        CardImages.Add(new Tuple<int, string>(14, "Club"), DeckControllerRazboi.instance.ClubsImages[12]);
+
+        Debug.Log($"Omega useless Dictionary count : {CardImages.Count}");
     }
     #endregion
 }

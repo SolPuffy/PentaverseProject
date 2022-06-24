@@ -5,7 +5,7 @@ using System;
 [Serializable]
 public class CardValueType
 {
-    public Sprite CardSprite;
+    //public Sprite CardSprite;
     public int CardValue;
     public string CardType;
 }
