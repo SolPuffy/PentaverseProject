@@ -105,7 +105,6 @@ public class DeckControllerRazboi : NetworkBehaviour
             }
         }
         ShowDeck();
-
         done = true;
     }    
     public void ShowDeck()
