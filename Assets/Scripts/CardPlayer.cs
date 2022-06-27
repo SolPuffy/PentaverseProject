@@ -42,9 +42,8 @@ public class CardPlayer : NetworkBehaviour
             localPlayer = this;           
             if (!HitSlapRazboi.instance.InititalSetupDone)
             {               
-                {                    
-                    AddDeck();
-                    SetPlayerIndex();
+                {
+                    SetPlayerIndex();                                       
                 }
             }
             else
@@ -52,17 +51,7 @@ public class CardPlayer : NetworkBehaviour
                 NetworkManager.singleton.StopClient();                  
             }            
         }
-    }
-    [Command]
-    public void BeginRazboi()
-    {
-
-    }
-    [Command]
-    void callServerLog(int i)
-    {
-        Debug.Log("Found local " + i);
-    }
+    }   
     [ClientRpc]
     public void EndGame()
     {
@@ -89,15 +78,12 @@ public class CardPlayer : NetworkBehaviour
         HitSlapRazboi.instance.SlapCards(playerIndex);
         ChangeDecks(HitSlapRazboi.instance.PlayerDecks);
     }
-
-
     [Command]
     public void BuildDeck()
     {
         DeckControllerRazboi.instance.BuildDeck();
     }
-
-    [Command]
+    
     public void AddDeck()
     {
         HitSlapRazboi.instance.PlayerDecks.Add(new List<CardValueType>());
@@ -126,7 +112,11 @@ public class CardPlayer : NetworkBehaviour
         return t;
 
     }
-
+    [TargetRpc]
+    public void DC()
+    {
+        NetworkManager.singleton.StopClient();
+    }
     
     [Command]
     public void SetPlayerIndex()
@@ -138,6 +128,17 @@ public class CardPlayer : NetworkBehaviour
         }
        
         playerIndex = cardPlayers.IndexOf(this);
-        Debug.Log("Setting index to : " + playerIndex);
+
+        if (playerIndex > 4) 
+        {
+            DC(); 
+        }
+        else
+        {
+            Debug.Log("Setting index to : " + playerIndex);
+            AddDeck();
+        }
+
+      
     }    
 }

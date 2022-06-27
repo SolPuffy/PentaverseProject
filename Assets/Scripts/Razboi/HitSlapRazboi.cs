@@ -115,6 +115,7 @@ public class HitSlapRazboi : NetworkBehaviour
         ServerBackup.CleanDataHold();
         InititalSetupDone = false;
         DeckControllerRazboi.instance.done = false;
+        IndexOfActivePlayer = 0;
         CardsOnGround.Clear();
         CardsLostToSlap.Clear();
         SlapCard = null;
@@ -170,7 +171,8 @@ public class HitSlapRazboi : NetworkBehaviour
         {           
             yield return null;
         }
-        Debug.Log("dispersing cards");        
+        Debug.Log("dispersing cards");
+        IndexOfActivePlayer = 0;
         DisperseCardsBetweenPlayers();
         SlapCard = null;        
     }
