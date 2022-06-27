@@ -83,6 +83,7 @@ public class HitSlapRazboi : NetworkBehaviour
     private void Awake()
     {
         StartGame.SetActive(false);
+        DeactivateVisualDecks();
 
         if (NetworkManager.singleton == null)
         {
@@ -91,14 +92,34 @@ public class HitSlapRazboi : NetworkBehaviour
         if(!Application.isBatchMode)
             FillMegaDictionary();
     }
-
-    public override void OnStopServer()
+    public void DeactivateVisualDecks()
     {
-        Debug.Log("client stopped");
-        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-        Debug.Log($"{players.Length} Players Found");
+        for (int i = 0; i < 5; i++)
+        {
+            PlayerVisualDecks[i].SetActive(false);
+            PlayerSpheres[i].gameObject.SetActive(false);
+            PlayerCardCount[i].gameObject.SetActive(false);
+        }
     }
-
+    public void ActivateVisualDecks(int index)
+    {
+        PlayerVisualDecks[index].SetActive(true);
+        PlayerSpheres[index].gameObject.SetActive(true);
+        PlayerCardCount[index].gameObject.SetActive(true);
+    }
+    public void ResetScene()
+    {
+        InititalSetupDone = false;
+        DeckControllerRazboi.instance.done = false;
+        CardsOnGround.Clear();
+        CardsLostToSlap.Clear();
+        SlapCard = null;
+        SlapsLeft = 3;
+        CardsToHit = 1;
+        PlayerDecks.Clear();
+        DeckControllerRazboi.instance.AssambledDeck.Clear();
+        StartCoroutine(Setup());
+    }
     private void Start()
     {        
         instance = this;
@@ -151,6 +172,11 @@ public class HitSlapRazboi : NetworkBehaviour
         AssignColors();
         CardCountUpdate();
         CardsOnGroundVisual();
+        DeactivateVisualDecks();
+        for(int i = 0; i < PlayerDecks.Count; i++)
+        {
+            ActivateVisualDecks(i);
+        }
     }
     #region HandlePlayerInput
 
@@ -261,7 +287,8 @@ public class HitSlapRazboi : NetworkBehaviour
         {
             PlayerSpheres[i].material = normalMat;
         }
-        PlayerSpheres[IndexOfActivePlayer].material = activeMat;
+        if(InititalSetupDone)
+            PlayerSpheres[IndexOfActivePlayer].material = activeMat;
     }
     public void CardCountUpdate()
     {

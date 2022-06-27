@@ -17,7 +17,15 @@ public class CardPlayer : NetworkBehaviour
 
     public override void OnStopServer()
     {
-        Debug.Log($"Client {name}, index {playerIndex} Stopped on Server");
+        Debug.Log($"Client {name}, index {playerIndex} Stopped on Server");        
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+       
+        if((players.Length - 1) == 0)
+        {
+            Debug.Log($"No Players Left. Resetting ...");
+            HitSlapRazboi.instance.ResetScene();
+        }
+
         //ServerDisconnect();
     }
 
@@ -39,7 +47,7 @@ public class CardPlayer : NetworkBehaviour
             {
                 NetworkManager.singleton.StopClient();       
                     
-            }
+            }            
         }
     }
     [Command]
@@ -115,5 +123,5 @@ public class CardPlayer : NetworkBehaviour
        
         playerIndex = cardPlayers.IndexOf(this);
         Debug.Log("Setting index to : " + playerIndex);
-    }
+    }    
 }
