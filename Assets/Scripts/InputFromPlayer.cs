@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class InputFromPlayer : MonoBehaviour
-{
+{   
     public void HitCards()
     {
         CardPlayer.localPlayer.HitCards();
@@ -17,5 +17,10 @@ public class InputFromPlayer : MonoBehaviour
     public void StartGame()
     {
         CardPlayer.localPlayer.BuildDeck();
+    }
+
+    public void ExitGame()
+    {
+        Application.Quit();
     }
 }

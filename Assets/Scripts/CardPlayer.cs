@@ -55,6 +55,12 @@ public class CardPlayer : NetworkBehaviour
     {
 
     }
+
+    [ClientRpc]
+    public void EndGame()
+    {
+
+    }
     
     [ClientRpc]
     public void CheckTurn(int index)

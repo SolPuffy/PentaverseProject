@@ -19,9 +19,9 @@ public class SyncListDecks : List<SyncListCards> { }
 
 
 public class HitSlapRazboi : NetworkBehaviour
-{   
+{
+    [SerializeField] int InitialSlapConter = 3;
 
-     [SerializeField]
     public Dictionary<Tuple<int, string>, Sprite> CardImages = new Dictionary<Tuple<int, string>, Sprite>();
 
     public static HitSlapRazboi instance;   
@@ -33,6 +33,7 @@ public class HitSlapRazboi : NetworkBehaviour
     public Button HitButton;
     public Button SlapButton;
     public GameObject StartGame;
+    public GameObject EndGame;
 
     public Image SlapImage;
     public Image CardSlot0;
@@ -49,7 +50,7 @@ public class HitSlapRazboi : NetworkBehaviour
     [SyncVar] public int IndexOfPlayerWhoTriggeredRoundEnd;
     [SyncVar] public int IndexOfActivePlayer = 0;
     [SyncVar] public int IndexOfSlappingPlayer = 0;
-    public int SlapsLeft = 3;
+    public SyncList<int> SlapsLeft = new SyncList<int>();
     public bool RoundEndTriggered = false;
 
     public List<MeshRenderer> PlayerSpheres = new List<MeshRenderer>();
@@ -61,6 +62,8 @@ public class HitSlapRazboi : NetworkBehaviour
     public List<List<CardValueType>> PlayerDecks = new List<List<CardValueType>>();
 
     [SyncVar] CardValueType SlapCard = null;
+
+    
 
     public SyncListCards CardsOnGround = new SyncListCards();
     public SyncListCards CardsLostToSlap = new SyncListCards();
@@ -82,6 +85,7 @@ public class HitSlapRazboi : NetworkBehaviour
     
     private void Awake()
     {
+        EndGame.SetActive(false);
         StartGame.SetActive(false);
         DeactivateVisualDecks();
 
@@ -114,7 +118,8 @@ public class HitSlapRazboi : NetworkBehaviour
         CardsOnGround.Clear();
         CardsLostToSlap.Clear();
         SlapCard = null;
-        SlapsLeft = 3;
+        SlapsLeft.Clear();
+        //SlapsLeft = 3;
         CardsToHit = 1;
         PlayerDecks.Clear();
         DeckControllerRazboi.instance.AssambledDeck.Clear();
@@ -163,6 +168,10 @@ public class HitSlapRazboi : NetworkBehaviour
             yield return null;
         }
         Debug.Log("dispersing cards");
+        for (int i = 0; i<PlayerDecks.Count; i++)
+        {
+            SlapsLeft.Add(InitialSlapConter);
+        }
         DisperseCardsBetweenPlayers();
         SlapCard = null;        
     }
@@ -240,11 +249,9 @@ public class HitSlapRazboi : NetworkBehaviour
     public void SlapCards(int IndexOfSlappingPlayer)
     {
         if (!InititalSetupDone) return;
-        
+        if (SlapsLeft[IndexOfSlappingPlayer] <= 0) return;        
         instance.IndexOfSlappingPlayer = IndexOfSlappingPlayer;
-        if (SlapsLeft > 0)
-        {
-            SlapsLeft--;
+        SlapsLeft[IndexOfSlappingPlayer]--; 
             if (CheckSlapRules())
             {
                 //successfully slapped, take cards wait for bots (delay && conditions to be removed for actual players)
@@ -273,14 +280,17 @@ public class HitSlapRazboi : NetworkBehaviour
                 }
                 SkipPlayersWithNoCards(IndexOfSlappingPlayer);
             }
-        }
-        if (SlapsLeft < 1)
-        {
-            SlapButton.interactable = false;
-        }
+           
     }
     #endregion
     #region Visuals
+
+    public void ExecuteEndGame()
+    {
+        HitButton.gameObject.SetActive(false);
+        SlapButton.gameObject.SetActive(false);
+        EndGame.SetActive(true);
+    }
     public void AssignColors()
     {
         for (int i = 0; i < PlayerSpheres.Count; i++)
@@ -297,7 +307,9 @@ public class HitSlapRazboi : NetworkBehaviour
             PlayerCardCount[i].text = PlayerDecks[i].Count.ToString();
         }
         hitCounter.text = CardsToHit.ToString();
-        slapCounter.text = SlapsLeft.ToString();
+        try { slapCounter.text = SlapsLeft[CardPlayer.localPlayer.playerIndex].ToString(); }
+        catch { Debug.Log("slap error. IGNORE ME"); }
+        
     }
 
     public void CheckUIButtons(int indexACtivePlayer)
@@ -393,12 +405,17 @@ public class HitSlapRazboi : NetworkBehaviour
         ShuffleDeck(indexLocalPlayer);
         CardsOnGround.Clear();
         CardsLostToSlap.Clear();
-        //CheckPlayerVictory(indexLocalPlayer);
-        SlapsLeft = 3;
+        
+        for(int i = 0; i < SlapsLeft.Count; i++)
+        {
+            SlapsLeft[i] = InitialSlapConter;
+        }
         RoundEndTriggered = false;
         IndexOfActivePlayer = IndexOfPlayerWhoTriggeredRoundEnd;
 
         firstPlayer.CheckTurn(IndexOfActivePlayer);
+
+        CheckPlayerVictory(indexLocalPlayer);
     }
 
     void IncrementActivePlayer()
