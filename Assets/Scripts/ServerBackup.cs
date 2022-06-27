@@ -65,7 +65,17 @@ public class ServerBackup : MonoBehaviour
     public static void BackupDeck(List<CardValueType> DeckList)
     {
         ServerInstance.DataHold.GameDeck = DeckList;
-    }  
+    }
+    public static void AddHitToList(int playerIndex)
+    {
+        ServerInstance.DataHold.playerActions.Add("Hit");
+        ServerInstance.DataHold.indexParameters.Add(playerIndex);
+    }
+    public static void AddSlapToList(int playerIndex)
+    {
+        ServerInstance.DataHold.playerActions.Add("Slap");
+        ServerInstance.DataHold.indexParameters.Add(playerIndex);
+    }    
     private string generateRandomSaveId()
     {
         string RandomToReturn = "";
