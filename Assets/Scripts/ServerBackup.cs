@@ -48,6 +48,12 @@ public class ServerBackup : MonoBehaviour
     {
         ServerInstance.PerformBackup();
     }
+    public static void CleanDataHold()
+    {
+        ServerInstance.DataHold.GameDeck.Clear();
+        ServerInstance.DataHold.playerActions.Clear();
+        ServerInstance.DataHold.indexParameters.Clear();
+    }    
     #endregion
     #region BackupFunctions
     private void PerformBackup()
