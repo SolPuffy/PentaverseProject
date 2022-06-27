@@ -14,6 +14,8 @@ public class BackupData
 }
 public class ServerBackup : MonoBehaviour
 {
+    //DO NOT CREATE ANY PUBLIC ACCESS POINT TO EITHER 'ServerInstance' OR 'DataHold' FOR SECURITY REASONS
+
     private static ServerBackup ServerInstance;
     private string fileDataPath;
     [SerializeField] private BackupData DataHold = new BackupData();
@@ -27,6 +29,26 @@ public class ServerBackup : MonoBehaviour
     {
         //PerformBackup();
     }
+    #region Statics
+    public static void BackupDeck(List<CardValueType> DeckList)
+    {
+        ServerInstance.DataHold.GameDeck = DeckList;
+    }
+    public static void AddHitToList(int playerIndex)
+    {
+        ServerInstance.DataHold.playerActions.Add("Hit");
+        ServerInstance.DataHold.indexParameters.Add(playerIndex);
+    }
+    public static void AddSlapToList(int playerIndex)
+    {
+        ServerInstance.DataHold.playerActions.Add("Slap");
+        ServerInstance.DataHold.indexParameters.Add(playerIndex);
+    }
+    public static void PerformServerBackup()
+    {
+        ServerInstance.PerformBackup();
+    }
+    #endregion
     #region BackupFunctions
     private void PerformBackup()
     {
@@ -62,20 +84,6 @@ public class ServerBackup : MonoBehaviour
     }
     #endregion
     #region ChecksAndRandomGeneration
-    public static void BackupDeck(List<CardValueType> DeckList)
-    {
-        ServerInstance.DataHold.GameDeck = DeckList;
-    }
-    public static void AddHitToList(int playerIndex)
-    {
-        ServerInstance.DataHold.playerActions.Add("Hit");
-        ServerInstance.DataHold.indexParameters.Add(playerIndex);
-    }
-    public static void AddSlapToList(int playerIndex)
-    {
-        ServerInstance.DataHold.playerActions.Add("Slap");
-        ServerInstance.DataHold.indexParameters.Add(playerIndex);
-    }    
     private string generateRandomSaveId()
     {
         string RandomToReturn = "";
