@@ -13,4 +13,9 @@ public class InputFromPlayer : MonoBehaviour
     {
         CardPlayer.localPlayer.SlapCards();
     }
+
+    public void StartGame()
+    {
+        CardPlayer.localPlayer.BuildDeck();
+    }
 }

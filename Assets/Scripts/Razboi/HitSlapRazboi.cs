@@ -18,25 +18,10 @@ public class SyncListCards : SyncList<CardValueType> { }
 public class SyncListDecks : List<SyncListCards> { }
 
 
-
-
-
-[Serializable]
-public class ListInList
-{
-     public SyncList<CardValueType> instance = new SyncList<CardValueType>();
-    //public SyncListGameObject players = new SyncListGameObject();
-
-    public ListInList()
-    {
-     
-    }
-
-}
-
 public class HitSlapRazboi : NetworkBehaviour
-{
-    [SerializeField]
+{   
+
+     [SerializeField]
     public Dictionary<Tuple<int, string>, Sprite> CardImages = new Dictionary<Tuple<int, string>, Sprite>();
 
     public static HitSlapRazboi instance;   
@@ -47,6 +32,7 @@ public class HitSlapRazboi : NetworkBehaviour
 
     public Button HitButton;
     public Button SlapButton;
+    public GameObject StartGame;
 
     public Image SlapImage;
     public Image CardSlot0;
@@ -58,6 +44,7 @@ public class HitSlapRazboi : NetworkBehaviour
 
     public Sprite BlankSprite;
 
+    [SyncVar] public bool InititalSetupDone = false;
     [SyncVar] public int CardsToHit;
     [SyncVar] public int IndexOfPlayerWhoTriggeredRoundEnd;
     [SyncVar] public int IndexOfActivePlayer = 0;
@@ -92,9 +79,12 @@ public class HitSlapRazboi : NetworkBehaviour
         } 
         set { } }
 
+    
     private void Awake()
     {
-        if(NetworkManager.singleton == null)
+        StartGame.SetActive(false);
+
+        if (NetworkManager.singleton == null)
         {
             SceneManager.LoadScene("ConnectScene");
         }
@@ -102,9 +92,15 @@ public class HitSlapRazboi : NetworkBehaviour
             FillMegaDictionary();
     }
 
+    public override void OnStopServer()
+    {
+        Debug.Log("client stopped");
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+        Debug.Log($"{players.Length} Players Found");
+    }
 
     private void Start()
-    {
+    {        
         instance = this;
         AssignColors();
         EnableSlapIfRules();
@@ -133,21 +129,21 @@ public class HitSlapRazboi : NetworkBehaviour
         if (CardPlayer.localPlayer.playerIndex == 0)
         {
             Debug.Log("I am HOST");
-            CardPlayer.localPlayer.BuildDeck();
+            //CardPlayer.localPlayer.BuildDeck();
+            StartGame.SetActive(true);
         }
-    }
+    }  
 
     IEnumerator Setup()
     {
-        while (PlayerDecks.Count == 0 || !DeckControllerRazboi.instance.done)
-        {
-            //Debug.Log("waiting for decks");
+        // Server is waiting until a player calls CardPlayer.localPlayer.BuildDeck();
+        while (!DeckControllerRazboi.instance.done)
+        {           
             yield return null;
         }
         Debug.Log("dispersing cards");
         DisperseCardsBetweenPlayers();
-        SlapCard = null;
-        
+        SlapCard = null;        
     }
     private void Update()
     {
@@ -161,12 +157,17 @@ public class HitSlapRazboi : NetworkBehaviour
 
     public void HitCards(int indexLocalPlayer)
     {
+        if (!InititalSetupDone) return;
+        if (indexLocalPlayer != IndexOfActivePlayer) return;
+        //Print Deck of player HIT
+        /*
         string _string = $"Deck for player {indexLocalPlayer} :";
         foreach (CardValueType card in PlayerDecks[indexLocalPlayer])
         {
             _string += card.CardValue.ToString() + "; ";
         }
         Debug.Log(_string);
+        */
 
         //HitButton.interactable = false;
         CardsToHit--;
@@ -212,6 +213,8 @@ public class HitSlapRazboi : NetworkBehaviour
     }
     public void SlapCards(int IndexOfSlappingPlayer)
     {
+        if (!InititalSetupDone) return;
+        
         instance.IndexOfSlappingPlayer = IndexOfSlappingPlayer;
         if (SlapsLeft > 0)
         {
@@ -276,6 +279,10 @@ public class HitSlapRazboi : NetworkBehaviour
         {
             HitButton.interactable = true;
         }
+        else
+        {
+            HitButton.interactable = false;
+        }
     }
     public void CardsOnGroundVisual()
     {
@@ -291,11 +298,13 @@ public class HitSlapRazboi : NetworkBehaviour
 
         switch (CardsOnGround.Count)
         {
+            case 0:
+                {
+                    break;
+                }
             case 1:
                 {
                     CardSlot2.sprite = CardImages[new Tuple<int, string>(CardsOnGround[CardsOnGround.Count - 1].CardValue, CardsOnGround[CardsOnGround.Count - 1].CardType)];
-
-
                     break;
                 }
             case 2:
@@ -304,26 +313,19 @@ public class HitSlapRazboi : NetworkBehaviour
                     CardSlot1.sprite = CardImages[new Tuple<int, string>(CardsOnGround[CardsOnGround.Count - 2].CardValue, CardsOnGround[CardsOnGround.Count - 2].CardType)];
                     break;
                 }
-            case 3:
+                //over 3
+            default:
                 {
                     CardSlot2.sprite = CardImages[new Tuple<int, string>(CardsOnGround[CardsOnGround.Count - 1].CardValue, CardsOnGround[CardsOnGround.Count - 1].CardType)];
                     CardSlot1.sprite = CardImages[new Tuple<int, string>(CardsOnGround[CardsOnGround.Count - 2].CardValue, CardsOnGround[CardsOnGround.Count - 2].CardType)];
                     CardSlot0.sprite = CardImages[new Tuple<int, string>(CardsOnGround[CardsOnGround.Count - 3].CardValue, CardsOnGround[CardsOnGround.Count - 3].CardType)];
                     break;
-                }
-            case 0:
-                {
-                    break;
-                }
-            default:
-                {
-                    break;
-                }
+                }                
         }
 
         if(SlapCard != null)
         {
-            SlapImage.sprite = CardImages[new Tuple<int, string>(PlayerDecks[IndexOfSlappingPlayer][0].CardValue, PlayerDecks[IndexOfSlappingPlayer][0].CardType)];
+            SlapImage.sprite = CardImages[new Tuple<int, string>(SlapCard.CardValue, SlapCard.CardType)];
         }
     }
     #endregion
@@ -338,15 +340,20 @@ public class HitSlapRazboi : NetworkBehaviour
         }
 
         Debug.Log($"created {PlayerDecks[PlayerDecks.Count - 1].Count}");
+        /*
         string _string = $"Deck for player {PlayerDecks.Count - 1} :";
         foreach (CardValueType card in PlayerDecks[PlayerDecks.Count - 1])
         {
             _string += card.CardValue.ToString() + "; ";
         }
         Debug.Log(_string);
-        
-        //SCUUUFED
+        */
+
+        //SCUUUFED Update Decks
+        Debug.Log("Finished Setying up decks for players.  Starting Game");
+        InititalSetupDone = true;
         firstPlayer.ChangeDecks(PlayerDecks);
+        firstPlayer.CheckTurn(IndexOfActivePlayer);       
 
     }
 
@@ -365,7 +372,6 @@ public class HitSlapRazboi : NetworkBehaviour
         IndexOfActivePlayer = IndexOfPlayerWhoTriggeredRoundEnd;
 
         firstPlayer.CheckTurn(IndexOfActivePlayer);
-
     }
 
     void IncrementActivePlayer()
@@ -391,27 +397,7 @@ public class HitSlapRazboi : NetworkBehaviour
                 return;                
             }
         }
-
-        firstPlayer.CheckTurn(IndexOfActivePlayer);
-        //DEACTIVATE controlls current player
-        //ENABle CONTROLS next player
-
-        /*
-        if (IndexOfActivePlayer > 4)
-        {
-            IndexOfActivePlayer = 0;
-        }
-        SkipPlayersWithNoCards(indexLocalPlayer);
-        if (IndexOfActivePlayer == 0)
-        {
-            HitButton.interactable = true;
-            return;
-        }
-        else
-        {
-            HitButton.interactable = false;
-        }*/
-
+        firstPlayer.CheckTurn(IndexOfActivePlayer); 
     }
     public void CheckPlayerVictory(int indexLocalPlayer)
     {
@@ -419,8 +405,7 @@ public class HitSlapRazboi : NetworkBehaviour
         {
             HitButton.interactable = false;
             SlapButton.interactable = false;
-            return;
-            //Player0Wins
+            return;           
         }
     }
 
@@ -570,4 +555,9 @@ public class HitSlapRazboi : NetworkBehaviour
         Debug.Log($"Omega useless Dictionary count : {CardImages.Count}");
     }
     #endregion
+
+    private void OnDestroy()
+    {
+        InititalSetupDone = false;
+    }
 }

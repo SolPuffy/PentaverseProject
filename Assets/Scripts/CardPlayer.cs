@@ -8,16 +8,46 @@ public class CardPlayer : NetworkBehaviour
     public static CardPlayer localPlayer;
     [SyncVar] public int playerIndex = 20;
     List<CardPlayer> cardPlayers = new List<CardPlayer>();
-    
+
+    public override void OnStopClient()
+    {
+        Debug.Log($"Client {name}, index {playerIndex} Stopped  ");
+        //ClientDisconnect();
+    }
+
+    public override void OnStopServer()
+    {
+        Debug.Log($"Client {name}, index {playerIndex} Stopped on Server");
+        //ServerDisconnect();
+    }
+
     private void Start()
     {
         if (isLocalPlayer)
         {
             localPlayer = this;
-            AddDeck();
-            SetPlayerIndex();
+            if (!HitSlapRazboi.instance.InititalSetupDone)
+            {
+
+                {
+                    localPlayer = this;
+                    AddDeck();
+                    SetPlayerIndex();
+                }
+            }
+            else
+            {
+                NetworkManager.singleton.StopClient();       
+                    
+            }
         }
     }
+    [Command]
+    public void BeginRazboi()
+    {
+
+    }
+    
     [ClientRpc]
     public void CheckTurn(int index)
     {
