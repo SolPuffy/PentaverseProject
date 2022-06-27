@@ -20,7 +20,7 @@ public class SyncListDecks : List<SyncListCards> { }
 
 public class HitSlapRazboi : NetworkBehaviour
 {
-    [SerializeField] int InitialSlapConter = 3;
+    [SerializeField] public int InitialSlapConter = 3;
 
     public Dictionary<Tuple<int, string>, Sprite> CardImages = new Dictionary<Tuple<int, string>, Sprite>();
 
@@ -85,6 +85,7 @@ public class HitSlapRazboi : NetworkBehaviour
     
     private void Awake()
     {
+        instance = this;
         EndGame.SetActive(false);
         StartGame.SetActive(false);
         DeactivateVisualDecks();
@@ -92,9 +93,7 @@ public class HitSlapRazboi : NetworkBehaviour
         if (NetworkManager.singleton == null)
         {
             SceneManager.LoadScene("ConnectScene");
-        }
-        if(!Application.isBatchMode)
-            FillMegaDictionary();
+        }        
     }
     public void DeactivateVisualDecks()
     {
@@ -113,6 +112,7 @@ public class HitSlapRazboi : NetworkBehaviour
     }
     public void ResetScene()
     {
+        ServerBackup.CleanDataHold();
         InititalSetupDone = false;
         DeckControllerRazboi.instance.done = false;
         CardsOnGround.Clear();
@@ -123,11 +123,14 @@ public class HitSlapRazboi : NetworkBehaviour
         CardsToHit = 1;
         PlayerDecks.Clear();
         DeckControllerRazboi.instance.AssambledDeck.Clear();
+        StopAllCoroutines();
         StartCoroutine(Setup());
     }
     private void Start()
-    {        
-        instance = this;
+    {
+        if (!Application.isBatchMode)
+            FillMegaDictionary();
+
         AssignColors();
         EnableSlapIfRules();
         if (Application.isBatchMode)
@@ -167,11 +170,7 @@ public class HitSlapRazboi : NetworkBehaviour
         {           
             yield return null;
         }
-        Debug.Log("dispersing cards");
-        for (int i = 0; i<PlayerDecks.Count; i++)
-        {
-            SlapsLeft.Add(InitialSlapConter);
-        }
+        Debug.Log("dispersing cards");        
         DisperseCardsBetweenPlayers();
         SlapCard = null;        
     }
@@ -399,7 +398,8 @@ public class HitSlapRazboi : NetworkBehaviour
     }
 
     public void WinRound(int indexLocalPlayer)
-    {       
+    {
+        CardsToHit = 1;
         //Didn't hit a +10 and someone before did
         PlayerDecks[indexLocalPlayer].AddRange(CardsOnGround);
         PlayerDecks[indexLocalPlayer].AddRange(CardsLostToSlap);
@@ -450,6 +450,7 @@ public class HitSlapRazboi : NetworkBehaviour
         if (PlayerDecks[indexLocalPlayer].Count == RefToController.AssambledDeck.Count)
         {
             firstPlayer.EndGame();
+            ServerBackup.PerformServerBackup();
             return;           
         }
     }
@@ -540,8 +541,10 @@ public class HitSlapRazboi : NetworkBehaviour
 
     void FillMegaDictionary()
     {
+        Debug.Log($"TEste before dictionary {CardImages.Count}");
         // OMEGA SCUFFED
-        CardImages.Add(new Tuple<int, string>(15, "Heart"), DeckControllerRazboi.instance.HeartsImages[0]);
+        CardImages.Add(new Tuple<int, string>(15, "Heart"),
+            DeckControllerRazboi.instance.HeartsImages[0]);
         CardImages.Add(new Tuple<int, string>(2, "Heart"), DeckControllerRazboi.instance.HeartsImages[1]);
         CardImages.Add(new Tuple<int, string>(3, "Heart"), DeckControllerRazboi.instance.HeartsImages[2]);
         CardImages.Add(new Tuple<int, string>(4, "Heart"), DeckControllerRazboi.instance.HeartsImages[3]);

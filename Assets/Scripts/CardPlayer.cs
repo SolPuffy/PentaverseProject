@@ -29,24 +29,27 @@ public class CardPlayer : NetworkBehaviour
         //ServerDisconnect();
     }
 
-    private void Start()
+    public override void OnStartServer()
     {
-        if (isLocalPlayer)
-        {
-            localPlayer = this;
-            if (!HitSlapRazboi.instance.InititalSetupDone)
-            {
+        Debug.Log($"Client {name} connected on Server");        
+    }
 
-                {
-                    localPlayer = this;
+
+    private void Start()
+    {        
+        if (isLocalPlayer)
+        {           
+            localPlayer = this;           
+            if (!HitSlapRazboi.instance.InititalSetupDone)
+            {               
+                {                    
                     AddDeck();
                     SetPlayerIndex();
                 }
             }
             else
-            {
-                NetworkManager.singleton.StopClient();       
-                    
+            {              
+                NetworkManager.singleton.StopClient();                  
             }            
         }
     }
@@ -55,7 +58,11 @@ public class CardPlayer : NetworkBehaviour
     {
 
     }
-
+    [Command]
+    void callServerLog(int i)
+    {
+        Debug.Log("Found local " + i);
+    }
     [ClientRpc]
     public void EndGame()
     {
@@ -71,6 +78,7 @@ public class CardPlayer : NetworkBehaviour
     [Command]
     public void HitCards()
     {
+        Debug.Log("hitting cards");
         HitSlapRazboi.instance.HitCards(playerIndex);
         ChangeDecks(HitSlapRazboi.instance.PlayerDecks);
     }
@@ -93,6 +101,8 @@ public class CardPlayer : NetworkBehaviour
     public void AddDeck()
     {
         HitSlapRazboi.instance.PlayerDecks.Add(new List<CardValueType>());
+        HitSlapRazboi.instance.SlapsLeft.Add(HitSlapRazboi.instance.InitialSlapConter);
+        ChangeDecks(HitSlapRazboi.instance.PlayerDecks);
     }
 
     //SCUUFED  
