@@ -105,6 +105,9 @@ public class DeckControllerRazboi : NetworkBehaviour
             }
         }
         ShowDeck();
+        List<CardValueType> SyncToLocalList = new List<CardValueType>();
+        AssambledDeck.CopyTo(SyncToLocalList);
+        ServerBackup.BackupDeck(SyncToLocalList);
         done = true;
     }    
     public void ShowDeck()

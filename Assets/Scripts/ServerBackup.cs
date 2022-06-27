@@ -6,7 +6,6 @@ using System.IO;
 [System.Serializable]
 public class BackupData
 {
-    [SerializeField]
     public int ActionsPerformed;
     public string Date;
     public List<CardValueType> GameDeck = new List<CardValueType>();
@@ -15,16 +14,18 @@ public class BackupData
 }
 public class ServerBackup : MonoBehaviour
 {
+    private static ServerBackup ServerInstance;
     private string fileDataPath;
     [SerializeField] private BackupData DataHold = new BackupData();
     private void Awake()
     {
+        ServerInstance = this;
         //makesSureSavefilesFolderAlwaysExists
         CheckFolderDataPath();
     }
     private void Start()
     {
-        PerformBackup();
+        //PerformBackup();
     }
     #region BackupFunctions
     private void PerformBackup()
@@ -61,11 +62,10 @@ public class ServerBackup : MonoBehaviour
     }
     #endregion
     #region ChecksAndRandomGeneration
-    public void BackupDeck(List<CardValueType> deckBackup)
+    public static void BackupDeck(List<CardValueType> DeckList)
     {
-        DataHold.GameDeck = deckBackup;
-    } 
-        
+        ServerInstance.DataHold.GameDeck = DeckList;
+    }  
     private string generateRandomSaveId()
     {
         string RandomToReturn = "";
