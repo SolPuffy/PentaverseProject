@@ -194,6 +194,7 @@ public class HitSlapRazboi : NetworkBehaviour
     {
         if (!InititalSetupDone) return;
         if (indexLocalPlayer != IndexOfActivePlayer) return;
+        ServerBackup.AddHitToList(indexLocalPlayer);
         //Print Deck of player HIT
         /*
         string _string = $"Deck for player {indexLocalPlayer} :";
@@ -249,7 +250,8 @@ public class HitSlapRazboi : NetworkBehaviour
     public void SlapCards(int IndexOfSlappingPlayer)
     {
         if (!InititalSetupDone) return;
-        if (SlapsLeft[IndexOfSlappingPlayer] <= 0) return;        
+        if (SlapsLeft[IndexOfSlappingPlayer] <= 0) return;
+        ServerBackup.AddSlapToList(IndexOfSlappingPlayer);
         instance.IndexOfSlappingPlayer = IndexOfSlappingPlayer;
         SlapsLeft[IndexOfSlappingPlayer]--; 
             if (CheckSlapRules())
