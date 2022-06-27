@@ -447,8 +447,7 @@ public class HitSlapRazboi : NetworkBehaviour
     {
         if (PlayerDecks[indexLocalPlayer].Count == RefToController.AssambledDeck.Count)
         {
-            HitButton.interactable = false;
-            SlapButton.interactable = false;
+            firstPlayer.EndGame();
             return;           
         }
     }

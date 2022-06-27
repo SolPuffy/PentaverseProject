@@ -311,7 +311,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b0fecffa3f624585964b0d0eb21b18e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Port: 7779
+  Port: 56969
   DualMode: 1
   NoDelay: 1
   Interval: 10
@@ -347,7 +347,7 @@ MonoBehaviour:
   offlineScene: Assets/Scenes/ConnectScene.unity
   onlineScene: Assets/Scenes/SampleScene.unity
   transport: {fileID: 89520148}
-  networkAddress: localhost
+  networkAddress: nas.retinafilmproduction.com
   maxConnections: 100
   authenticator: {fileID: 0}
   playerPrefab: {fileID: 5644974922076370858, guid: 3e0a9c230507fb44d80edd14b4facde5, type: 3}

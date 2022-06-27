@@ -59,7 +59,7 @@ public class CardPlayer : NetworkBehaviour
     [ClientRpc]
     public void EndGame()
     {
-
+        HitSlapRazboi.instance.ExecuteEndGame();
     }
     
     [ClientRpc]
