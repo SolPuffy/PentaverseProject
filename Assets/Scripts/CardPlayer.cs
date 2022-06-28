@@ -34,7 +34,12 @@ public class CardPlayer : NetworkBehaviour
         Debug.Log($"Client {name} connected on Server");        
     }
 
-
+    [ClientRpc]
+    public void SetupDone()
+    {
+        HitSlapRazboi.instance.InititalSetupDone = true;
+    }
+   
     private void Start()
     {        
         if (isLocalPlayer)

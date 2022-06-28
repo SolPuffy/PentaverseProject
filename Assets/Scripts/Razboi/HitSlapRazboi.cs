@@ -252,6 +252,8 @@ public class HitSlapRazboi : NetworkBehaviour
     {
         if (!InititalSetupDone) return;
         if (SlapsLeft[IndexOfSlappingPlayer] <= 0) return;
+        if (PlayerDecks[IndexOfSlappingPlayer].Count <= 0) return;
+
         ServerBackup.AddSlapToList(IndexOfSlappingPlayer);
         instance.IndexOfSlappingPlayer = IndexOfSlappingPlayer;
         SlapsLeft[IndexOfSlappingPlayer]--; 
@@ -295,13 +297,15 @@ public class HitSlapRazboi : NetworkBehaviour
         EndGame.SetActive(true);
     }
     public void AssignColors()
-    {
+    {        
         for (int i = 0; i < PlayerSpheres.Count; i++)
         {
             PlayerSpheres[i].material = normalMat;
         }
-        if(InititalSetupDone)
+        if (InititalSetupDone)
+        {            
             PlayerSpheres[IndexOfActivePlayer].material = activeMat;
+        }
     }
     public void CardCountUpdate()
     {
@@ -394,6 +398,7 @@ public class HitSlapRazboi : NetworkBehaviour
         //SCUUUFED Update Decks
         Debug.Log("Finished Setying up decks for players.  Starting Game");
         InititalSetupDone = true;
+        firstPlayer.SetupDone();
         firstPlayer.ChangeDecks(PlayerDecks);
         firstPlayer.CheckTurn(IndexOfActivePlayer);       
 
@@ -517,6 +522,10 @@ public class HitSlapRazboi : NetworkBehaviour
                 return true;
             }
             if (RefToController.SpecialRulesToggles.KQ_or_QK && (CardsOnGround[CardsOnGround.Count - 1].CardValue == 14 && CardsOnGround[CardsOnGround.Count - 2].CardValue == 13) || (CardsOnGround[CardsOnGround.Count - 1].CardValue == 13 && CardsOnGround[CardsOnGround.Count - 2].CardValue == 14))
+            {
+                return true;
+            }
+            if (RefToController.SpecialRulesToggles.JQ_or_QJ && (CardsOnGround[CardsOnGround.Count - 1].CardValue == 12 && CardsOnGround[CardsOnGround.Count - 2].CardValue == 13) || (CardsOnGround[CardsOnGround.Count - 1].CardValue == 13 && CardsOnGround[CardsOnGround.Count - 2].CardValue == 12))
             {
                 return true;
             }

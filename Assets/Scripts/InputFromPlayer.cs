@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 
 public class InputFromPlayer : MonoBehaviour
 {   
@@ -21,6 +22,6 @@ public class InputFromPlayer : MonoBehaviour
 
     public void ExitGame()
     {
-        Application.Quit();
+        GameObject.Find("NetworkManager").GetComponent<NetworkManager>().StopClient();
     }
 }

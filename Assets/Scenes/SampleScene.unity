@@ -5454,10 +5454,11 @@ MonoBehaviour:
     DoShuffling: 1
     ShufflesCount: 1300
   SpecialRulesToggles:
-    Last2AddTo10: 1
+    Last2AddTo10: 0
     TwoEqualInARow: 1
     TwoSandwichOne: 1
     KQ_or_QK: 1
+    JQ_or_QJ: 1
   cardcount: 0
   done: 0
 --- !u!114 &2131420261

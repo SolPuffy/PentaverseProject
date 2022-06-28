@@ -14,7 +14,7 @@ public class DeckControllerRazboi : NetworkBehaviour
     // J - deal 1
 
     //CurrentDeck
-    public readonly SyncListCards AssambledDeck = new SyncListCards();
+    public  SyncListCards AssambledDeck = new SyncListCards();
     [Header("Decks")]
     public List<CardValueType> Jokers = new List<CardValueType>();
     public List<CardValueType> Hearts = new List<CardValueType>();
@@ -147,4 +147,5 @@ public struct _RulesToggles
     public bool TwoEqualInARow;
     public bool TwoSandwichOne;
     public bool KQ_or_QK;
+    public bool JQ_or_QJ;
 }
