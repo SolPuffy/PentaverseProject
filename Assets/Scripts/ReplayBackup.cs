@@ -6,10 +6,23 @@ using UnityEngine.UI;
 
 public class ReplayBackup : MonoBehaviour
 {
+    private static ReplayBackup ReplayInstance;
     private BackupData DataHold;
     public InputField inputIndex;
     public int SimDelay = 1000;
 
+    private void Awake()
+    {
+        ReplayInstance = this;
+    }
+
+    #region Statics
+    public static void StartSim()
+    {
+        ReplayInstance.SimulateGame();
+    }
+    #endregion
+    #region DataTransfer
     public async void inputFieldToData()
     {
         DataHold = await ServerBackup.RetrieveDataHoldFromServer(inputIndex.text);
@@ -20,7 +33,9 @@ public class ReplayBackup : MonoBehaviour
 
         //Start the scene
     }
-    public async void SimulateGame()
+    #endregion
+
+    private async void SimulateGame()
     {
         for(int i=0;i<DataHold.ActionsPerformed;i++)
         {
@@ -42,4 +57,5 @@ public class ReplayBackup : MonoBehaviour
             await Task.Delay(SimDelay);
         }
     }
+    
 }
