@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.IO;
+using System.Threading.Tasks;
+
 [System.Serializable]
 public class BackupData
 {
@@ -44,19 +46,25 @@ public class ServerBackup : MonoBehaviour
         ServerInstance.DataHold.playerActions.Add("Slap");
         ServerInstance.DataHold.indexParameters.Add(playerIndex);
     }
-    public static void PerformServerBackup()
-    {
-        ServerInstance.PerformBackup();
-    }
     public static void CleanDataHold()
     {
         ServerInstance.DataHold.GameDeck.Clear();
         ServerInstance.DataHold.playerActions.Clear();
         ServerInstance.DataHold.indexParameters.Clear();
-    }    
+    }
+    public async static void PerformServerBackup()
+    {
+        await ServerInstance.PerformBackup();
+        Debug.Log("Backup Complete");
+    }
+    public async static Task<BackupData> RetrieveDataHoldFromServer(string fileIndex)
+    {
+        await ServerInstance.ReadBackup(fileIndex);
+        return ServerInstance.DataHold;
+    }
     #endregion
     #region BackupFunctions
-    private void PerformBackup()
+    private async Task PerformBackup()
     {
         GetFileDataPath();
 
@@ -64,18 +72,18 @@ public class ServerBackup : MonoBehaviour
         DataHold.Date = DateTime.Now.ToString("G");
 
         string JsonOutput = JsonUtility.ToJson(DataHold, true);
-        System.IO.File.WriteAllText(fileDataPath, JsonOutput);
+        await System.IO.File.WriteAllTextAsync(fileDataPath, JsonOutput);
 
         Debug.Log($"Backup location: {fileDataPath}, Backup date: {DataHold.Date}");
     }
-    public void ReadBackup(string inputToFile)
+    public async Task ReadBackup(string inputToFile)
     {
         if (inputToFile.Length == 9)
         {
             inputToFile = ReadFileDataPath(inputToFile);
             if (File.Exists(inputToFile))
             {
-                string JsonInput = System.IO.File.ReadAllText(inputToFile);
+                string JsonInput = await System.IO.File.ReadAllTextAsync(inputToFile);
                 JsonUtility.FromJsonOverwrite(JsonInput, DataHold);
             }
             else
