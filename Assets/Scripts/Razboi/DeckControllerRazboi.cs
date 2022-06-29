@@ -18,13 +18,10 @@ public class DeckControllerRazboi : NetworkBehaviour
     [Header("Decks")]
     public List<CardValueType> Jokers = new List<CardValueType>();
     public List<CardValueType> Hearts = new List<CardValueType>();
+    public List<CardValueType> Clubs = new List<CardValueType>(); 
     public List<CardValueType> Spades = new List<CardValueType>();
     public List<CardValueType> Diamonds = new List<CardValueType>();
-    public List<CardValueType> Clubs = new List<CardValueType>();
-    public List<Sprite> HeartsImages = new List<Sprite>();
-    public List<Sprite> ClubsImages = new List<Sprite>();
-    public List<Sprite> SpadesImages = new List<Sprite>();
-    public List<Sprite> DiamondsImages = new List<Sprite>();
+     
     [Header("Toggles")]
     public _DeckToggles DeckToggles;
     public _ShuffleToggles ShuffleToggles;

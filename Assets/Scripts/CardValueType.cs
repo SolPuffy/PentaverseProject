@@ -1,11 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using System;
 [Serializable]
 public class CardValueType
 {
-    //public Sprite CardSprite;
+    //Card Index : 0-12 Hearts;  13 - 25 Clubs; 26 - 38 Spades; 39 - 51 Diamonds;
+    public int CardSpriteIndex;
     public int CardValue;
     public string CardType;
 }
