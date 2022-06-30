@@ -1,48 +1,43 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
-using System;
 using Mirror;
-using UnityEngine.SceneManagement;
+using UnityEngine.Events;
 
 [System.Serializable]
-public class SyncListGameObject : SyncList<GameObject> { }
+public class SyncListObjects : SyncList<GameObject> { }
 
 [System.Serializable]
 public class SyncListCards : SyncList<CardValueType> { }
 
 [System.Serializable]
-public class SyncListDecks : List<SyncListCards> { }
+public class SyncListDecks : List<List<CardValueType>> { }
 
 
 public class HitSlapRazboi : NetworkBehaviour
 {
     public static HitSlapRazboi instance;
 
-    public int InitialSlapConter = 3; 
+    public int InitialSlapConter = 3;    
+    public static UnityEvent<int>  CheckUI;
+    public static UnityEvent  EndGame;
+    public static UnityEvent<string, int> SlapSuccess;
     public DeckControllerRazboi RefToController;
-    public Button HitButton;
-    public Button SlapButton;
-    public GameObject StartGame;
-    public GameObject EndGame;    
+    public bool RoundEndTriggered = false;
+    public List<List<CardValueType>> PlayerDecks = new List<List<CardValueType>>();
+    float LastHitTime;
+    float SlapTime;    
 
     [SyncVar] public bool InititalSetupDone = false;
     [SyncVar] public int CardsToHit;
     [SyncVar] public int IndexOfPlayerWhoTriggeredRoundEnd;
     [SyncVar] public int IndexOfActivePlayer = 0;
     [SyncVar] public int IndexOfSlappingPlayer = 0;
-    public SyncList<int> SlapsLeft = new SyncList<int>();
-    public bool RoundEndTriggered = false; 
-
-    public List<List<CardValueType>> PlayerDecks = new List<List<CardValueType>>();
-
-
     [SyncVar] public CardValueType SlapCard = null;
+    public SyncList<int> SlapsLeft = new SyncList<int>();    
     public SyncListCards CardsOnGround = new SyncListCards();
     public SyncListCards CardsLostToSlap = new SyncListCards();
+    public SyncListObjects Players = new SyncListObjects();
 
     CardPlayer firstPlayer { get 
         {
@@ -62,16 +57,6 @@ public class HitSlapRazboi : NetworkBehaviour
     private void Awake()
     {
         instance = this;
-        EndGame.SetActive(false);
-        StartGame.SetActive(false);
-        
-
-        /*
-        if (NetworkManager.singleton == null)
-        {
-            SceneManager.LoadScene("ConnectScene");
-        }    
-        */
     }   
     public void ResetScene()
     {
@@ -86,43 +71,21 @@ public class HitSlapRazboi : NetworkBehaviour
         //SlapsLeft = 3;
         CardsToHit = 1;
         PlayerDecks.Clear();
+        Players.Clear();
         DeckControllerRazboi.instance.AssambledDeck.Clear();
         StopAllCoroutines();
         StartCoroutine(Setup());
     }
     private void Start()
-    {      
-        
-        EnableSlapIfRules();
+    {         
         if (Application.isBatchMode)
         {
             Debug.Log("I am SERVER");
             StartCoroutine(Setup());
-        }
-        else 
-        {
-           StartCoroutine(WaitForLocal());
-        }
-        //
-        //
+        }      
     }
 
-    IEnumerator WaitForLocal()
-    {
-        Debug.Log("waiting for local");
-        while(CardPlayer.localPlayer == null || CardPlayer.localPlayer.playerIndex > 10)
-        {
-            //Debug.Log(CardPlayer.localPlayer.playerIndex);
-            yield return null;
-        }
-        Debug.Log("I have local player and index");
-        if (CardPlayer.localPlayer.playerIndex == 0)
-        {
-            Debug.Log("I am HOST");
-            //CardPlayer.localPlayer.BuildDeck();
-            StartGame.SetActive(true);
-        }
-    }  
+    
 
     IEnumerator Setup()
     {
@@ -143,8 +106,14 @@ public class HitSlapRazboi : NetworkBehaviour
     {
         if (!InititalSetupDone) return;
         if (indexLocalPlayer != IndexOfActivePlayer) return;
+
+        //start measure Time
+        LastHitTime = Time.realtimeSinceStartup;
+       
+
         ServerBackup.AddHitToList(indexLocalPlayer);         
         CardsToHit--;
+
         //card pile on ground, primeste top card-ul playerului care apasa butonul
         CardsOnGround.Add(PlayerDecks[indexLocalPlayer][0]);
         PlayerDecks[indexLocalPlayer].RemoveAt(0);
@@ -152,16 +121,22 @@ public class HitSlapRazboi : NetworkBehaviour
         //check if card > 10 , Yes = trigger round end, No = continue
         if (CardsOnGround[CardsOnGround.Count - 1].CardValue > 10 /* 9 */)
         {
+            RoundEndTriggered = true;
             IndexOfPlayerWhoTriggeredRoundEnd = indexLocalPlayer;
+
             switch (CardsOnGround[CardsOnGround.Count - 1].CardValue)
             {
                 //case 10: { CardsToHit = 1; break; }
-                case 12: { CardsToHit = 1; break; }
-                case 13: { CardsToHit = 2; break; }
-                case 14: { CardsToHit = 3; break; }
-                case 15: { CardsToHit = 4; break; }
+                case 12: { // J is a free pass
+                        CardsToHit = 1;
+                        RoundEndTriggered = false;
+                        break;
+                    }
+                case 13: { CardsToHit = 1; break; }
+                case 14: { CardsToHit = 2; break; }
+                case 15: { CardsToHit = 3; break; }
             }
-            RoundEndTriggered = true;
+            
             NextPlayer();
         }
         else
@@ -185,88 +160,60 @@ public class HitSlapRazboi : NetworkBehaviour
         }
         //
     }
-    public void SlapCards(int IndexOfSlappingPlayer)
+    public void SlapCards(int IndexOfSlappingPlayer, out bool Success , out int ReactionTime )
     {
+        Success = false;
+        ReactionTime = 0;
         if (!InititalSetupDone) return;
         if (SlapsLeft[IndexOfSlappingPlayer] <= 0) return;
         if (PlayerDecks[IndexOfSlappingPlayer].Count <= 0) return;
 
         ServerBackup.AddSlapToList(IndexOfSlappingPlayer);
         instance.IndexOfSlappingPlayer = IndexOfSlappingPlayer;
-        SlapsLeft[IndexOfSlappingPlayer]--; 
-            if (CheckSlapRules())
-            {
-                //successfully slapped, take cards wait for bots (delay && conditions to be removed for actual players)
-                SlapButton.interactable = false;
-                HitButton.interactable = false;
-                RoundEndTriggered = true;
-                IndexOfPlayerWhoTriggeredRoundEnd = IndexOfSlappingPlayer;
+        SlapsLeft[IndexOfSlappingPlayer]--;
+
+        SlapTime = Time.realtimeSinceStartup;
+        //Debug.Log(SlapTime);
+        ReactionTime = Mathf.RoundToInt((SlapTime - LastHitTime) * 1000);
+
+        if (CheckSlapRules())
+            {                
                 WinRound(IndexOfSlappingPlayer);
+                Success = true;               
+                Debug.Log($"Slap result : {Success.ToString()}  {ReactionTime.ToString()}");
             }
             else
             {
                 //lose 1 card, continue game
-                try
-                {
-                    //SlapImage.sprite = CardImages[new Tuple<int, string>(PlayerDecks[IndexOfSlappingPlayer][0].CardValue, PlayerDecks[IndexOfSlappingPlayer][0].CardType)];
-                    SlapCard = PlayerDecks[IndexOfSlappingPlayer][0];
-                    CardsLostToSlap.Insert(0, PlayerDecks[IndexOfSlappingPlayer][0]);
-                    PlayerDecks[IndexOfSlappingPlayer].RemoveAt(0);                    
-                }
-                catch
-                {
-                    //SlapImage.sprite = CardImages[new Tuple<int, string>(PlayerDecks[IndexOfSlappingPlayer][0].CardValue, PlayerDecks[IndexOfSlappingPlayer][0].CardType)];
-                    SlapCard = PlayerDecks[IndexOfSlappingPlayer][0];
-                    CardsLostToSlap.Add(PlayerDecks[IndexOfSlappingPlayer][0]);
-                    PlayerDecks[IndexOfSlappingPlayer].RemoveAt(0);                   
-                }                
+                Success = false;   
+            
+                SlapCard = PlayerDecks[IndexOfSlappingPlayer][0];
+                CardsLostToSlap.Add(PlayerDecks[IndexOfSlappingPlayer][0]);
+                PlayerDecks[IndexOfSlappingPlayer].RemoveAt(0);   
+
+                Debug.Log($"Slap result : {Success.ToString()}  {ReactionTime.ToString()}");
             }
            
     }
     #endregion
     #region Visuals
 
-    public void ExecuteEndGame()
-    {
-        HitButton.gameObject.SetActive(false);
-        SlapButton.gameObject.SetActive(false);
-        EndGame.SetActive(true);
-    }
+    
    
     
 
-    public void CheckUIButtons(int indexACtivePlayer)
-    {
-        if(indexACtivePlayer == CardPlayer.localPlayer.playerIndex)
-        {
-            HitButton.interactable = true;
-        }
-        else
-        {
-            HitButton.interactable = false;
-        }
-    }
+    
    
     #endregion
     #region Other
     private void DisperseCardsBetweenPlayers()
     {
-        //SCUUUFED
-        Debug.Log($"Deck count : {PlayerDecks.Count}");
+        
         for (int i = 0; i < RefToController.AssambledDeck.Count; i++)
         {           
             PlayerDecks[i % PlayerDecks.Count].Add(RefToController.AssambledDeck[i]);
-        }
-
-        Debug.Log($"created {PlayerDecks[PlayerDecks.Count - 1].Count}");
-        /*
-        string _string = $"Deck for player {PlayerDecks.Count - 1} :";
-        foreach (CardValueType card in PlayerDecks[PlayerDecks.Count - 1])
-        {
-            _string += card.CardValue.ToString() + "; ";
-        }
-        Debug.Log(_string);
-        */
+        }   
+        
 
         //SCUUUFED Update Decks
         Debug.Log("Finished Setying up decks for players.  Starting Game");
@@ -344,17 +291,7 @@ public class HitSlapRazboi : NetworkBehaviour
             firstPlayer.CheckTurn(IndexOfActivePlayer);
         }
     }
-    public void EnableSlapIfRules()
-    {
-        if (RefToController.SpecialRulesToggles.KQ_or_QK || RefToController.SpecialRulesToggles.Last2AddTo10 || RefToController.SpecialRulesToggles.TwoEqualInARow || RefToController.SpecialRulesToggles.TwoSandwichOne)
-        {
-            SlapButton.interactable = true;
-        }
-        else
-        {
-            SlapButton.interactable = false;
-        }
-    }
+    
     //shuffle deck after taking cards from table
     public void ShuffleDeck(int indexLocalPlayer)
     {
@@ -418,5 +355,8 @@ public class HitSlapRazboi : NetworkBehaviour
     private void OnDestroy()
     {
         InititalSetupDone = false;
+        CheckUI.RemoveAllListeners();
+        EndGame.RemoveAllListeners();
+        SlapSuccess.RemoveAllListeners();
     }
 }

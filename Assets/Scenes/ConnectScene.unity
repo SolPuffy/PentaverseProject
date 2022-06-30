@@ -318,7 +318,7 @@ MonoBehaviour:
   offlineScene: Assets/Scenes/ConnectScene.unity
   onlineScene: Assets/Scenes/SampleScene.unity
   transport: {fileID: 89520151}
-  networkAddress: nas.retinafilmproduction.com
+  networkAddress: localhost
   maxConnections: 100
   authenticator: {fileID: 0}
   playerPrefab: {fileID: 5644974922076370858, guid: 3e0a9c230507fb44d80edd14b4facde5, type: 3}
@@ -352,7 +352,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0110f245bfcfc7d459681f7bd9ebc590, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  port: 56969
+  port: 7770
   maxMessageSize: 16384
   handshakeMaxSize: 3000
   noDelay: 1

@@ -4,27 +4,56 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System;
+using UnityEngine.Events;
 
 public class VisualsRazboi : MonoBehaviour
-{    
-    [SerializeField] List<Sprite> CardImages = new List<Sprite>(); 
-    [SerializeField] List<Image> PlayerPortrait = new List<Image>();
-    [SerializeField] Color PlayerDefaultColor;
-    [SerializeField] Color ActivePlayerColor;   
-    [SerializeField] List<TextMeshProUGUI> PlayerName = new List<TextMeshProUGUI>();
-    [SerializeField] List<TextMeshProUGUI> PlayerCardCount = new List<TextMeshProUGUI>();
-    [SerializeField] List<GameObject> PlayerVisualDecks = new List<GameObject>();
-    [SerializeField] List<int> correctOrder = new List<int>();
+{
+    [Header("UI Elements")]
     [SerializeField] TextMeshProUGUI hitCounter;
     [SerializeField] TextMeshProUGUI slapCounter;
+    [SerializeField] GameObject EndGame;
+    [SerializeField] GameObject SlapPanel;
+    [Header("PlayerSpots")]
+    [SerializeField] Color PlayerDefaultColor;
+    [SerializeField] Color ActivePlayerColor;
+    [SerializeField] List<int> correctOrder = new List<int>();
+    [SerializeField] List<Image> PlayerPortrait = new List<Image>();    
+    [SerializeField] List<TextMeshProUGUI> PlayerName = new List<TextMeshProUGUI>();
+    [SerializeField] List<TextMeshProUGUI> PlayerCardCount = new List<TextMeshProUGUI>();
+    [SerializeField] List<GameObject> PlayerVisualDecks = new List<GameObject>();  
+    [Header("Cards")]    
     [SerializeField] Image SlapImage;
     [SerializeField] Image CardSlot0;
     [SerializeField] Image CardSlot1;
     [SerializeField] Image CardSlot2;
     [SerializeField] Sprite BlankSprite;
+    [SerializeField] List<Sprite> CardImages = new List<Sprite>();
+    [Header("UIButtons")]
+    [SerializeField] Button HitButton;
+    [SerializeField] Button SlapButton;    
+    [SerializeField] GameObject StartGame;
+    TextMeshProUGUI SlapName;
+    TextMeshProUGUI ReactionTxt;
+
+
     private void Awake()
     {
-        if(Application.isBatchMode) { Destroy(this); }        
+        if(Application.isBatchMode) { Destroy(this); }
+        EndGame.SetActive(false);
+        StartGame.SetActive(false);
+        SlapPanel.SetActive(false);
+        if (HitSlapRazboi.CheckUI == null) { HitSlapRazboi.CheckUI = new UnityEvent<int>(); }
+        if (HitSlapRazboi.EndGame == null) { HitSlapRazboi.EndGame = new UnityEvent(); }
+        if (HitSlapRazboi.SlapSuccess == null) { HitSlapRazboi.SlapSuccess = new UnityEvent<string, int>(); }
+
+        HitSlapRazboi.CheckUI.AddListener(CheckUIButtons);
+        HitSlapRazboi.EndGame.AddListener(ExecuteEndGame);
+        HitSlapRazboi.SlapSuccess.AddListener(SuccessSlap);
+
+        StartCoroutine(WaitForLocal());
+        SlapName = SlapPanel.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+        ReactionTxt = SlapPanel.transform.GetChild(2).GetComponent<TextMeshProUGUI>();
+
     }
 
     void Update()
@@ -43,7 +72,23 @@ public class VisualsRazboi : MonoBehaviour
         CardCountUpdate();
         CardsOnGroundVisual();
         AssignColors();
-        SetNames();        
+        SetNames();
+        CheckSlapButton();
+    }
+
+    IEnumerator WaitForLocal()
+    {
+        Debug.Log("waiting for local");
+        while (CardPlayer.localPlayer == null || CardPlayer.localPlayer.playerIndex > 10)
+        {            
+            yield return null;
+        }
+        Debug.Log("I have local player and index");
+        if (CardPlayer.localPlayer.playerIndex == 0)
+        {
+            Debug.Log("I am HOST");            
+            StartGame.SetActive(true);
+        }
     }
 
     void CalculateCorrectOrder(List<int> _correctOrder)
@@ -132,7 +177,8 @@ public class VisualsRazboi : MonoBehaviour
     {
         for(int i = 0; i < correctOrder.Count; i++)
         {
-            PlayerName[i].text = "P" + (correctOrder[i] + 1).ToString();
+            //PlayerName[i].text = "P" + (correctOrder[i] + 1).ToString();
+            PlayerName[correctOrder.IndexOf(i)].text = HitSlapRazboi.instance.Players[i].GetComponent<CardPlayer>().Nome;
         }
     }    
     public void DeactivateVisualDecks()
@@ -150,4 +196,58 @@ public class VisualsRazboi : MonoBehaviour
         PlayerPortrait[index].gameObject.SetActive(true);
         PlayerCardCount[index].gameObject.SetActive(true);
     }
+
+    void CheckUIButtons(int indexACtivePlayer)
+    {
+        if (indexACtivePlayer == CardPlayer.localPlayer.playerIndex)
+        {
+            HitButton.interactable = true;
+        }
+        else
+        {
+            HitButton.interactable = false;
+        }
+    }
+
+    void ExecuteEndGame()
+    {
+        HitButton.gameObject.SetActive(false);
+        SlapButton.gameObject.SetActive(false);
+        EndGame.SetActive(true);
+    }
+
+    void CheckSlapButton()
+    {
+        SlapButton.interactable = false;
+        if (!HitSlapRazboi.instance.InititalSetupDone) { return; }
+
+        try
+        {
+            if (HitSlapRazboi.instance.SlapsLeft[CardPlayer.localPlayer.playerIndex] > 0)
+            {
+                SlapButton.interactable = true;
+            }
+        }
+        catch { Debug.LogWarning("probably no localplayer yet"); }
+        
+    }
+
+    void SuccessSlap(string Name, int ReactionTime)
+    {
+        StopAllCoroutines();
+
+        SlapName.text = Name;
+        ReactionTxt.text = ReactionTime.ToString();
+
+        StartCoroutine(StopSlapPanel(5));
+    }
+
+    IEnumerator StopSlapPanel(float WaitTime)
+    {
+        SlapPanel.SetActive(true);
+        yield return new WaitForSeconds(WaitTime);
+        SlapPanel.SetActive(false);
+    }
+
+ 
 }

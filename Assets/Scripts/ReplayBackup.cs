@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 public class ReplayBackup : MonoBehaviour
 {
@@ -48,7 +49,7 @@ public class ReplayBackup : MonoBehaviour
                     }
                 case "Slap": 
                     {
-                        HitSlapRazboi.instance.SlapCards(DataHold.indexParameters[i]);
+                        HitSlapRazboi.instance.SlapCards(DataHold.indexParameters[i], out bool Success, out int span);
                         break; 
                     }
                 default://Error lmao

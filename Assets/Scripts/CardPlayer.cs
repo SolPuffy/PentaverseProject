@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
@@ -7,6 +6,7 @@ public class CardPlayer : NetworkBehaviour
 {
     public static CardPlayer localPlayer;
     [SyncVar] public int playerIndex = 20;
+    [SyncVar] public string Nome = "P";
     List<CardPlayer> cardPlayers = new List<CardPlayer>();
 
     public override void OnStopClient()
@@ -24,9 +24,7 @@ public class CardPlayer : NetworkBehaviour
         {
             Debug.Log($"No Players Left. Resetting ...");
             HitSlapRazboi.instance.ResetScene();
-        }
-
-        //ServerDisconnect();
+        }       
     }
 
     public override void OnStartServer()
@@ -60,19 +58,22 @@ public class CardPlayer : NetworkBehaviour
     [ClientRpc]
     public void EndGame()
     {
-        HitSlapRazboi.instance.ExecuteEndGame();
+        HitSlapRazboi.EndGame.Invoke();
+       // HitSlapRazboi.instance.ExecuteEndGame();
     }
     
     [ClientRpc]
     public void CheckTurn(int index)
     {
-        HitSlapRazboi.instance.CheckUIButtons(index);
+        //HitSlapRazboi.instance.CheckUIButtons(index);
+        HitSlapRazboi.CheckUI.Invoke(index);
     }
 
     [Command]
     public void HitCards()
-    {
-        Debug.Log("hitting cards");
+    {        
+        if(playerIndex != HitSlapRazboi.instance.IndexOfActivePlayer) { Debug.LogWarning($"WrongHit turn {name}"); return; }
+        Debug.Log($"hitting cards {name} with index {playerIndex}");
         HitSlapRazboi.instance.HitCards(playerIndex);
         ChangeDecks(HitSlapRazboi.instance.PlayerDecks);
     }
@@ -80,8 +81,19 @@ public class CardPlayer : NetworkBehaviour
     [Command]
     public void SlapCards()
     {
-        HitSlapRazboi.instance.SlapCards(playerIndex);
+        Debug.Log($"Trying to slap cards {name} with index {playerIndex}");
+        HitSlapRazboi.instance.SlapCards(playerIndex, out bool Success, out int timeSpan);
+
         ChangeDecks(HitSlapRazboi.instance.PlayerDecks);
+
+        if(Success) { RegisterWinningSlap(Nome, timeSpan ); }
+    }
+
+    [ClientRpc]
+    void RegisterWinningSlap ( string Name, int reactionTime )
+    {
+        Debug.Log($"{Name} successfully slapped with reaction time : {reactionTime.ToString()}ms");
+        HitSlapRazboi.SlapSuccess.Invoke(Name, reactionTime);
     }
     [Command]
     public void BuildDeck()
@@ -93,6 +105,7 @@ public class CardPlayer : NetworkBehaviour
     {
         HitSlapRazboi.instance.PlayerDecks.Add(new List<CardValueType>());
         HitSlapRazboi.instance.SlapsLeft.Add(HitSlapRazboi.instance.InitialSlapConter);
+        HitSlapRazboi.instance.Players.Add(gameObject);
         ChangeDecks(HitSlapRazboi.instance.PlayerDecks);
     }
 
@@ -124,7 +137,7 @@ public class CardPlayer : NetworkBehaviour
     }
     
     [Command]
-    public void SetPlayerIndex()
+    void SetPlayerIndex()
     {
         GameObject[] Players = GameObject.FindGameObjectsWithTag("Player");
         foreach(GameObject p in Players)
@@ -132,7 +145,7 @@ public class CardPlayer : NetworkBehaviour
             cardPlayers.Add(p.GetComponent<CardPlayer>());
         }
        
-        playerIndex = cardPlayers.IndexOf(this);
+        playerIndex = cardPlayers.IndexOf(this);        
 
         if (playerIndex > 4) 
         {
@@ -140,10 +153,18 @@ public class CardPlayer : NetworkBehaviour
         }
         else
         {
-            Debug.Log("Setting index to : " + playerIndex);
+            Debug.Log($"Setting {name} index to : " + playerIndex);
+            
+            SetName();            
             AddDeck();
         }
 
       
     }    
+
+    void SetName()
+    {
+        Nome = "P " + (playerIndex + 1).ToString();
+        Debug.Log($"Setting {name} name to : " + Nome);
+    }
 }
