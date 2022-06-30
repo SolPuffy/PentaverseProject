@@ -25,6 +25,7 @@ public class HitSlapRazboi : NetworkBehaviour
     public DeckControllerRazboi RefToController;
     public bool RoundEndTriggered = false;
     public List<List<CardValueType>> PlayerDecks = new List<List<CardValueType>>();
+    public List<GameObject> Players = new List<GameObject>();
     float LastHitTime;
     float SlapTime;    
 
@@ -37,7 +38,7 @@ public class HitSlapRazboi : NetworkBehaviour
     public SyncList<int> SlapsLeft = new SyncList<int>();    
     public SyncListCards CardsOnGround = new SyncListCards();
     public SyncListCards CardsLostToSlap = new SyncListCards();
-    public SyncListObjects Players = new SyncListObjects();
+    
 
     CardPlayer firstPlayer { get 
         {
@@ -219,7 +220,7 @@ public class HitSlapRazboi : NetworkBehaviour
         Debug.Log("Finished Setying up decks for players.  Starting Game");
         InititalSetupDone = true;
         firstPlayer.SetupDone();
-        firstPlayer.ChangeDecks(PlayerDecks);
+        firstPlayer.ChangeDecks(PlayerDecks, Players);
         firstPlayer.CheckTurn(IndexOfActivePlayer);       
 
     }

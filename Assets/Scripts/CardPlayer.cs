@@ -75,7 +75,7 @@ public class CardPlayer : NetworkBehaviour
         if(playerIndex != HitSlapRazboi.instance.IndexOfActivePlayer) { Debug.LogWarning($"WrongHit turn {name}"); return; }
         Debug.Log($"hitting cards {name} with index {playerIndex}");
         HitSlapRazboi.instance.HitCards(playerIndex);
-        ChangeDecks(HitSlapRazboi.instance.PlayerDecks);
+        ChangeDecks(HitSlapRazboi.instance.PlayerDecks, HitSlapRazboi.instance.Players);
     }
 
     [Command]
@@ -84,7 +84,7 @@ public class CardPlayer : NetworkBehaviour
         Debug.Log($"Trying to slap cards {name} with index {playerIndex}");
         HitSlapRazboi.instance.SlapCards(playerIndex, out bool Success, out int timeSpan);
 
-        ChangeDecks(HitSlapRazboi.instance.PlayerDecks);
+        ChangeDecks(HitSlapRazboi.instance.PlayerDecks, HitSlapRazboi.instance.Players);
 
         if(Success) { RegisterWinningSlap(Nome, timeSpan ); }
     }
@@ -106,16 +106,17 @@ public class CardPlayer : NetworkBehaviour
         HitSlapRazboi.instance.PlayerDecks.Add(new List<CardValueType>());
         HitSlapRazboi.instance.SlapsLeft.Add(HitSlapRazboi.instance.InitialSlapConter);
         HitSlapRazboi.instance.Players.Add(gameObject);
-        ChangeDecks(HitSlapRazboi.instance.PlayerDecks);
+        ChangeDecks(HitSlapRazboi.instance.PlayerDecks, HitSlapRazboi.instance.Players);
     }
 
     //SCUUFED  
    
 
     [ClientRpc]
-    public void ChangeDecks(List<List<CardValueType>> listOfDecks) 
+    public void ChangeDecks(List<List<CardValueType>> listOfDecks, List<GameObject> players) 
     {
         HitSlapRazboi.instance.PlayerDecks = listOfDecks;
+        HitSlapRazboi.instance.Players = players;
         Debug.Log(ShowDecksCount(HitSlapRazboi.instance.PlayerDecks));
     }
 
