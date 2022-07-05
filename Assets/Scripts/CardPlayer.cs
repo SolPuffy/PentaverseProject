@@ -7,8 +7,25 @@ public class CardPlayer : NetworkBehaviour
     public static CardPlayer localPlayer;
     [SyncVar] public int playerIndex = 20;
     [SyncVar] public string Nome = "P";
-    List<CardPlayer> cardPlayers = new List<CardPlayer>();
-
+    [SyncVar] public bool HasEntered = false;
+    //List<CardPlayer> cardPlayers = new List<CardPlayer>();
+    private void Start()
+    {
+        if (isLocalPlayer)
+        {
+            localPlayer = this;
+            if (!HitSlapRazboi.instance.InititalSetupDone)
+            {
+                {
+                    SetPlayerIndex();
+                }
+            }
+            else
+            {
+                NetworkManager.singleton.StopClient();
+            }
+        }
+    }
     public override void OnStopClient()
     {
         Debug.Log($"Client {name}, index {playerIndex} Stopped  ");
@@ -19,12 +36,24 @@ public class CardPlayer : NetworkBehaviour
     {
         Debug.Log($"Client {name}, index {playerIndex} Stopped on Server");        
         GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-       
-        if((players.Length - 1) == 0)
+
+        if ((players.Length - 1) == 0)
         {
             Debug.Log($"No Players Left. Resetting ...");
             HitSlapRazboi.instance.ResetScene();
-        }       
+            return;
+        }
+
+        if (!HasEntered)
+        {
+            Debug.Log("Player tried to join with no space left");
+        }
+        else
+        {
+            HitSlapRazboi.instance.RemovePlayer(playerIndex);
+        }
+       
+            
     }
 
     public override void OnStartServer()
@@ -38,23 +67,13 @@ public class CardPlayer : NetworkBehaviour
         HitSlapRazboi.instance.InititalSetupDone = true;
     }
    
-    private void Start()
-    {        
-        if (isLocalPlayer)
-        {           
-            localPlayer = this;           
-            if (!HitSlapRazboi.instance.InititalSetupDone)
-            {               
-                {
-                    SetPlayerIndex();                                       
-                }
-            }
-            else
-            {              
-                NetworkManager.singleton.StopClient();                  
-            }            
-        }
-    }   
+    [TargetRpc]
+    public void InstantIndexUpdate(int newIndex)
+    {
+        Debug.Log($"Updating index to {newIndex}");
+        playerIndex = newIndex;
+    }
+    
     [ClientRpc]
     public void EndGame()
     {
@@ -75,7 +94,7 @@ public class CardPlayer : NetworkBehaviour
         if(playerIndex != HitSlapRazboi.instance.IndexOfActivePlayer) { Debug.LogWarning($"WrongHit turn {name}"); return; }
         Debug.Log($"hitting cards {name} with index {playerIndex}");
         HitSlapRazboi.instance.HitCards(playerIndex);
-        ChangeDecks(HitSlapRazboi.instance.PlayerDecks, HitSlapRazboi.instance.Players);
+        //ChangeDecks(HitSlapRazboi.instance.PlayerDecks, HitSlapRazboi.instance.Players);
     }
 
     [Command]
@@ -84,7 +103,7 @@ public class CardPlayer : NetworkBehaviour
         Debug.Log($"Trying to slap cards {name} with index {playerIndex}");
         HitSlapRazboi.instance.SlapCards(playerIndex, out bool Success, out int timeSpan);
 
-        ChangeDecks(HitSlapRazboi.instance.PlayerDecks, HitSlapRazboi.instance.Players);
+       // ChangeDecks(HitSlapRazboi.instance.PlayerDecks, HitSlapRazboi.instance.Players);
 
         if(Success) { RegisterWinningSlap(Nome, timeSpan ); }
     }
@@ -105,32 +124,11 @@ public class CardPlayer : NetworkBehaviour
     {
         HitSlapRazboi.instance.PlayerDecks.Add(new List<CardValueType>());
         HitSlapRazboi.instance.SlapsLeft.Add(HitSlapRazboi.instance.InitialSlapConter);
-        HitSlapRazboi.instance.Players.Add(gameObject);
-        ChangeDecks(HitSlapRazboi.instance.PlayerDecks, HitSlapRazboi.instance.Players);
+        HitSlapRazboi.instance.CardCount.Add(0);
+        HitSlapRazboi.instance.Players.Add(this);
+        playerIndex = HitSlapRazboi.instance.Players.IndexOf(this);       
     }
-
-    //SCUUFED  
-   
-
-    [ClientRpc]
-    public void ChangeDecks(List<List<CardValueType>> listOfDecks, List<GameObject> players) 
-    {
-        HitSlapRazboi.instance.PlayerDecks = listOfDecks;
-        HitSlapRazboi.instance.Players = players;
-        Debug.Log(ShowDecksCount(HitSlapRazboi.instance.PlayerDecks));
-    }
-
-    string ShowDecksCount(List<List<CardValueType>> listOfDecks)
-    {
-        string t = "";
-        foreach(List<CardValueType> CardList in listOfDecks)
-        {
-            t += $"Deck {listOfDecks.IndexOf(CardList)} has {CardList.Count} cards. ";
-        }
-
-        return t;
-
-    }
+  
     [TargetRpc]
     public void DC()
     {
@@ -140,32 +138,25 @@ public class CardPlayer : NetworkBehaviour
     [Command]
     void SetPlayerIndex()
     {
-        GameObject[] Players = GameObject.FindGameObjectsWithTag("Player");
-        foreach(GameObject p in Players)
-        {
-            cardPlayers.Add(p.GetComponent<CardPlayer>());
-        }
-       
-        playerIndex = cardPlayers.IndexOf(this);        
-
-        if (playerIndex > 4) 
+        GameObject[] Players = GameObject.FindGameObjectsWithTag("Player");              
+        
+        if (Players.Length > 4) 
         {
             DC(); 
         }
         else
         {
-            Debug.Log($"Setting {name} index to : " + playerIndex);
-            
-            SetName();            
+            HasEntered = true;
             AddDeck();
-        }
-
-      
+            SetName();
+            Debug.Log($"Setting {name} index to : " + playerIndex);     
+        }      
     }    
 
     void SetName()
     {
         Nome = "P " + (playerIndex + 1).ToString();
+        HitSlapRazboi.instance.PlayerNames.Add(Nome);
         Debug.Log($"Setting {name} name to : " + Nome);
     }
 }

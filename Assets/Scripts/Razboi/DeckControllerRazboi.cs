@@ -14,7 +14,7 @@ public class DeckControllerRazboi : NetworkBehaviour
     // J - deal 1
 
     //CurrentDeck
-    public  SyncListCards AssambledDeck = new SyncListCards();
+    public  List<CardValueType> AssambledDeck = new List<CardValueType>();
     [Header("Decks")]
     public List<CardValueType> Jokers = new List<CardValueType>();
     public List<CardValueType> Hearts = new List<CardValueType>();

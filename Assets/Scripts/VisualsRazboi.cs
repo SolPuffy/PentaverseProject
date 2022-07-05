@@ -61,7 +61,7 @@ public class VisualsRazboi : MonoBehaviour
         if(HitSlapRazboi.instance == null ) { return; }
 
         DeactivateVisualDecks();
-        for (int i = 0; i < HitSlapRazboi.instance.PlayerDecks.Count; i++)
+        for (int i = 0; i < HitSlapRazboi.instance.CardCount.Count; i++)
         {
             ActivateVisualDecks(i);
         }
@@ -84,17 +84,30 @@ public class VisualsRazboi : MonoBehaviour
             yield return null;
         }
         Debug.Log("I have local player and index");
-        if (CardPlayer.localPlayer.playerIndex == 0)
+        StartCoroutine(WaitForStart());
+    }
+
+    IEnumerator WaitForStart()
+    {
+        while(!HitSlapRazboi.instance.InititalSetupDone)
         {
-            Debug.Log("I am HOST");            
-            StartGame.SetActive(true);
+            if (CardPlayer.localPlayer.playerIndex == 0)
+            {
+                Debug.Log("I am HOST");
+                StartGame.SetActive(true);
+            }
+            else
+            {
+                StartGame.SetActive(false);
+            }
+            yield return null;
         }
     }
 
     void CalculateCorrectOrder(List<int> _correctOrder)
     {
         _correctOrder.Clear();
-        for (int i = 0; i < HitSlapRazboi.instance.PlayerDecks.Count; i++)
+        for (int i = 0; i < HitSlapRazboi.instance.CardCount.Count; i++)
         {
             _correctOrder.Add(0);
         }
@@ -110,7 +123,7 @@ public class VisualsRazboi : MonoBehaviour
     {
         for (int i = 0; i < correctOrder.Count; i++)
         {
-            PlayerCardCount[correctOrder.IndexOf(i)].text = HitSlapRazboi.instance.PlayerDecks[i].Count.ToString();
+            PlayerCardCount[correctOrder.IndexOf(i)].text = HitSlapRazboi.instance.CardCount[i].ToString();
         }
         hitCounter.text = HitSlapRazboi.instance.CardsToHit.ToString();
         try { slapCounter.text = HitSlapRazboi.instance.SlapsLeft[CardPlayer.localPlayer.playerIndex].ToString(); }
@@ -178,7 +191,7 @@ public class VisualsRazboi : MonoBehaviour
         for(int i = 0; i < correctOrder.Count; i++)
         {
             //PlayerName[i].text = "P" + (correctOrder[i] + 1).ToString();
-            PlayerName[correctOrder.IndexOf(i)].text = HitSlapRazboi.instance.Players[i].GetComponent<CardPlayer>().Nome;
+            PlayerName[correctOrder.IndexOf(i)].text = HitSlapRazboi.instance.PlayerNames[i];
         }
     }    
     public void DeactivateVisualDecks()
@@ -199,6 +212,7 @@ public class VisualsRazboi : MonoBehaviour
 
     void CheckUIButtons(int indexACtivePlayer)
     {
+        Debug.Log($"Checking Turn my index: {CardPlayer.localPlayer.playerIndex} with {indexACtivePlayer}");
         if (indexACtivePlayer == CardPlayer.localPlayer.playerIndex)
         {
             HitButton.interactable = true;

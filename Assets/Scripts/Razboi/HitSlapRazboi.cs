@@ -25,20 +25,25 @@ public class HitSlapRazboi : NetworkBehaviour
     public DeckControllerRazboi RefToController;
     public bool RoundEndTriggered = false;
     public List<List<CardValueType>> PlayerDecks = new List<List<CardValueType>>();
-    public List<GameObject> Players = new List<GameObject>();
+    public List<CardPlayer> Players = new List<CardPlayer>();
+    public List<CardValueType> CardsLostToSlap = new List<CardValueType>();
+    int IndexOfPlayerWhoTriggeredRoundEnd;    
     float LastHitTime;
     float SlapTime;    
 
     [SyncVar] public bool InititalSetupDone = false;
-    [SyncVar] public int CardsToHit;
-    [SyncVar] public int IndexOfPlayerWhoTriggeredRoundEnd;
-    [SyncVar] public int IndexOfActivePlayer = 0;
-    [SyncVar] public int IndexOfSlappingPlayer = 0;
+    [SyncVar] public int CardsToHit;    
+    [SyncVar] public int IndexOfActivePlayer = 0;    
     [SyncVar] public CardValueType SlapCard = null;
-    public SyncList<int> SlapsLeft = new SyncList<int>();    
+    public SyncList<int> SlapsLeft = new SyncList<int>();   
     public SyncListCards CardsOnGround = new SyncListCards();
-    public SyncListCards CardsLostToSlap = new SyncListCards();
     
+
+    public SyncList<int> CardCount = new SyncList<int>();
+    public SyncList<string> PlayerNames = new SyncList<string>();
+
+
+
 
     CardPlayer firstPlayer { get 
         {
@@ -59,24 +64,7 @@ public class HitSlapRazboi : NetworkBehaviour
     {
         instance = this;
     }   
-    public void ResetScene()
-    {
-        ServerBackup.CleanDataHold();
-        InititalSetupDone = false;
-        DeckControllerRazboi.instance.done = false;
-        IndexOfActivePlayer = 0;
-        CardsOnGround.Clear();
-        CardsLostToSlap.Clear();
-        SlapCard = null;
-        SlapsLeft.Clear();
-        //SlapsLeft = 3;
-        CardsToHit = 1;
-        PlayerDecks.Clear();
-        Players.Clear();
-        DeckControllerRazboi.instance.AssambledDeck.Clear();
-        StopAllCoroutines();
-        StartCoroutine(Setup());
-    }
+   
     private void Start()
     {         
         if (Application.isBatchMode)
@@ -86,7 +74,13 @@ public class HitSlapRazboi : NetworkBehaviour
         }      
     }
 
-    
+    private void Update()
+    {
+        if (Application.isBatchMode)
+        {
+            UpdateValuesForVisuals();
+        }
+    }
 
     IEnumerator Setup()
     {
@@ -99,7 +93,36 @@ public class HitSlapRazboi : NetworkBehaviour
         IndexOfActivePlayer = 0;
         DisperseCardsBetweenPlayers();
         SlapCard = null;        
-    }    
+    }
+
+    public void ResetScene()
+    {
+        ServerBackup.CleanDataHold();
+        InititalSetupDone = false;
+        DeckControllerRazboi.instance.done = false;
+        IndexOfActivePlayer = 0;
+        CardsOnGround.Clear();
+        CardsLostToSlap.Clear();
+        SlapCard = null;
+        SlapsLeft.Clear();
+        CardCount.Clear();
+        PlayerNames.Clear();
+        //SlapsLeft = 3;
+        CardsToHit = 1;
+        PlayerDecks.Clear();
+        Players.Clear();
+        DeckControllerRazboi.instance.AssambledDeck.Clear();
+        StopAllCoroutines();
+        StartCoroutine(Setup());
+    }
+
+    void UpdateValuesForVisuals()
+    {
+        for(int i = 0; i < PlayerDecks.Count; i++ )
+        {
+            CardCount[i] = PlayerDecks[i].Count;            
+        }
+    }
     #region HandlePlayerInput
 
 
@@ -169,8 +192,7 @@ public class HitSlapRazboi : NetworkBehaviour
         if (SlapsLeft[IndexOfSlappingPlayer] <= 0) return;
         if (PlayerDecks[IndexOfSlappingPlayer].Count <= 0) return;
 
-        ServerBackup.AddSlapToList(IndexOfSlappingPlayer);
-        instance.IndexOfSlappingPlayer = IndexOfSlappingPlayer;
+        ServerBackup.AddSlapToList(IndexOfSlappingPlayer);        
         SlapsLeft[IndexOfSlappingPlayer]--;
 
         SlapTime = Time.realtimeSinceStartup;
@@ -220,7 +242,7 @@ public class HitSlapRazboi : NetworkBehaviour
         Debug.Log("Finished Setying up decks for players.  Starting Game");
         InititalSetupDone = true;
         firstPlayer.SetupDone();
-        firstPlayer.ChangeDecks(PlayerDecks, Players);
+        //firstPlayer.ChangeDecks(PlayerDecks, Players);
         firstPlayer.CheckTurn(IndexOfActivePlayer);       
 
     }
@@ -258,6 +280,7 @@ public class HitSlapRazboi : NetworkBehaviour
     }
     public void NextPlayer()
     {
+        Debug.Log("Next Player");
         IncrementActivePlayer();
 
         int whilecounter = 0;
@@ -285,6 +308,12 @@ public class HitSlapRazboi : NetworkBehaviour
 
     public void StaySamePlayer()
     {
+        Debug.Log("Stay same player");
+        if (IndexOfActivePlayer >= PlayerDecks.Count)
+        {
+            IndexOfActivePlayer = 0;
+        }
+
         if (PlayerDecks[IndexOfActivePlayer].Count == 0)
             NextPlayer();
         else
@@ -349,6 +378,42 @@ public class HitSlapRazboi : NetworkBehaviour
             //Failed since there aren't atleast 3 cards on the table
         }
         return false;
+    }
+
+    public void RemovePlayer(int index)
+    {
+        Debug.Log($"Removing player with index {index}");
+        SlapsLeft.RemoveAt(index);
+        CardCount.RemoveAt(index);
+        Players.RemoveAt(index);
+        PlayerNames.RemoveAt(index);
+
+        //split cards
+        if (PlayerDecks[index].Count <= 0)
+        {
+            PlayerDecks.RemoveAt(index);
+        }
+        else 
+        {
+            List<CardValueType> tempList = PlayerDecks[index];
+            PlayerDecks.RemoveAt(index);
+            for (int i = 0; i < tempList.Count; i++)
+            {
+                PlayerDecks[i % PlayerDecks.Count].Add(tempList[i]);
+            }
+        }
+
+        //rename indexes
+        foreach(CardPlayer player in Players)
+        {
+            int newIndex = Players.IndexOf(player);
+            player.playerIndex = newIndex;
+            player.InstantIndexUpdate(newIndex);
+        }
+
+        //RefreshTurn
+        if(index < IndexOfActivePlayer) {IndexOfActivePlayer--;}
+        StaySamePlayer();
     }
    
     #endregion
