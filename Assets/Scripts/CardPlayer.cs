@@ -66,6 +66,17 @@ public class CardPlayer : NetworkBehaviour
     {
         HitSlapRazboi.instance.InititalSetupDone = true;
     }
+
+    [Command]
+    public void RequestConsoleUpdate(string input)
+    {
+        DisplayConsoleOut(input);
+    }
+    [ClientRpc]
+    private void DisplayConsoleOut(string input)
+    {
+        ScriptToConsoleOut.UpdateConsole(input);
+    }
    
     [TargetRpc]
     public void InstantIndexUpdate(int newIndex)
@@ -93,7 +104,7 @@ public class CardPlayer : NetworkBehaviour
     {        
         if(playerIndex != HitSlapRazboi.instance.IndexOfActivePlayer) { Debug.LogWarning($"WrongHit turn {name}"); return; }
         Debug.Log($"hitting cards {name} with index {playerIndex}");
-        HitSlapRazboi.instance.HitCards(playerIndex);
+        HitSlapRazboi.instance.HitCards(playerIndex,Nome);
         //ChangeDecks(HitSlapRazboi.instance.PlayerDecks, HitSlapRazboi.instance.Players);
     }
 
@@ -101,7 +112,7 @@ public class CardPlayer : NetworkBehaviour
     public void SlapCards()
     {
         Debug.Log($"Trying to slap cards {name} with index {playerIndex}");
-        HitSlapRazboi.instance.SlapCards(playerIndex, out bool Success, out int timeSpan);
+        HitSlapRazboi.instance.SlapCards(playerIndex,Nome, out bool Success, out int timeSpan);
 
        // ChangeDecks(HitSlapRazboi.instance.PlayerDecks, HitSlapRazboi.instance.Players);
 

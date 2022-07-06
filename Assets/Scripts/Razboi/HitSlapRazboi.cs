@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 using UnityEngine.Events;
+using System.Threading.Tasks;
 
 [System.Serializable]
 public class SyncListObjects : SyncList<GameObject> { }
@@ -18,7 +19,9 @@ public class HitSlapRazboi : NetworkBehaviour
 {
     public static HitSlapRazboi instance;
 
-    public int InitialSlapConter = 3;    
+    public int InitialSlapConter = 3;
+    public float DelayBeforeResetBoard = 1;
+    public int SwitchCaseDeckRules = 0;
     public static UnityEvent<int>  CheckUI;
     public static UnityEvent  EndGame;
     public static UnityEvent<string, int> SlapSuccess;
@@ -29,8 +32,8 @@ public class HitSlapRazboi : NetworkBehaviour
     public List<CardValueType> CardsLostToSlap = new List<CardValueType>();
     int IndexOfPlayerWhoTriggeredRoundEnd;    
     float LastHitTime;
-    float SlapTime;    
-
+    float SlapTime;
+    bool StopInputAtRoundWin = false;
     [SyncVar] public bool InititalSetupDone = false;
     [SyncVar] public int CardsToHit;    
     [SyncVar] public int IndexOfActivePlayer = 0;    
@@ -89,6 +92,7 @@ public class HitSlapRazboi : NetworkBehaviour
         {           
             yield return null;
         }
+        ServerBackup.RegisterStartTime();
         Debug.Log("dispersing cards");
         IndexOfActivePlayer = 0;
         DisperseCardsBetweenPlayers();
@@ -126,16 +130,17 @@ public class HitSlapRazboi : NetworkBehaviour
     #region HandlePlayerInput
 
 
-    public void HitCards(int indexLocalPlayer)
+    public void HitCards(int indexLocalPlayer,string playerName)
     {
         if (!InititalSetupDone) return;
+        if (StopInputAtRoundWin) return;
         if (indexLocalPlayer != IndexOfActivePlayer) return;
 
         //start measure Time
         LastHitTime = Time.realtimeSinceStartup;
        
 
-        ServerBackup.AddHitToList(indexLocalPlayer);         
+        ServerBackup.AddHitToList(indexLocalPlayer,playerName);         
         CardsToHit--;
 
         //card pile on ground, primeste top card-ul playerului care apasa butonul
@@ -148,19 +153,7 @@ public class HitSlapRazboi : NetworkBehaviour
             RoundEndTriggered = true;
             IndexOfPlayerWhoTriggeredRoundEnd = indexLocalPlayer;
 
-            switch (CardsOnGround[CardsOnGround.Count - 1].CardValue)
-            {
-                //case 10: { CardsToHit = 1; break; }
-                case 12: { // J is a free pass
-                        CardsToHit = 1;
-                        RoundEndTriggered = false;
-                        break;
-                    }
-                case 13: { CardsToHit = 1; break; }
-                case 14: { CardsToHit = 2; break; }
-                case 15: { CardsToHit = 3; break; }
-            }
-            
+            SwitchInSwitchlol(CardsOnGround[CardsOnGround.Count - 1].CardValue);
             NextPlayer();
         }
         else
@@ -184,15 +177,112 @@ public class HitSlapRazboi : NetworkBehaviour
         }
         //
     }
-    public void SlapCards(int IndexOfSlappingPlayer, out bool Success , out int ReactionTime )
+    #region SwitchInSwitchlol
+    private void SwitchInSwitchlol(int checkValue)
+    {
+        switch(SwitchCaseDeckRules)
+        {
+            case 0:
+                {
+                    //Default Behavior
+                    switch (checkValue)
+                    {
+                        //case 10: { CardsToHit = 1; break; }
+                        case 12:
+                            { // J is a free pass
+                                CardsToHit = 1;
+                                //RoundEndTriggered = false;
+                                break;
+                            }
+                        case 13: { CardsToHit = 2; break; }
+                        case 14: { CardsToHit = 3; break; }
+                        case 15: { CardsToHit = 4; break; }
+                    }
+                    break;
+                }
+            case 1:
+                {
+                    //Requested 12 pass Behavior
+                    switch (checkValue)
+                    {
+                        //case 10: { CardsToHit = 1; break; }
+                        case 12:
+                            { // J is a free pass
+                                CardsToHit = 1;
+                                RoundEndTriggered = false;
+                                break;
+                            }
+                        case 13: { CardsToHit = 1; break; }
+                        case 14: { CardsToHit = 2; break; }
+                        case 15: { CardsToHit = 3; break; }
+                    }
+                    break;
+                }
+            case 2:
+                {
+                    //Requested 12 pass Behavior + Normal others
+                    switch (checkValue)
+                    {
+                        //case 10: { CardsToHit = 1; break; }
+                        case 12:
+                            { // J is a free pass
+                                CardsToHit = 1;
+                                RoundEndTriggered = false;
+                                break;
+                            }
+                        case 13: { CardsToHit = 2; break; }
+                        case 14: { CardsToHit = 3; break; }
+                        case 15: { CardsToHit = 4; break; }
+                    }
+                    break;
+                }
+            case 3:
+                {
+                    //BulletGame Behavior
+                    switch (checkValue)
+                    {
+                        //case 10: { CardsToHit = 1; break; }
+                        case 12:
+                            { // J is a free pass
+                                CardsToHit = 4;
+                                break;
+                            }
+                        case 13: { CardsToHit = 4; break; }
+                        case 14: { CardsToHit = 4; break; }
+                        case 15: { CardsToHit = 4; break; }
+                    }
+                    break;
+                }
+            default:
+                {
+                    //Default Behavior
+                    switch (checkValue)
+                    {
+                        //case 10: { CardsToHit = 1; break; }
+                        case 12:
+                            { // J is a free pass
+                                CardsToHit = 1;
+                                //RoundEndTriggered = false;
+                                break;
+                            }
+                        case 13: { CardsToHit = 2; break; }
+                        case 14: { CardsToHit = 3; break; }
+                        case 15: { CardsToHit = 4; break; }
+                    }
+                    break;
+                }
+        }
+    }
+    #endregion
+    public void SlapCards(int IndexOfSlappingPlayer,string PlayerName, out bool Success , out int ReactionTime )
     {
         Success = false;
         ReactionTime = 0;
         if (!InititalSetupDone) return;
+        if (StopInputAtRoundWin) return;
         if (SlapsLeft[IndexOfSlappingPlayer] <= 0) return;
         if (PlayerDecks[IndexOfSlappingPlayer].Count <= 0) return;
-
-        ServerBackup.AddSlapToList(IndexOfSlappingPlayer);        
+  
         SlapsLeft[IndexOfSlappingPlayer]--;
 
         SlapTime = Time.realtimeSinceStartup;
@@ -200,10 +290,10 @@ public class HitSlapRazboi : NetworkBehaviour
         ReactionTime = Mathf.RoundToInt((SlapTime - LastHitTime) * 1000);
 
         if (CheckSlapRules())
-            {                
-                WinRound(IndexOfSlappingPlayer);
-                Success = true;               
-                Debug.Log($"Slap result : {Success.ToString()}  {ReactionTime.ToString()}");
+            {
+            WinRound(IndexOfSlappingPlayer);
+            Success = true;
+            Debug.Log($"Slap result : {Success.ToString()}  {ReactionTime.ToString()}");
             }
             else
             {
@@ -216,7 +306,7 @@ public class HitSlapRazboi : NetworkBehaviour
 
                 Debug.Log($"Slap result : {Success.ToString()}  {ReactionTime.ToString()}");
             }
-           
+        ServerBackup.AddSlapToList(IndexOfSlappingPlayer, PlayerName, Success, ReactionTime);
     }
     #endregion
     #region Visuals
@@ -247,8 +337,10 @@ public class HitSlapRazboi : NetworkBehaviour
 
     }
 
-    public void WinRound(int indexLocalPlayer)
+    public async void WinRound(int indexLocalPlayer)
     {
+        StopInputAtRoundWin = true;
+        await Task.Delay(System.Convert.ToInt32(DelayBeforeResetBoard * 1000));
         CardsToHit = 1;
         //Didn't hit a +10 and someone before did
         PlayerDecks[indexLocalPlayer].AddRange(CardsOnGround);
@@ -257,11 +349,12 @@ public class HitSlapRazboi : NetworkBehaviour
         ShuffleDeck(indexLocalPlayer);
         CardsOnGround.Clear();
         CardsLostToSlap.Clear();
-        
         for(int i = 0; i < SlapsLeft.Count; i++)
         {
             SlapsLeft[i] = InitialSlapConter;
         }
+        
+        StopInputAtRoundWin = false;
         RoundEndTriggered = false;
         IndexOfActivePlayer = IndexOfPlayerWhoTriggeredRoundEnd;
 

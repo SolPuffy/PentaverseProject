@@ -8,11 +8,21 @@ using System.Threading.Tasks;
 [System.Serializable]
 public class BackupData
 {
+    public string TimeOFGameStart;
+    public string TimeOfGameEnd;
     public int ActionsPerformed;
-    public string Date;
+    public List<playerActions> Actions = new List<playerActions>();
     public List<CardValueType> GameDeck = new List<CardValueType>();
-    public List<string> playerActions = new List<string>();
-    public List<int> indexParameters = new List<int>();
+    
+}
+[System.Serializable]
+public class playerActions
+{
+    public int playerIndex;
+    public string playerName;
+    public string actionType;
+    public bool SlapSuccessful;
+    public float SlapResponseTime;
 }
 public class ServerBackup : MonoBehaviour
 {
@@ -31,50 +41,23 @@ public class ServerBackup : MonoBehaviour
     {
         //PerformBackup();
     }
-    #region Statics
-    public static void BackupDeck(List<CardValueType> DeckList)
+    //TEMP CONSOLE OUT
+    private void calloutToConsole(string input)
     {
-        ServerInstance.DataHold.GameDeck = DeckList;
-    }
-    public static void AddHitToList(int playerIndex)
-    {
-        ServerInstance.DataHold.playerActions.Add("Hit");
-        ServerInstance.DataHold.indexParameters.Add(playerIndex);
-    }
-    public static void AddSlapToList(int playerIndex)
-    {
-        ServerInstance.DataHold.playerActions.Add("Slap");
-        ServerInstance.DataHold.indexParameters.Add(playerIndex);
-    }
-    public static void CleanDataHold()
-    {
-        ServerInstance.DataHold.GameDeck.Clear();
-        ServerInstance.DataHold.playerActions.Clear();
-        ServerInstance.DataHold.indexParameters.Clear();
-    }
-    public async static void PerformServerBackup()
-    {
-        await ServerInstance.PerformBackup();
-        Debug.Log("Backup Complete");
-    }
-    public async static Task<BackupData> RetrieveDataHoldFromServer(string fileIndex)
-    {
-        await ServerInstance.ReadBackup(fileIndex);
-        return ServerInstance.DataHold;
-    }
-    #endregion
+        CardPlayer.localPlayer.RequestConsoleUpdate(input);
+    }    
     #region BackupFunctions
     private async Task PerformBackup()
     {
         GetFileDataPath();
 
-        DataHold.ActionsPerformed = DataHold.playerActions.Count;
-        DataHold.Date = DateTime.Now.ToString("G");
+        DataHold.ActionsPerformed = DataHold.Actions.Count;
+        DataHold.TimeOfGameEnd = DateTime.Now.ToString("G");
 
         string JsonOutput = JsonUtility.ToJson(DataHold, true);
         await System.IO.File.WriteAllTextAsync(fileDataPath, JsonOutput);
 
-        Debug.Log($"Backup location: {fileDataPath}, Backup date: {DataHold.Date}");
+        Debug.Log($"Backup location: {fileDataPath}, Backup date: {DataHold.TimeOfGameEnd}");
     }
     public async Task ReadBackup(string inputToFile)
     {
@@ -95,6 +78,53 @@ public class ServerBackup : MonoBehaviour
         {
             Debug.LogError("ReadBackup >> Invalid Input");
         }
+    }
+    #endregion
+    #region Statics
+    public static void BackupDeck(List<CardValueType> DeckList)
+    {
+        ServerInstance.DataHold.GameDeck = DeckList;
+    }
+    public static void AddHitToList(int playerIndex, string playerName)
+    {
+        playerActions act = new playerActions();
+        act.actionType = "Hit";
+        act.playerIndex = playerIndex;
+        act.playerName = playerName;
+        act.SlapSuccessful = false;
+        act.SlapResponseTime = 0;
+        ServerInstance.DataHold.Actions.Add(act);
+        ServerInstance.calloutToConsole($"Player {playerName} has Hit at {DateTime.Now.ToString("T")}");
+    }
+    public static void AddSlapToList(int playerIndex, string playerName, bool Success, float ResponseTime)
+    {
+        playerActions act = new playerActions();
+        act.actionType = "Slap";
+        act.playerIndex = playerIndex;
+        act.playerName = playerName;
+        act.SlapSuccessful = Success;
+        act.SlapResponseTime = ResponseTime;
+        ServerInstance.DataHold.Actions.Add(act);
+        ServerInstance.calloutToConsole($"Player {playerName} has Slapped at {DateTime.Now.ToString("T")} with {ResponseTime} Delay, Success = {Success}");
+    }
+    public static void CleanDataHold()
+    {
+        ServerInstance.DataHold.GameDeck.Clear();
+        ServerInstance.DataHold.Actions.Clear();
+    }
+    public static void RegisterStartTime()
+    {
+        ServerInstance.DataHold.TimeOFGameStart = DateTime.Now.ToString("G");
+    }
+    public async static void PerformServerBackup()
+    {
+        await ServerInstance.PerformBackup();
+        Debug.Log("Backup Complete");
+    }
+    public async static Task<BackupData> RetrieveDataHoldFromServer(string fileIndex)
+    {
+        await ServerInstance.ReadBackup(fileIndex);
+        return ServerInstance.DataHold;
     }
     #endregion
     #region ChecksAndRandomGeneration

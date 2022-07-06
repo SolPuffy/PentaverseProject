@@ -40,16 +40,16 @@ public class ReplayBackup : MonoBehaviour
     {
         for(int i=0;i<DataHold.ActionsPerformed;i++)
         {
-            switch (DataHold.playerActions[i])
+            switch (DataHold.Actions[i].actionType)
             {
                 case "Hit": 
                     {
-                        HitSlapRazboi.instance.HitCards(DataHold.indexParameters[i]);
+                        HitSlapRazboi.instance.HitCards(DataHold.Actions[i].playerIndex,"a");
                         break; 
                     }
                 case "Slap": 
                     {
-                        HitSlapRazboi.instance.SlapCards(DataHold.indexParameters[i], out bool Success, out int span);
+                        HitSlapRazboi.instance.SlapCards(DataHold.Actions[i].playerIndex, "a", out bool Success, out int span);
                         break; 
                     }
                 default://Error lmao
