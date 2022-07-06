@@ -48,7 +48,7 @@ public class HitSlapRazboi : NetworkBehaviour
 
 
 
-    CardPlayer firstPlayer { get 
+    public CardPlayer firstPlayer { get 
         {
             GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
             if(players.Length > 0)

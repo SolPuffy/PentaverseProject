@@ -66,14 +66,8 @@ public class CardPlayer : NetworkBehaviour
     {
         HitSlapRazboi.instance.InititalSetupDone = true;
     }
-
-    [Command]
-    public void RequestConsoleUpdate(string input)
-    {
-        DisplayConsoleOut(input);
-    }
     [ClientRpc]
-    private void DisplayConsoleOut(string input)
+    public void DisplayConsoleOut(string input)
     {
         ScriptToConsoleOut.UpdateConsole(input);
     }

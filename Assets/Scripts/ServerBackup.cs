@@ -44,7 +44,7 @@ public class ServerBackup : MonoBehaviour
     //TEMP CONSOLE OUT
     private void calloutToConsole(string input)
     {
-        CardPlayer.localPlayer.RequestConsoleUpdate(input);
+        HitSlapRazboi.instance.firstPlayer.DisplayConsoleOut(input);
     }    
     #region BackupFunctions
     private async Task PerformBackup()
