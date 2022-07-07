@@ -41,11 +41,12 @@ public class ServerBackup : MonoBehaviour
     {
         //PerformBackup();
     }
-    //TEMP CONSOLE OUT
+    //CONSOLE OUT
     private void calloutToConsole(string input)
     {
         HitSlapRazboi.instance.firstPlayer.DisplayConsoleOut(input);
     }    
+    //
     #region BackupFunctions
     private async Task PerformBackup()
     {

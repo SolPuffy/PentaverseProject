@@ -105,6 +105,16 @@ public class DeckControllerRazboi : NetworkBehaviour
         List<CardValueType> SyncToLocalList = new List<CardValueType>();
         AssambledDeck.CopyTo(SyncToLocalList);
         ServerBackup.BackupDeck(SyncToLocalList);
+
+        //CONSOLE OUTPUT
+        string consoleOut = "Deck formation: ";
+        for (int i = 0; i < AssambledDeck.Count; i++)
+        {
+            consoleOut += $"|{AssambledDeck[i].CardValue},{AssambledDeck[i].CardType}";
+        }
+        consoleOut += "|";
+        HitSlapRazboi.instance.firstPlayer.DisplayConsoleOut(consoleOut);
+        //
         done = true;
     }    
     public void ShowDeck()

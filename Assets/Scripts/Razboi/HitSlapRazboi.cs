@@ -4,6 +4,7 @@ using UnityEngine;
 using Mirror;
 using UnityEngine.Events;
 using System.Threading.Tasks;
+using System;
 
 [System.Serializable]
 public class SyncListObjects : SyncList<GameObject> { }
@@ -146,7 +147,11 @@ public class HitSlapRazboi : NetworkBehaviour
         //card pile on ground, primeste top card-ul playerului care apasa butonul
         CardsOnGround.Add(PlayerDecks[indexLocalPlayer][0]);
         PlayerDecks[indexLocalPlayer].RemoveAt(0);
-       
+
+        //CONSOLE OUT
+        HitSlapRazboi.instance.firstPlayer.DisplayConsoleOut($"Player {indexLocalPlayer} hit card {CardsOnGround[CardsOnGround.Count - 1].CardValue}_{CardsOnGround[CardsOnGround.Count - 1].CardType}");
+
+        //
         //check if card > 10 , Yes = trigger round end, No = continue
         if (CardsOnGround[CardsOnGround.Count - 1].CardValue > 10 /* 9 */)
         {
@@ -347,6 +352,15 @@ public class HitSlapRazboi : NetworkBehaviour
         PlayerDecks[indexLocalPlayer].AddRange(CardsLostToSlap);
         SlapCard = null;
         ShuffleDeck(indexLocalPlayer);
+        //CONSOLE OUTPUT
+        HitSlapRazboi.instance.firstPlayer.DisplayConsoleOut($"IndexOfPlayerWhoWon: {indexLocalPlayer}");
+        string consoleOut = "Last (up to) 3 cards on ground on Win:\n";
+        for (int i = 0; i < Math.Max(CardsOnGround.Count, 3); i++)
+        {
+            consoleOut += $"CardIndex: {CardsOnGround[CardsOnGround.Count - i - 1].CardSpriteIndex}, CardValue: {CardsOnGround[CardsOnGround.Count - i - 1].CardValue}, CardType: {CardsOnGround[CardsOnGround.Count - i - 1].CardType}\n";
+        }
+        HitSlapRazboi.instance.firstPlayer.DisplayConsoleOut(consoleOut);
+        //
         CardsOnGround.Clear();
         CardsLostToSlap.Clear();
         for(int i = 0; i < SlapsLeft.Count; i++)
@@ -387,6 +401,9 @@ public class HitSlapRazboi : NetworkBehaviour
                 return;                
             }
         }
+        //CONSOLE OUTPUT
+        HitSlapRazboi.instance.firstPlayer.DisplayConsoleOut($"UpdatePlayerTurn_Index:{IndexOfActivePlayer}");
+        //
         firstPlayer.CheckTurn(IndexOfActivePlayer); 
     }
     public void CheckPlayerVictory(int indexLocalPlayer)
