@@ -294,6 +294,18 @@ public class HitSlapRazboi : NetworkBehaviour
         //Debug.Log(SlapTime);
         ReactionTime = Mathf.RoundToInt((SlapTime - LastHitTime) * 1000);
 
+
+        //CONSOLE OUTPUT
+        HitSlapRazboi.instance.firstPlayer.DisplayConsoleOut($"Player at Index: {IndexOfSlappingPlayer}, slapped in {ReactionTime}ms, Success={Success}\n");
+        string consoleOut = "Last (up to) 3 cards on ground on Slap:\n";
+        for (int i = 0; i < Math.Clamp(CardsOnGround.Count, 1, 3); i++)
+        {
+            consoleOut += $"CardIndex: {CardsOnGround[CardsOnGround.Count - i - 1].CardSpriteIndex}, CardValue: {CardsOnGround[CardsOnGround.Count - i - 1].CardValue}, CardType: {CardsOnGround[CardsOnGround.Count - i - 1].CardType}\n";
+        }
+        HitSlapRazboi.instance.firstPlayer.DisplayConsoleOut(consoleOut);
+        //
+
+
         if (CheckSlapRules())
             {
             WinRound(IndexOfSlappingPlayer);
@@ -352,15 +364,6 @@ public class HitSlapRazboi : NetworkBehaviour
         PlayerDecks[indexLocalPlayer].AddRange(CardsLostToSlap);
         SlapCard = null;
         ShuffleDeck(indexLocalPlayer);
-        //CONSOLE OUTPUT
-        HitSlapRazboi.instance.firstPlayer.DisplayConsoleOut($"IndexOfPlayerWhoWon: {indexLocalPlayer}");
-        string consoleOut = "Last (up to) 3 cards on ground on Win:\n";
-        for (int i = 0; i < Math.Max(CardsOnGround.Count, 3); i++)
-        {
-            consoleOut += $"CardIndex: {CardsOnGround[CardsOnGround.Count - i - 1].CardSpriteIndex}, CardValue: {CardsOnGround[CardsOnGround.Count - i - 1].CardValue}, CardType: {CardsOnGround[CardsOnGround.Count - i - 1].CardType}\n";
-        }
-        HitSlapRazboi.instance.firstPlayer.DisplayConsoleOut(consoleOut);
-        //
         CardsOnGround.Clear();
         CardsLostToSlap.Clear();
         for(int i = 0; i < SlapsLeft.Count; i++)
