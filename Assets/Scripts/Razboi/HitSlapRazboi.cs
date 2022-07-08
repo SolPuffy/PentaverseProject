@@ -298,7 +298,7 @@ public class HitSlapRazboi : NetworkBehaviour
         //CONSOLE OUTPUT
         HitSlapRazboi.instance.firstPlayer.DisplayConsoleOut($"Player at Index: {IndexOfSlappingPlayer}, slapped in {ReactionTime}ms, Success={Success}\n");
         string consoleOut = "Last (up to) 3 cards on ground on Slap:\n";
-        for (int i = 0; i < Math.Clamp(CardsOnGround.Count, 1, 3); i++)
+        for (int i = 0; i < Math.Min(CardsOnGround.Count, 3); i++)
         {
             consoleOut += $"CardIndex: {CardsOnGround[CardsOnGround.Count - i - 1].CardSpriteIndex}, CardValue: {CardsOnGround[CardsOnGround.Count - i - 1].CardValue}, CardType: {CardsOnGround[CardsOnGround.Count - i - 1].CardType}\n";
         }
