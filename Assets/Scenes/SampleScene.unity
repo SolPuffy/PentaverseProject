@@ -6012,7 +6012,7 @@ MonoBehaviour:
   - CardSpriteIndex: 33
     CardValue: 8
     CardType: Spade
-  - CardSpriteIndex: 37
+  - CardSpriteIndex: 34
     CardValue: 9
     CardType: Spade
   - CardSpriteIndex: 35
