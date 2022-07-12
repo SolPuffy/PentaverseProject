@@ -378,10 +378,10 @@ public class HitSlapRazboi : NetworkBehaviour
         PlayerDecks[indexLocalPlayer].AddRange(CardsOnGround);
         PlayerDecks[indexLocalPlayer].AddRange(CardsLostToSlap);
         SlapCard = null;
-        SlapCard.CardSpriteIndex = 52;
+        //SlapCard.CardSpriteIndex = 52;
         ShuffleDeck(indexLocalPlayer);
         //CONSOLE OUTPUT
-        HitSlapRazboi.instance.firstPlayer.DisplayConsoleOut($"Index of round winner:{IndexOfPlayerWhoTriggeredRoundEnd}, gained {CardsOnGround.Count + CardsLostToSlap.Count} cards");
+        HitSlapRazboi.instance.firstPlayer.DisplayConsoleOut($"Index of round winner:{indexLocalPlayer}, gained {CardsOnGround.Count + CardsLostToSlap.Count} cards");
 
         //
         CardsOnGround.Clear();
