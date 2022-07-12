@@ -373,7 +373,7 @@ public class HitSlapRazboi : NetworkBehaviour
         RoundEndTriggered = false;
         IndexOfActivePlayer = IndexOfPlayerWhoTriggeredRoundEnd;
 
-        firstPlayer.CheckTurn(IndexOfActivePlayer);
+        firstPlayer.CheckTurn(indexLocalPlayer);
 
         CheckPlayerVictory(indexLocalPlayer);
     }
