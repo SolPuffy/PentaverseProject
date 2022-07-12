@@ -288,6 +288,7 @@ public class HitSlapRazboi : NetworkBehaviour
         if (StopInputAtRoundWin) return;
         if (SlapsLeft[IndexOfSlappingPlayer] <= 0) return;
         if (PlayerDecks[IndexOfSlappingPlayer].Count <= 0) return;
+        if (CardsOnGround.Count < 2) return;
   
         SlapsLeft[IndexOfSlappingPlayer]--;
 
