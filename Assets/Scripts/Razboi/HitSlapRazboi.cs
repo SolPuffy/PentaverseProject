@@ -5,6 +5,7 @@ using Mirror;
 using UnityEngine.Events;
 using System.Threading.Tasks;
 using System;
+using UnityEngine.UI;
 
 [System.Serializable]
 public class SyncListObjects : SyncList<GameObject> { }
@@ -38,7 +39,7 @@ public class HitSlapRazboi : NetworkBehaviour
     [SyncVar] public bool InititalSetupDone = false;
     [SyncVar] public int CardsToHit;    
     [SyncVar] public int IndexOfActivePlayer = 0;    
-    [SyncVar] public CardValueType SlapCard = null;
+    [SyncVar] public CardValueType SlapCard;
     public SyncList<int> SlapsLeft = new SyncList<int>();   
     public SyncListCards CardsOnGround = new SyncListCards();
     
@@ -97,7 +98,7 @@ public class HitSlapRazboi : NetworkBehaviour
         Debug.Log("dispersing cards");
         IndexOfActivePlayer = 0;
         DisperseCardsBetweenPlayers();
-        SlapCard = null;        
+        SlapCard = null;
     }
 
     public void ResetScene()
@@ -326,14 +327,29 @@ public class HitSlapRazboi : NetworkBehaviour
     #endregion
     #region Visuals
 
-    
-   
-    
 
-    
-   
+
+
+
+
+
     #endregion
     #region Other
+    public void UpdateRules(int input)
+    {
+        SwitchCaseDeckRules = input;
+        string localString;
+        switch(input)
+        {
+            case 0: { localString = "Card rules changed to Default"; break; }
+            case 1: { localString = "Card rules changed to 12IsPass"; break; }
+            case 2: { localString = "Card rules changed to Hybrid"; break; }
+            case 3: { localString = "Card rules changed to Bullet"; break; }
+            default: { localString = "LMAO"; Debug.Log("big error lol"); break; }
+        }
+        HitSlapRazboi.instance.firstPlayer.DisplayConsoleOut(localString);
+
+    }
     private void DisperseCardsBetweenPlayers()
     {
         
@@ -361,6 +377,7 @@ public class HitSlapRazboi : NetworkBehaviour
         PlayerDecks[indexLocalPlayer].AddRange(CardsOnGround);
         PlayerDecks[indexLocalPlayer].AddRange(CardsLostToSlap);
         SlapCard = null;
+        SlapCard.CardSpriteIndex = 52;
         ShuffleDeck(indexLocalPlayer);
         //CONSOLE OUTPUT
         HitSlapRazboi.instance.firstPlayer.DisplayConsoleOut($"Index of round winner:{IndexOfPlayerWhoTriggeredRoundEnd}, gained {CardsOnGround.Count + CardsLostToSlap.Count} cards");

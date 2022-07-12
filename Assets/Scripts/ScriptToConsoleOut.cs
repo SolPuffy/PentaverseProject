@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Threading.Tasks;
 
 public class ScriptToConsoleOut : MonoBehaviour
 {
@@ -38,12 +39,13 @@ public class ScriptToConsoleOut : MonoBehaviour
             toggleStateGUI.text = "D";
         }
     }    
-    public static void UpdateConsole(string input)
+    public async static void UpdateConsole(string input)
     {
         privateInstance.consoleBuffer += input + "\n";
         if (privateInstance.receiveUpdates)
         {
             privateInstance.consoleText.text = privateInstance.consoleBuffer;
+            await Task.Delay(50);
             privateInstance.scroller.verticalNormalizedPosition = 0;
         }
     }

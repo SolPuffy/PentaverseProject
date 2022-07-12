@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
+using UnityEngine.UI;
 
 public class CardPlayer : NetworkBehaviour
 {
@@ -34,7 +35,7 @@ public class CardPlayer : NetworkBehaviour
 
     public override void OnStopServer()
     {
-        Debug.Log($"Client {name}, index {playerIndex} Stopped on Server");        
+        Debug.Log($"Client {name}, index {playerIndex} Stopped on Server");
         GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
 
         if ((players.Length - 1) == 0)
@@ -52,13 +53,13 @@ public class CardPlayer : NetworkBehaviour
         {
             HitSlapRazboi.instance.RemovePlayer(playerIndex);
         }
-       
-            
+
+
     }
 
     public override void OnStartServer()
     {
-        Debug.Log($"Client {name} connected on Server");        
+        Debug.Log($"Client {name} connected on Server");
     }
 
     [ClientRpc]
@@ -66,12 +67,16 @@ public class CardPlayer : NetworkBehaviour
     {
         HitSlapRazboi.instance.InititalSetupDone = true;
     }
+    [Command]
+    public void SendRulesUpdateToServer(int sliderInput)
+    {
+        HitSlapRazboi.instance.UpdateRules(sliderInput);
+    }
     [ClientRpc]
     public void DisplayConsoleOut(string input)
     {
         ScriptToConsoleOut.UpdateConsole(input);
     }
-   
     [TargetRpc]
     public void InstantIndexUpdate(int newIndex)
     {
