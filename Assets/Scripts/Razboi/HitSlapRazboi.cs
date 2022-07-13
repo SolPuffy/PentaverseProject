@@ -297,8 +297,8 @@ public class HitSlapRazboi : NetworkBehaviour
         ReactionTime = Mathf.RoundToInt((SlapTime - LastHitTime) * 1000);
         if (CheckSlapRules())
             {
-            WinRound(IndexOfSlappingPlayer);
             Success = true;
+            WinRound(IndexOfSlappingPlayer);
             Debug.Log($"Slap result : {Success.ToString()}  {ReactionTime.ToString()}");
             }
             else
@@ -393,7 +393,7 @@ public class HitSlapRazboi : NetworkBehaviour
         
         StopInputAtRoundWin = false;
         RoundEndTriggered = false;
-        IndexOfActivePlayer = IndexOfPlayerWhoTriggeredRoundEnd;
+        IndexOfActivePlayer = indexLocalPlayer;
 
         firstPlayer.CheckTurn(indexLocalPlayer);
 

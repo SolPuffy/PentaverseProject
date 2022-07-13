@@ -39,14 +39,19 @@ public class ScriptToConsoleOut : MonoBehaviour
             toggleStateGUI.text = "D";
         }
     }    
-    public async static void UpdateConsole(string input)
+    public static void UpdateConsole(string input)
     {
         privateInstance.consoleBuffer += input + "\n";
         if (privateInstance.receiveUpdates)
         {
             privateInstance.consoleText.text = privateInstance.consoleBuffer;
-            await Task.Delay(50);
-            privateInstance.scroller.verticalNormalizedPosition = 0;
+            privateInstance.updateConsoleRow();
         }
+    }
+
+    private async void updateConsoleRow()
+    {
+        await Task.Delay(100);
+        privateInstance.scroller.verticalNormalizedPosition = 0;
     }
 }
