@@ -44,7 +44,7 @@ public class ServerBackup : MonoBehaviour
     //CONSOLE OUT
     private void calloutToConsole(string input)
     {
-        HitSlapRazboi.instance.firstPlayer.DisplayConsoleOut(input);
+        //HitSlapRazboi.instance.firstPlayer.DisplayConsoleOut(input);
     }    
     //
     #region BackupFunctions

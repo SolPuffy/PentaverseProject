@@ -1,7 +1,0 @@
-{
-    "ActionsPerformed": 0,
-    "Date": "6/27/2022 6:08:25 PM",
-    "GameDeck": [],
-    "playerActions": [],
-    "indexParameters": []
-}
