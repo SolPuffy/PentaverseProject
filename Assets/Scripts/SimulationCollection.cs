@@ -23,6 +23,8 @@ public class RunTimeCollection
     public int TotalActions = 0;
     public int TotalHits = 0;
     public int TotalSlaps = 0;
+    public string TimeStart = "";
+    public string TimeEnd = "";
 }
 public class SimulationCollection : MonoBehaviour
 {
@@ -55,8 +57,6 @@ public class SimulationCollection : MonoBehaviour
         for(int i=0;i<SettingsRef.AmountOfSimulations;i++)
         {
             SimmulateGame sim = new SimmulateGame();
-            sim.randomA = UnityEngine.Random.Range(0, 51);
-            sim.randomB = UnityEngine.Random.Range(0, 51);
 
             sim.A = UnityEngine.Random.Range(0.65f, 1.75f);
             sim.B = UnityEngine.Random.Range(0.65f, 1.75f);
@@ -113,6 +113,14 @@ public class SimulationCollection : MonoBehaviour
     {
         Instance.SimDataHold.CollectionDataHold.TotalRunTime += amount;
     }  
+    public static void SetTimeStart(string time)
+    {
+        Instance.SimDataHold.CollectionDataHold.TimeStart = time;
+    }
+    public static void SetTimeEnd(string time)
+    {
+        Instance.SimDataHold.CollectionDataHold.TimeEnd = time;
+    }
     #endregion
     #region ChecksAndRandomGeneration
     private string generateRandomSaveId()

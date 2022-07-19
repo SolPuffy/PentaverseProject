@@ -358,8 +358,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rulesSetting: 0
-  randomA: 0
-  randomB: 0
   A: 0
   B: 0
   C: 0
@@ -393,6 +391,8 @@ MonoBehaviour:
       TotalActions: 0
       TotalHits: 0
       TotalSlaps: 0
+      TimeStart: 
+      TimeEnd: 
 --- !u!114 &239362347
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -405,8 +405,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b716b5dc6285e1240ab026eeb7ba6f27, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AmountOfSimulations: 500
-  Rules: 2
+  AmountOfSimulations: 50
+  Rules: 0
 --- !u!1 &449101455
 GameObject:
   m_ObjectHideFlags: 0

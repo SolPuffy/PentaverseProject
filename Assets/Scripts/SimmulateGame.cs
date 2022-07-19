@@ -27,9 +27,6 @@ public class SimmulateGame : MonoBehaviour
     bool slapped = false;
     float timeElapsed = 0;
 
-    [HideInInspector] public int randomA;
-    [HideInInspector] public int randomB;
-
     [HideInInspector] public float A;
     [HideInInspector] public float B;
     [HideInInspector] public float C;
@@ -38,6 +35,7 @@ public class SimmulateGame : MonoBehaviour
 
     [HideInInspector] public int RandomTickA;
     [HideInInspector] public float RandomTickB;
+
 
     public async Task Simmulate()
     {
@@ -61,11 +59,22 @@ public class SimmulateGame : MonoBehaviour
         int aux;
         for (int i = 0; i < 1000; i++)
         {
-            aux = cards[randomB];
-            cards[randomA] = cards[randomB];
-            cards[randomA] = aux;
+            aux = cards[(int)Mathf.Min((new System.DateTime().Millisecond * 0.05f), 51)];
+            cards[(int)Mathf.Min((new System.DateTime().Millisecond * 0.05f), 51)] = cards[(int)Mathf.Min((new System.DateTime().Millisecond * 0.05f), 51)];
+            cards[(int)Mathf.Min((new System.DateTime().Millisecond * 0.05f), 51)] = aux;
         }
         await TrimTwoLowCards();
+    }
+    private async Task RefreshPlayerCards()
+    {
+        int aux;
+        for (int i = 0; i < 1000; i++)
+        {
+            aux = deck[indexOfExpectedWin].cards[(int)Mathf.Min((new System.DateTime().Millisecond* 0.05f), 51)];
+            deck[indexOfExpectedWin].cards[(int)Mathf.Min((new System.DateTime().Millisecond * 0.05f), 51)] = deck[indexOfExpectedWin].cards[(int)Mathf.Min((new System.DateTime().Millisecond * 0.05f), 51)];
+            deck[indexOfExpectedWin].cards[(int)Mathf.Min((new System.DateTime().Millisecond * 0.05f), 51)] = aux;
+        }
+        await Task.Yield();
     }
     private async Task SetSlappingDelays()
     {
@@ -116,6 +125,7 @@ public class SimmulateGame : MonoBehaviour
     }
     private async Task PlayTheGame()
     {
+        SimulationCollection.SetTimeStart(DateTime.Now.ToString("fff"));
         while(GameInProgress)
         {
             timeElapsed++;
@@ -208,7 +218,7 @@ public class SimmulateGame : MonoBehaviour
     private async Task AwardCards()
     {
         deck[indexOfExpectedWin].cards.AddRange(groundCards);
-        await Task.Yield();
+        await RefreshPlayerCards();
     }
     private async Task AddCardsToPile()
     {
@@ -228,8 +238,7 @@ public class SimmulateGame : MonoBehaviour
     }
     private async Task<int> TickDownSlapOcassion(int cardValueDrawn)
     {
-        int randomAmountOfTicks = RandomTickA;
-        for (int i=0;i<randomAmountOfTicks;i++)
+        for (int i=0;i<RandomTickA; i++)
         {
             await TickPlayersDelays();
             if (await CheckDelaysForTriggers())
@@ -347,6 +356,7 @@ public class SimmulateGame : MonoBehaviour
         if(playersElimiated == 4)
         {
             GameInProgress = false;
+            SimulationCollection.SetTimeEnd(DateTime.Now.ToString("fff"));
             SimulationCollection.CollectTime(timeElapsed);
         }
         await Task.Yield();
