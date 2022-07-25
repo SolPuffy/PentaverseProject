@@ -68,6 +68,7 @@ public class HitSlapRazboi : NetworkBehaviour
     private void Awake()
     {
         instance = this;
+        SlapCard = null;
     }   
    
     private void Start()

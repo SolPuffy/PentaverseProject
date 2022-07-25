@@ -131,7 +131,7 @@ public class VisualsRazboi : MonoBehaviour
 
     }
     public void CardsOnGroundVisual()
-    {
+    {        
         try
         {
             CardSlot2.sprite = BlankSprite;
