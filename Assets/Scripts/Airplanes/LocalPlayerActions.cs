@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
+using System;
 using UnityEngine.Tilemaps;
 using System.Threading.Tasks;
 
@@ -20,7 +21,7 @@ public class LocalPlayerActions : MonoBehaviour
     public GameObject BackPanel;
     public GameObject PlayerCamera;
     public Tilemap PlayingField;
-    public Tile TargetedTile;
+    public Vector3Int TargetedTileLocation;
 
     private void Awake()
     {
@@ -36,6 +37,12 @@ public class LocalPlayerActions : MonoBehaviour
         {
             RaycastToTile();
         }
+        if(Input.GetKeyDown(KeyCode.Keypad1))
+        {
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+            ServerActions.Instance.ShowTotalMap();
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+        }
     }
     //raycastToATile
     //ReturnInformation
@@ -43,14 +50,23 @@ public class LocalPlayerActions : MonoBehaviour
 
     #region PlayerToServerCommands
     //[Command]
+    public void SendTileInformationToServer()
+    {
+        ServerActions.Instance.HitCalledOnTileLocation(TargetedTileLocation);
+    }
+    #endregion
+    #region FunctionsRunLocally
     public async void RaycastToTile()
     {
         Ray RayC = Camera.main.ScreenPointToRay(Input.mousePosition);
         await Cast3dRayTo2dCell(RayC);
-        ServerActions.Instance.HitCalledOnTileLocation(TargetedTile);
+        if(Int16.Parse(PlayingField.GetTile(TargetedTileLocation).name) == LocalPlayerIndex + 5)
+        {
+            Debug.Log("You can't target yourself. Dumbass.");
+            return;
+        }
+        SendTileInformationToServer();
     }
-    #endregion
-    #region FunctionsRunLocally
     public void SetBackPanelToGridSize()
     {
         float BoardScaling = ((0.28f * ServerActions.Instance.BoardSize) + ServerActions.Instance.BoardSize) / 2f;
@@ -61,14 +77,14 @@ public class LocalPlayerActions : MonoBehaviour
     }
     public async Task Cast3dRayTo2dCell(Ray SnapshotOfRay)
     {
-        if (Physics.Raycast(SnapshotOfRay.origin, SnapshotOfRay.direction, out RaycastHit RayH, 30f, 1 << LayerMask.NameToLayer("Tilemap")))
+        if (Physics.Raycast(SnapshotOfRay.origin, SnapshotOfRay.direction, out RaycastHit RayH, ServerActions.Instance.BoardSize * 2.5f, 1 << LayerMask.NameToLayer("Tilemap")))
         {
             Debug.DrawLine(SnapshotOfRay.origin, RayH.point, Color.red, 3f);
-            TargetedTile = (Tile)PlayingField.GetTile(PlayingField.WorldToCell(RayH.point));
+            TargetedTileLocation = PlayingField.WorldToCell(RayH.point);
         }
         else
         {
-            TargetedTile = null;
+            TargetedTileLocation = new Vector3Int(-1, -1);
             Debug.Log("Fetch Error");
         }
         await Task.Yield();
