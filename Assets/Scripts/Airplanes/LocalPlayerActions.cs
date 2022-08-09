@@ -11,7 +11,7 @@ public class LocalPlayerActions : MonoBehaviour
     public static LocalPlayerActions Instance;
 
 
-    public GridBaseStructure PlayerVisibleGrid;
+    //public GridBaseStructure PlayerVisibleGrid;
     public int CurrentPowerup;
     public int LocalPlayerIndex;
 
@@ -37,11 +37,35 @@ public class LocalPlayerActions : MonoBehaviour
         {
             RaycastToTile();
         }
-        if(Input.GetKeyDown(KeyCode.Keypad1))
+        if (Input.GetKey(KeyCode.Keypad0))
+        {
+            SendDebugCommandToServer();
+        }    
+    }
+    //[Command]
+    private void SendDebugCommandToServer()
+    {
+        if (Input.GetKey(KeyCode.Keypad0) && Input.GetKeyDown(KeyCode.Keypad1))
         {
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-            ServerActions.Instance.ShowTotalMap();
+            ServerActions.Instance.ShowMap();
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+        }
+        if(Input.GetKey(KeyCode.Keypad0) && Input.GetKeyDown(KeyCode.Keypad2))
+        {
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+            ServerActions.Instance.RevealToAllPlayersCurrentBoardState();
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+        }
+        if (Input.GetKey(KeyCode.Keypad0) && Input.GetKeyDown(KeyCode.Keypad3))
+        {
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+            ServerActions.Instance.ResetBoard();
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+        }
+        if(Input.GetKey(KeyCode.Keypad0) && Input.GetKeyDown(KeyCode.KeypadPeriod))
+        {
+            ServerActions.Instance.DebugPlayerIndexSwitcher();
         }
     }
     //raycastToATile
@@ -50,9 +74,11 @@ public class LocalPlayerActions : MonoBehaviour
 
     #region PlayerToServerCommands
     //[Command]
-    public void SendTileInformationToServer()
+    public async void SendTileInformationToServer()
     {
-        ServerActions.Instance.HitCalledOnTileLocation(TargetedTileLocation);
+        HitCalled = true;
+        await ServerActions.Instance.VerifyAndUpdateTile(TargetedTileLocation);
+        await ServerActions.Instance.HitCalledOnTileLocation(TargetedTileLocation);
     }
     #endregion
     #region FunctionsRunLocally
@@ -60,6 +86,10 @@ public class LocalPlayerActions : MonoBehaviour
     {
         Ray RayC = Camera.main.ScreenPointToRay(Input.mousePosition);
         await Cast3dRayTo2dCell(RayC);
+        if(TargetedTileLocation == new Vector3Int(-1,-1))
+        {
+            return;
+        }
         if(Int16.Parse(PlayingField.GetTile(TargetedTileLocation).name) == LocalPlayerIndex + 5)
         {
             Debug.Log("You can't target yourself. Dumbass.");
