@@ -11,6 +11,7 @@ public class PlayerShipStructure
 {
     public CoordsStructure PlayerShipCenter = new CoordsStructure();
     public CoordsStructure PlayerShipHead = new CoordsStructure();
+    public PowerUp CurrentHeldPowerup;
     public int Health = 8;
     public string Orientation = "";
     public bool isDestroyed = false;
@@ -68,8 +69,24 @@ public class ServerActions : MonoBehaviour
         LocalPlayerActions.Instance.HitCalled = false;
         await Task.Yield();
     }
+    public bool RequestPowerupInformation()
+    {
+        if(PlayersList[CurrentPlayerTurn].CurrentHeldPowerup != null)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
     public async Task VerifyAndUpdateTile(Vector3Int targetedTile)
     {
+        if(ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] == CurrentPlayerTurn + 5)
+        {
+            Debug.Log("PreventHittingOwnShip");
+            return;
+        }
         string DebugStatement = $"Tile@Location:{targetedTile.x},{targetedTile.y}|";
         tileTypeBeforeUpdate = ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y];
         switch (tileTypeBeforeUpdate)
@@ -188,6 +205,164 @@ public class ServerActions : MonoBehaviour
             LocalPlayerActions.Instance.LocalPlayerIndex = CurrentPlayerTurn;
         }
         Debug.Log(DebugStatement);
+        await Task.Yield();
+    }
+    //[TargetRpc]
+    public async Task PatternCalledOnTileLocation(Vector3Int[] targetedTiles)
+    {
+        for (int x = 0; x < targetedTiles.Length; x++)
+        {
+            if (LocalPlayerActions.Instance.PlayingField.GetTile(targetedTiles[x]) == null)
+            {
+                Debug.Log("PreventHitsOutsideMap");
+                continue;
+            }
+            //LocalPlayerActions.Instance.PlayerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = TValue;
+            LocalPlayerActions.Instance.PlayingField.SetTile(targetedTiles[x], Tiles[ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y]]);
+        }
+        LocalPlayerActions.Instance.HitCalled = false;
+        await Task.Yield();
+    }
+    public async Task VerifyAndUpdatePattern(Vector3Int[] targetedTiles)
+    {
+        Debug.Log("attempt pattern");
+        bool hitPlayer = false;
+        for (int x = 0; x < targetedTiles.Length; x++)
+        {
+            if (ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] == CurrentPlayerTurn + 5)
+            {
+                Debug.Log("PreventHittingOwnShip");
+                continue;
+            }
+            if(LocalPlayerActions.Instance.PlayingField.GetTile(targetedTiles[x]) == null)
+            {
+                Debug.Log("PreventHitsOutsideMap");
+                continue;
+            }
+            string DebugStatement = $"Tile@Location:{targetedTiles[x].x},{targetedTiles[x].y}|";
+            tileTypeBeforeUpdate = ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y];
+            switch (tileTypeBeforeUpdate)
+            {
+
+                //Water To Miss
+                case 0:
+                    {
+                        DebugStatement += "TileType Water To Miss"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 3;
+                        break;
+                    }
+
+                /*//Undiscovered Treasure To Discovered Treasure //rewardItemToPlayer //deprecated
+                case 1:
+                    {
+                        DebugStatement += "TileType Treasure To DTreasure"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 2;
+                        CurrentPlayerTurn++; CurrentPlayerTurn = CurrentPlayerTurn % 5;
+                        break;
+                    }*/
+
+                //Destroyed To Destroyed
+                case 2:
+                    {
+                        DebugStatement += "TileType Destroyed To Destroyed"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 2;
+                        break;
+                    }
+
+                //Miss To Miss
+                case 3:
+                    {
+                        DebugStatement += "TileType Miss To Miss"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 3;
+                        break;
+                    }
+
+                //Success Hit to Success Hit
+                case 4:
+                    {
+                        DebugStatement += "TileType Success To Success"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 4;
+                        break;
+                    }
+
+                //Player 0 To Success Hit //DamagePlayer0 //InstakillPlayer0 If targetedTile = head position
+                case 5:
+                    {
+                        hitPlayer = true;
+                        DebugStatement += "TileType Player0 To Suceess"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 4;
+                        PlayersList[0].Health--;
+                        if (PlayersList[0].Health < 1 || (targetedTiles[x].x == PlayersList[0].PlayerShipHead.X && targetedTiles[x].y == PlayersList[0].PlayerShipHead.Y))
+                        {
+                            PlayersList[0].isDestroyed = true;
+                            playerShipDestroy(0);
+                        }
+                        break;
+                    }
+
+                //Player 1 To Success Hit //DamagePlayer1 //InstakillPlayer1 If targetedTile = head position
+                case 6:
+                    {
+                        hitPlayer = true;
+                        DebugStatement += "TileType Player1 To Suceess"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 4;
+                        PlayersList[1].Health--;
+                        if (PlayersList[1].Health < 1 || (targetedTiles[x].x == PlayersList[1].PlayerShipHead.X && targetedTiles[x].y == PlayersList[1].PlayerShipHead.Y))
+                        {
+                            PlayersList[1].isDestroyed = true;
+                            playerShipDestroy(1);
+                        }
+                        break;
+                    }
+
+                //Player 2 To Success Hit //DamagePlayer2 //InstakillPlayer2 If targetedTile = head position
+                case 7:
+                    {
+                        hitPlayer = true;
+                        DebugStatement += "TileType Player2 To Suceess"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 4;
+                        PlayersList[2].Health--;
+                        if (PlayersList[2].Health < 1 || (targetedTiles[x].x == PlayersList[2].PlayerShipHead.X && targetedTiles[x].y == PlayersList[2].PlayerShipHead.Y))
+                        {
+                            PlayersList[2].isDestroyed = true;
+                            playerShipDestroy(2);
+                        }
+                        break;
+                    }
+
+                //Player 3 To Success Hit //DamagePlayer3 //InstakillPlayer3 If targetedTile = head position
+                case 8:
+                    {
+                        hitPlayer = true;
+                        DebugStatement += "TileType Player3 To Suceess"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 4;
+                        PlayersList[3].Health--;
+                        if (PlayersList[3].Health < 1 || (targetedTiles[x].x == PlayersList[3].PlayerShipHead.X && targetedTiles[x].y == PlayersList[3].PlayerShipHead.Y))
+                        {
+                            PlayersList[3].isDestroyed = true;
+                            playerShipDestroy(3);
+                        }
+                        break;
+                    }
+
+                //Player 4 To Success Hit //DamagePlayer4 //InstakillPlayer4 If targetedTile = head position
+                case 9:
+                    {
+                        hitPlayer = true;
+                        DebugStatement += "TileType Player4 To Suceess"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 4;
+                        PlayersList[4].Health--;
+                        if (PlayersList[4].Health < 1 || (targetedTiles[x].x == PlayersList[4].PlayerShipHead.X && targetedTiles[x].y == PlayersList[4].PlayerShipHead.Y))
+                        {
+                            PlayersList[4].isDestroyed = true;
+                            playerShipDestroy(4);
+                        }
+                        break;
+                    }
+                //Destroy To Destroy
+                //case 10: { DebugStatement += "TileType Destroyed To Destroyed"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 10; break; }
+                default: break;
+            }
+        }
+        PlayersList[CurrentPlayerTurn].CurrentHeldPowerup = null;
+        if (!hitPlayer)
+        {
+            CurrentPlayerTurn++; CurrentPlayerTurn = CurrentPlayerTurn % 5;
+        }
+        if (DebugPlayerIndex)
+        {
+            LocalPlayerActions.Instance.LocalPlayerIndex = CurrentPlayerTurn;
+        }
         await Task.Yield();
     }
     public void playerShipDestroy(int switchTarget)

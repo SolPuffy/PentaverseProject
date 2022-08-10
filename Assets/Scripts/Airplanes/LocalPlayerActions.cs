@@ -12,7 +12,7 @@ public class LocalPlayerActions : MonoBehaviour
 
 
     //public GridBaseStructure PlayerVisibleGrid;
-    public int CurrentPowerup;
+    //public int CurrentPowerup;
     public int LocalPlayerIndex;
 
 
@@ -77,8 +77,17 @@ public class LocalPlayerActions : MonoBehaviour
     public async void SendTileInformationToServer()
     {
         HitCalled = true;
-        await ServerActions.Instance.VerifyAndUpdateTile(TargetedTileLocation);
-        await ServerActions.Instance.HitCalledOnTileLocation(TargetedTileLocation);
+        if(ServerActions.Instance.PlayersList[ServerActions.Instance.CurrentPlayerTurn].CurrentHeldPowerup != null)
+        {
+            //if no powerup is present, shoot normally
+            await ServerActions.Instance.PlayersList[ServerActions.Instance.CurrentPlayerTurn].CurrentHeldPowerup.OnUse(TargetedTileLocation);
+        }
+        else
+        {
+            //else use powerup on your shot
+            await ServerActions.Instance.VerifyAndUpdateTile(TargetedTileLocation);
+            await ServerActions.Instance.HitCalledOnTileLocation(TargetedTileLocation);
+        }
     }
     #endregion
     #region FunctionsRunLocally

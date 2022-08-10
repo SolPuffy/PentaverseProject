@@ -445,7 +445,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7faf7d15f3ae2434e9049f459bc05abe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CurrentPowerup: 0
   LocalPlayerIndex: 0
   HitCalled: 0
   BackPanel: {fileID: 1178629612}
