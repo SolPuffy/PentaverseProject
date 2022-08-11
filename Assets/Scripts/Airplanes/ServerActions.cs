@@ -22,18 +22,21 @@ public class ServerActions : MonoBehaviour
 
     public GridBaseStructure ServerVisibleGrid;
     public List<string> AvailableBuildSpaces = new List<string>();
-    public List<string> AvailableTreasureSpaces = new List<string>();
+    //public List<string> AvailableTreasureSpaces = new List<string>();
+    public List<PowerUp> BasePowerupsList = new List<PowerUp>();
+    public List<PowerUp> ActivePowerupsList = new List<PowerUp>();
     public List<PlayerShipStructure> PlayersList = new List<PlayerShipStructure>();
 
     public Tile[] Tiles = new Tile[10];
 
     public int CurrentPlayerTurn = 0;
 
-    public bool SetupInProgress = true;
+    [HideInInspector] public bool SetupInProgress = true;
     public int BoardSize = 21;
     [Range(0.85f, 3f)]
     public float PowerupsDensity = 1;
     private int tileTypeBeforeUpdate = 0;
+    private int playerIndexBeforeUpdate = 0;
     private bool DebugPlayerIndex = false; //for debug in-editor purposes only. To be removed after finishing up.
     private void Awake()
     {
@@ -63,13 +66,14 @@ public class ServerActions : MonoBehaviour
         //LocalPlayerActions.Instance.PlayerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = TValue;
         if((tileTypeBeforeUpdate < 1 && tileTypeBeforeUpdate > 4) && UnityEngine.Random.Range(0,1164) > 999 / PowerupsDensity)
         {
+            PlayersList[playerIndexBeforeUpdate].CurrentHeldPowerup = ActivePowerupsList[UnityEngine.Random.Range(0, ActivePowerupsList.Count - 1)];
             Debug.Log("Gib Powwa");
         }
         LocalPlayerActions.Instance.PlayingField.SetTile(targetedTile, Tiles[ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y]]);
         LocalPlayerActions.Instance.HitCalled = false;
         await Task.Yield();
     }
-    public bool RequestPowerupInformation()
+    /*public bool RequestPowerupInformation()
     {
         if(PlayersList[CurrentPlayerTurn].CurrentHeldPowerup != null)
         {
@@ -79,7 +83,7 @@ public class ServerActions : MonoBehaviour
         {
             return false;
         }
-    }
+    }*/
     public async Task VerifyAndUpdateTile(Vector3Int targetedTile)
     {
         if(ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] == CurrentPlayerTurn + 5)
@@ -89,6 +93,7 @@ public class ServerActions : MonoBehaviour
         }
         string DebugStatement = $"Tile@Location:{targetedTile.x},{targetedTile.y}|";
         tileTypeBeforeUpdate = ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y];
+        playerIndexBeforeUpdate = CurrentPlayerTurn;
         switch (tileTypeBeforeUpdate)
         {
 
@@ -462,6 +467,7 @@ public class ServerActions : MonoBehaviour
         await FillMapWithWater();
         await BuildEmptyAreaArray();
         await AttemptToArrangePlayers();
+        await BuildPowerUpsPool();
         //Powerups are now handled by Hitting tiles
         //await AddPowerUps();
         await DisplayIndividualShips();
@@ -504,6 +510,8 @@ public class ServerActions : MonoBehaviour
                 }
             }
         }
+        //Available treasure spaces - deprecated in favor of new treasure sys
+        /*
         for (int i = 0; i < BoardSize; i++)
         {
             for (int j = 0; j < BoardSize; j++)
@@ -525,7 +533,7 @@ public class ServerActions : MonoBehaviour
                     AvailableTreasureSpaces.Add($"{i}{j}");
                 }
             }
-        }
+        }*/
         await Task.Yield();
     }    
     private async Task AttemptToArrangePlayers()
@@ -1072,6 +1080,19 @@ public class ServerActions : MonoBehaviour
         }
         await Task.Yield();
     }
+
+    private async Task BuildPowerUpsPool()
+    {
+        int randomMemory;
+        int targetCount = BasePowerupsList.Count;
+        for (int i = 0;i<Math.Min(targetCount,5);i++)
+        {
+            randomMemory = UnityEngine.Random.Range(0, BasePowerupsList.Count - 1);
+            ActivePowerupsList.Add(BasePowerupsList[randomMemory]);
+            BasePowerupsList.RemoveAt(randomMemory);
+        }
+        await Task.Yield();
+    }
     /*private async Task AddPowerUps() //deprecated powerups
     {
         int localRandomIndex;
@@ -1163,6 +1184,8 @@ public class ServerActions : MonoBehaviour
                     break;
                 }
         }
+        //Available treasure spaces - deprecated in favor of new treasure sys
+        /*
         for(int i=0;i<ShipPartsPositions.Count;i++)
         {
             if(ShipPartsPositions[i] != null)
@@ -1170,7 +1193,7 @@ public class ServerActions : MonoBehaviour
                 AvailableTreasureSpaces.RemoveAt(AvailableTreasureSpaces.IndexOf(ShipPartsPositions[i]));
             }    
             
-        }
+        }*/
     }    
     private async Task<string> interToStringerLocation(int x,int y)
     {
