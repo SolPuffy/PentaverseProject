@@ -12,6 +12,7 @@ public class PlayerShipStructure
     public CoordsStructure PlayerShipCenter = new CoordsStructure();
     public CoordsStructure PlayerShipHead = new CoordsStructure();
     public PowerUp CurrentHeldPowerup;
+    public float PowerupPity = 0;
     public int Health = 8;
     public string Orientation = "";
     public bool isDestroyed = false;
@@ -24,7 +25,7 @@ public class ServerActions : MonoBehaviour
     public List<string> AvailableBuildSpaces = new List<string>();
     //public List<string> AvailableTreasureSpaces = new List<string>();
     public List<PowerUp> BasePowerupsList = new List<PowerUp>();
-    public List<PowerUp> ActivePowerupsList = new List<PowerUp>();
+    public List<ToPlayersPowerUp> ActivePowerupsList = new List<ToPlayersPowerUp>();
     public List<PlayerShipStructure> PlayersList = new List<PlayerShipStructure>();
 
     public Tile[] Tiles = new Tile[10];
@@ -64,10 +65,36 @@ public class ServerActions : MonoBehaviour
     public async Task HitCalledOnTileLocation(Vector3Int targetedTile)
     {
         //LocalPlayerActions.Instance.PlayerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = TValue;
-        if((tileTypeBeforeUpdate < 1 && tileTypeBeforeUpdate > 4) && UnityEngine.Random.Range(0,1164) > 999 / PowerupsDensity)
+        if (tileTypeBeforeUpdate < 1 || tileTypeBeforeUpdate > 4)
         {
-            PlayersList[playerIndexBeforeUpdate].CurrentHeldPowerup = ActivePowerupsList[UnityEngine.Random.Range(0, ActivePowerupsList.Count - 1)];
-            Debug.Log("Gib Powwa");
+            if (UnityEngine.Random.Range(0, 1164) > 999 / PowerupsDensity + PlayersList[playerIndexBeforeUpdate].PowerupPity)
+            {
+                List<ToPlayersPowerUp> WeightedPowerUpChoice = new List<ToPlayersPowerUp>();
+                int RollWeight = UnityEngine.Random.Range(1, 100);
+                for (int i = 0; i < ActivePowerupsList.Count; i++)
+                {
+                    if (ActivePowerupsList[i].AvailableQuanity > 0 && RollWeight >= ActivePowerupsList[i].PowerUp.PowerUpRequiredWeight)
+                    {
+                        WeightedPowerUpChoice.Add(ActivePowerupsList[i]);
+                    }
+                }
+                if (WeightedPowerUpChoice.Count > 0)
+                {
+                    RollWeight = UnityEngine.Random.Range(0, WeightedPowerUpChoice.Count - 1);
+                    PlayersList[playerIndexBeforeUpdate].CurrentHeldPowerup = WeightedPowerUpChoice[RollWeight].PowerUp;
+                    PlayersList[playerIndexBeforeUpdate].PowerupPity = 0;
+                    ActivePowerupsList[ActivePowerupsList.IndexOf(WeightedPowerUpChoice[RollWeight])].AvailableQuanity--;
+                }
+                else
+                {
+                    Debug.Log("No Powers Selected by weight");
+                }
+                WeightedPowerUpChoice.Clear();
+            }
+            else
+            {
+                PlayersList[playerIndexBeforeUpdate].PowerupPity += 0.25f;
+            }
         }
         LocalPlayerActions.Instance.PlayingField.SetTile(targetedTile, Tiles[ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y]]);
         LocalPlayerActions.Instance.HitCalled = false;
@@ -209,7 +236,7 @@ public class ServerActions : MonoBehaviour
         {
             LocalPlayerActions.Instance.LocalPlayerIndex = CurrentPlayerTurn;
         }
-        Debug.Log(DebugStatement);
+        //Debug.Log(DebugStatement);
         await Task.Yield();
     }
     //[TargetRpc]
@@ -234,14 +261,14 @@ public class ServerActions : MonoBehaviour
         bool hitPlayer = false;
         for (int x = 0; x < targetedTiles.Length; x++)
         {
+            if (LocalPlayerActions.Instance.PlayingField.GetTile(targetedTiles[x]) == null)
+            {
+                Debug.Log("PreventHitsOutsideMap");
+                continue;
+            }
             if (ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] == CurrentPlayerTurn + 5)
             {
                 Debug.Log("PreventHittingOwnShip");
-                continue;
-            }
-            if(LocalPlayerActions.Instance.PlayingField.GetTile(targetedTiles[x]) == null)
-            {
-                Debug.Log("PreventHitsOutsideMap");
                 continue;
             }
             string DebugStatement = $"Tile@Location:{targetedTiles[x].x},{targetedTiles[x].y}|";
@@ -1088,7 +1115,10 @@ public class ServerActions : MonoBehaviour
         for (int i = 0;i<Math.Min(targetCount,5);i++)
         {
             randomMemory = UnityEngine.Random.Range(0, BasePowerupsList.Count - 1);
-            ActivePowerupsList.Add(BasePowerupsList[randomMemory]);
+            ToPlayersPowerUp tppu = new ToPlayersPowerUp();
+            tppu.PowerUp = BasePowerupsList[randomMemory];
+            tppu.AvailableQuanity = BasePowerupsList[randomMemory].AvailableQuanity;
+            ActivePowerupsList.Add(tppu);
             BasePowerupsList.RemoveAt(randomMemory);
         }
         await Task.Yield();

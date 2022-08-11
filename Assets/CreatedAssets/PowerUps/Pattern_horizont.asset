@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: Pattern_horizont
   m_EditorClassIdentifier: 
   PowerUpType: 0
+  PowerUpRequiredWeight: 1
+  AvailableQuanity: 5
   PatternStrike_Pattern: 'OOOOO
 
     XXXXX

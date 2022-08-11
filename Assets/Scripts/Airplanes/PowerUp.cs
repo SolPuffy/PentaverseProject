@@ -12,11 +12,14 @@ public class PowerUp : ScriptableObject
 {
     [SerializeField]
     public _PowerUpType PowerUpType;
+    [SerializeField]
+    [Range(1,100)]
+    public int PowerUpRequiredWeight;
+    public int AvailableQuanity = 5;
     [TextArea(10,10)]
     public string PatternStrike_Pattern;
     public async Task OnUse(Vector3Int UseAtLocation)
     {
-        Debug.Log("received OnUse");
         switch((int)PowerUpType)
         {
             case 0: { PatternStrikeTrigger(UseAtLocation);break; }
