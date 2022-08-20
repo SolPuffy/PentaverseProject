@@ -20,6 +20,19 @@ public class PlayerShipStructure
 public class ServerActions : MonoBehaviour
 {
     public static ServerActions Instance;
+    public PlanesPlayer firstPlayer
+    {
+        get 
+        {
+            GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+            if (players.Length > 0)
+            {
+                return players[0].GetComponent<PlanesPlayer>();
+            }
+            else
+                return null;
+        }        
+    }    
 
     public GridBaseStructure ServerVisibleGrid;
     public List<string> AvailableBuildSpaces = new List<string>();
@@ -39,15 +52,11 @@ public class ServerActions : MonoBehaviour
     private int tileTypeBeforeUpdate = 0;
     private int playerIndexBeforeUpdate = 0;
     private bool DebugPlayerIndex = false; //for debug in-editor purposes only. To be removed after finishing up.
+    public bool HitCalled = false;
     private void Awake()
     {
         Instance = this;
-    }
-    private void Start()
-    {
-        //setup
-        SetupBoard();
-    }
+    }      
 
     // tile 0 = normal water
     // tile 1 = undiscovered treasure                                                                                        //deprecated, not used anymore.
@@ -96,8 +105,9 @@ public class ServerActions : MonoBehaviour
                 PlayersList[playerIndexBeforeUpdate].PowerupPity += 0.25f;
             }
         }
-        LocalPlayerActions.Instance.PlayingField.SetTile(targetedTile, Tiles[ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y]]);
-        LocalPlayerActions.Instance.HitCalled = false;
+        PlayerAtIndex(playerIndexBeforeUpdate).UpdateTile(targetedTile, ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y]);
+        //LocalPlayerActions.Instance.PlayingField.SetTile(targetedTile, Tiles[ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y]]);
+        HitCalled = false;
         await Task.Yield();
     }
     /*public bool RequestPowerupInformation()
@@ -252,7 +262,7 @@ public class ServerActions : MonoBehaviour
             //LocalPlayerActions.Instance.PlayerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = TValue;
             LocalPlayerActions.Instance.PlayingField.SetTile(targetedTiles[x], Tiles[ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y]]);
         }
-        LocalPlayerActions.Instance.HitCalled = false;
+        HitCalled = false;
         await Task.Yield();
     }
     public async Task VerifyAndUpdatePattern(Vector3Int[] targetedTiles)
@@ -489,7 +499,7 @@ public class ServerActions : MonoBehaviour
     }
     #region GameSetupPhase
     //DrawBoardForServer
-    private async void SetupBoard()
+    public async void SetupBoard()
     {
         await FillMapWithWater();
         await BuildEmptyAreaArray();
@@ -1321,4 +1331,19 @@ public class ServerActions : MonoBehaviour
     }
     #endregion
     //DisplayBoardToEachPlayer
+
+    public PlanesPlayer PlayerAtIndex(int index)
+    {
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+        if(players.Length > 0)
+            foreach(GameObject p in players)
+            {
+                PlanesPlayer _player = p.GetComponent<PlanesPlayer>();
+                if (_player.playerIndex == index)
+                {
+                    return _player;
+                }
+            }
+        return null;
+    }
 }

@@ -16,7 +16,7 @@ public class LocalPlayerActions : MonoBehaviour
     public int LocalPlayerIndex;
 
 
-    public bool HitCalled = false;
+    
     [SerializeField]
     public GameObject BackPanel;
     public GameObject PlayerCamera;
@@ -33,7 +33,7 @@ public class LocalPlayerActions : MonoBehaviour
     }
     private void Update()
     {
-        if (!ServerActions.Instance.SetupInProgress && Input.GetMouseButtonDown(0) && ServerActions.Instance.CurrentPlayerTurn == LocalPlayerIndex && !HitCalled)
+        if (!ServerActions.Instance.SetupInProgress && Input.GetMouseButtonDown(0) && ServerActions.Instance.CurrentPlayerTurn == PlanesPlayer.localPlayer.playerIndex && !ServerActions.Instance.HitCalled)
         {
             RaycastToTile();
         }
@@ -74,20 +74,9 @@ public class LocalPlayerActions : MonoBehaviour
 
     #region PlayerToServerCommands
     //[Command]
-    public async void SendTileInformationToServer()
+    public void SendTileInformationToServer()
     {
-        HitCalled = true;
-        if(ServerActions.Instance.PlayersList[ServerActions.Instance.CurrentPlayerTurn].CurrentHeldPowerup != null)
-        {
-            //if no powerup is present, shoot normally
-            await ServerActions.Instance.PlayersList[ServerActions.Instance.CurrentPlayerTurn].CurrentHeldPowerup.OnUse(TargetedTileLocation);
-        }
-        else
-        {
-            //else use powerup on your shot
-            await ServerActions.Instance.VerifyAndUpdateTile(TargetedTileLocation);
-            await ServerActions.Instance.HitCalledOnTileLocation(TargetedTileLocation);
-        }
+        PlanesPlayer.localPlayer.HitTile(TargetedTileLocation);        
     }
     #endregion
     #region FunctionsRunLocally
