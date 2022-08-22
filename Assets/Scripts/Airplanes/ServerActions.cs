@@ -17,23 +17,13 @@ public class PlayerShipStructure
     public string Orientation = "";
     public bool isDestroyed = false;
 }
-public class ServerActions : MonoBehaviour
+public class ServerActions : NetworkBehaviour
 {
+    [SyncVar] public int activeShipsCount;
     public static ServerActions Instance;
-    public PlanesPlayer firstPlayer
-    {
-        get 
-        {
-            GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-            if (players.Length > 0)
-            {
-                return players[0].GetComponent<PlanesPlayer>();
-            }
-            else
-                return null;
-        }        
-    }    
-
+    public List<PlanesPlayer> PlanesPlayers = new List<PlanesPlayer>();
+    [SerializeField] Tilemap map;
+   
     public GridBaseStructure ServerVisibleGrid;
     public List<string> AvailableBuildSpaces = new List<string>();
     //public List<string> AvailableTreasureSpaces = new List<string>();
@@ -43,16 +33,16 @@ public class ServerActions : MonoBehaviour
 
     public Tile[] Tiles = new Tile[10];
 
-    public int CurrentPlayerTurn = 0;
+    [SyncVar] public int CurrentPlayerTurn = 0;
 
-    [HideInInspector] public bool SetupInProgress = true;
+    [HideInInspector][SyncVar] public bool SetupInProgress = true;
     public int BoardSize = 21;
     [Range(0.85f, 3f)]
     public float PowerupsDensity = 1;
     private int tileTypeBeforeUpdate = 0;
     private int playerIndexBeforeUpdate = 0;
     private bool DebugPlayerIndex = false; //for debug in-editor purposes only. To be removed after finishing up.
-    public bool HitCalled = false;
+    [SyncVar]  public bool HitCalled = false;
     private void Awake()
     {
         Instance = this;
@@ -73,6 +63,7 @@ public class ServerActions : MonoBehaviour
     //[TargetRpc]
     public async Task HitCalledOnTileLocation(Vector3Int targetedTile)
     {
+        //Debug.Log(targetedTile);
         //LocalPlayerActions.Instance.PlayerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = TValue;
         if (tileTypeBeforeUpdate < 1 || tileTypeBeforeUpdate > 4)
         {
@@ -105,7 +96,7 @@ public class ServerActions : MonoBehaviour
                 PlayersList[playerIndexBeforeUpdate].PowerupPity += 0.25f;
             }
         }
-        PlayerAtIndex(playerIndexBeforeUpdate).UpdateTile(targetedTile, ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y]);
+        PlanesPlayers[playerIndexBeforeUpdate].UpdateTile(targetedTile, ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y]);        
         //LocalPlayerActions.Instance.PlayingField.SetTile(targetedTile, Tiles[ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y]]);
         HitCalled = false;
         await Task.Yield();
@@ -138,7 +129,7 @@ public class ServerActions : MonoBehaviour
             case 0:
                 {
                     DebugStatement += "TileType Water To Miss"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 3;
-                    CurrentPlayerTurn++; CurrentPlayerTurn = CurrentPlayerTurn % 5;
+                    await IncreaseTurn();
                     break;
                 }
 
@@ -154,7 +145,7 @@ public class ServerActions : MonoBehaviour
             case 2:
                 {
                     DebugStatement += "TileType Destroyed To Destroyed"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 2;
-                    CurrentPlayerTurn++; CurrentPlayerTurn = CurrentPlayerTurn % 5;
+                    await IncreaseTurn();
                     break;
                 }
 
@@ -162,7 +153,7 @@ public class ServerActions : MonoBehaviour
             case 3:
                 {
                     DebugStatement += "TileType Miss To Miss"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 3;
-                    CurrentPlayerTurn++; CurrentPlayerTurn = CurrentPlayerTurn % 5;
+                    await IncreaseTurn();
                     break;
                 }
 
@@ -170,7 +161,7 @@ public class ServerActions : MonoBehaviour
             case 4:
                 {
                     DebugStatement += "TileType Success To Success"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 4;
-                    CurrentPlayerTurn++; CurrentPlayerTurn = CurrentPlayerTurn % 5;
+                    await IncreaseTurn();
                     break;
                 }
 
@@ -179,11 +170,14 @@ public class ServerActions : MonoBehaviour
                 {
                     DebugStatement += "TileType Player0 To Suceess"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 4;
                     PlayersList[0].Health--;
+                    try { PlanesPlayers[0].UpdateTile(new Vector3Int(targetedTile.x, targetedTile.y), 4); }
+                    catch { Debug.Log("Player not existent"); }
                     if (PlayersList[0].Health < 1 || (targetedTile.x == PlayersList[0].PlayerShipHead.X && targetedTile.y == PlayersList[0].PlayerShipHead.Y))
                     {
                         PlayersList[0].isDestroyed = true;
                         playerShipDestroy(0);
                     }
+                    
                     break;
                 }
 
@@ -192,6 +186,8 @@ public class ServerActions : MonoBehaviour
                 {
                     DebugStatement += "TileType Player1 To Suceess"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 4;
                     PlayersList[1].Health--;
+                    try { PlanesPlayers[1].UpdateTile(new Vector3Int(targetedTile.x, targetedTile.y), 4); }
+                    catch { Debug.Log("Player not existent"); }
                     if (PlayersList[1].Health < 1 || (targetedTile.x == PlayersList[1].PlayerShipHead.X && targetedTile.y == PlayersList[1].PlayerShipHead.Y))
                     {
                         PlayersList[1].isDestroyed = true;
@@ -205,6 +201,8 @@ public class ServerActions : MonoBehaviour
                 {
                     DebugStatement += "TileType Player2 To Suceess"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 4;
                     PlayersList[2].Health--;
+                    try { PlanesPlayers[2].UpdateTile(new Vector3Int(targetedTile.x, targetedTile.y), 4); }
+                    catch { Debug.Log("Player not existent"); }
                     if (PlayersList[2].Health < 1 || (targetedTile.x == PlayersList[2].PlayerShipHead.X && targetedTile.y == PlayersList[2].PlayerShipHead.Y))
                     {
                         PlayersList[2].isDestroyed = true;
@@ -218,6 +216,8 @@ public class ServerActions : MonoBehaviour
                 {
                     DebugStatement += "TileType Player3 To Suceess"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 4;
                     PlayersList[3].Health--;
+                    try { PlanesPlayers[3].UpdateTile(new Vector3Int(targetedTile.x, targetedTile.y), 4); }
+                    catch { Debug.Log("Player not existent"); }
                     if (PlayersList[3].Health < 1 || (targetedTile.x == PlayersList[3].PlayerShipHead.X && targetedTile.y == PlayersList[3].PlayerShipHead.Y))
                     {
                         PlayersList[3].isDestroyed = true;
@@ -231,17 +231,20 @@ public class ServerActions : MonoBehaviour
                 {
                     DebugStatement += "TileType Player4 To Suceess"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 4;
                     PlayersList[4].Health--;
+                    try { PlanesPlayers[4].UpdateTile(new Vector3Int(targetedTile.x, targetedTile.y), 4); }
+                    catch { Debug.Log("Player not existent"); }
                     if (PlayersList[4].Health < 1 || (targetedTile.x == PlayersList[4].PlayerShipHead.X && targetedTile.y == PlayersList[4].PlayerShipHead.Y))
                     {
                         PlayersList[4].isDestroyed = true;
                         playerShipDestroy(4);
                     }
                     break;
-                }
+                }                
             //Destroy To Destroy
             //case 10: { DebugStatement += "TileType Destroyed To Destroyed"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 10; break; }
             default: break;
         }
+
         if(DebugPlayerIndex)
         {
             LocalPlayerActions.Instance.LocalPlayerIndex = CurrentPlayerTurn;
@@ -254,13 +257,14 @@ public class ServerActions : MonoBehaviour
     {
         for (int x = 0; x < targetedTiles.Length; x++)
         {
-            if (LocalPlayerActions.Instance.PlayingField.GetTile(targetedTiles[x]) == null)
+            if (map.GetTile(targetedTiles[x]) == null)
             {
                 Debug.Log("PreventHitsOutsideMap");
                 continue;
             }
             //LocalPlayerActions.Instance.PlayerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = TValue;
-            LocalPlayerActions.Instance.PlayingField.SetTile(targetedTiles[x], Tiles[ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y]]);
+            //LocalPlayerActions.Instance.PlayingField.SetTile(targetedTiles[x], Tiles[ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y]]);
+            PlanesPlayers[playerIndexBeforeUpdate].UpdateTile(targetedTiles[x], ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y]);
         }
         HitCalled = false;
         await Task.Yield();
@@ -271,7 +275,7 @@ public class ServerActions : MonoBehaviour
         bool hitPlayer = false;
         for (int x = 0; x < targetedTiles.Length; x++)
         {
-            if (LocalPlayerActions.Instance.PlayingField.GetTile(targetedTiles[x]) == null)
+            if (map.GetTile(targetedTiles[x]) == null)
             {
                 Debug.Log("PreventHitsOutsideMap");
                 continue;
@@ -283,6 +287,7 @@ public class ServerActions : MonoBehaviour
             }
             string DebugStatement = $"Tile@Location:{targetedTiles[x].x},{targetedTiles[x].y}|";
             tileTypeBeforeUpdate = ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y];
+            playerIndexBeforeUpdate = CurrentPlayerTurn;
             switch (tileTypeBeforeUpdate)
             {
 
@@ -328,6 +333,10 @@ public class ServerActions : MonoBehaviour
                         hitPlayer = true;
                         DebugStatement += "TileType Player0 To Suceess"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 4;
                         PlayersList[0].Health--;
+
+                        try { PlanesPlayers[0].UpdateTile(new Vector3Int(targetedTiles[x].x, targetedTiles[x].y), 4); }
+                        catch { Debug.Log("Player not existent"); }
+                        
                         if (PlayersList[0].Health < 1 || (targetedTiles[x].x == PlayersList[0].PlayerShipHead.X && targetedTiles[x].y == PlayersList[0].PlayerShipHead.Y))
                         {
                             PlayersList[0].isDestroyed = true;
@@ -342,6 +351,8 @@ public class ServerActions : MonoBehaviour
                         hitPlayer = true;
                         DebugStatement += "TileType Player1 To Suceess"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 4;
                         PlayersList[1].Health--;
+                        try { PlanesPlayers[1].UpdateTile(new Vector3Int(targetedTiles[x].x, targetedTiles[x].y), 4); }
+                        catch { Debug.Log("Player not existent"); }
                         if (PlayersList[1].Health < 1 || (targetedTiles[x].x == PlayersList[1].PlayerShipHead.X && targetedTiles[x].y == PlayersList[1].PlayerShipHead.Y))
                         {
                             PlayersList[1].isDestroyed = true;
@@ -356,6 +367,8 @@ public class ServerActions : MonoBehaviour
                         hitPlayer = true;
                         DebugStatement += "TileType Player2 To Suceess"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 4;
                         PlayersList[2].Health--;
+                        try { PlanesPlayers[2].UpdateTile(new Vector3Int(targetedTiles[x].x, targetedTiles[x].y), 4); }
+                        catch { Debug.Log("Player not existent"); }
                         if (PlayersList[2].Health < 1 || (targetedTiles[x].x == PlayersList[2].PlayerShipHead.X && targetedTiles[x].y == PlayersList[2].PlayerShipHead.Y))
                         {
                             PlayersList[2].isDestroyed = true;
@@ -370,6 +383,8 @@ public class ServerActions : MonoBehaviour
                         hitPlayer = true;
                         DebugStatement += "TileType Player3 To Suceess"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 4;
                         PlayersList[3].Health--;
+                        try { PlanesPlayers[3].UpdateTile(new Vector3Int(targetedTiles[x].x, targetedTiles[x].y), 4); }
+                        catch { Debug.Log("Player not existent"); }
                         if (PlayersList[3].Health < 1 || (targetedTiles[x].x == PlayersList[3].PlayerShipHead.X && targetedTiles[x].y == PlayersList[3].PlayerShipHead.Y))
                         {
                             PlayersList[3].isDestroyed = true;
@@ -384,6 +399,8 @@ public class ServerActions : MonoBehaviour
                         hitPlayer = true;
                         DebugStatement += "TileType Player4 To Suceess"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 4;
                         PlayersList[4].Health--;
+                        try { PlanesPlayers[4].UpdateTile(new Vector3Int(targetedTiles[x].x, targetedTiles[x].y), 4); }
+                        catch { Debug.Log("Player not existent"); }
                         if (PlayersList[4].Health < 1 || (targetedTiles[x].x == PlayersList[4].PlayerShipHead.X && targetedTiles[x].y == PlayersList[4].PlayerShipHead.Y))
                         {
                             PlayersList[4].isDestroyed = true;
@@ -399,7 +416,7 @@ public class ServerActions : MonoBehaviour
         PlayersList[CurrentPlayerTurn].CurrentHeldPowerup = null;
         if (!hitPlayer)
         {
-            CurrentPlayerTurn++; CurrentPlayerTurn = CurrentPlayerTurn % 5;
+            await IncreaseTurn();
         }
         if (DebugPlayerIndex)
         {
@@ -409,6 +426,7 @@ public class ServerActions : MonoBehaviour
     }
     public void playerShipDestroy(int switchTarget)
     {
+        PlayersList[switchTarget].isDestroyed = true;
         //CenterOfShip
         int CenterX = PlayersList[switchTarget].PlayerShipCenter.X;
         int CenterY = PlayersList[switchTarget].PlayerShipCenter.Y;
@@ -490,17 +508,31 @@ public class ServerActions : MonoBehaviour
             {
                 if (ServerVisibleGrid.Row[i].Column[j] == 2)
                 {
-                    LocalPlayerActions.Instance.PlayingField.SetTile(new Vector3Int(i, j), Tiles[2]);
+                    foreach(PlanesPlayer _player in PlanesPlayers)
+                    {
+                        try { _player.UpdateTile(new Vector3Int(i, j), 2); }
+                        catch { Debug.Log("player not present"); }                        
+                    }                  
+                    
+                    //LocalPlayerActions.Instance.PlayingField.SetTile(new Vector3Int(i, j), Tiles[2]);
                 }
 
             }
         }
+
+        activeShipsCount--;
+        Debug.Log($"{activeShipsCount} ships Left");
+        if (activeShipsCount <= 1)
+            FinishGame();
 
     }
     #region GameSetupPhase
     //DrawBoardForServer
     public async void SetupBoard()
     {
+        if (!SetupInProgress)
+            return;
+
         await FillMapWithWater();
         await BuildEmptyAreaArray();
         await AttemptToArrangePlayers();
@@ -510,6 +542,8 @@ public class ServerActions : MonoBehaviour
         await DisplayIndividualShips();
         //await ShowTotalMap();
         SetupInProgress = false;
+        PlanesPlayers[0].SetUpProgress(false);
+        activeShipsCount = 5;
     }
     private async Task FillMapWithWater()
     {
@@ -517,7 +551,13 @@ public class ServerActions : MonoBehaviour
         {
             for (int j = 0; j < BoardSize; j++)
             {
-                LocalPlayerActions.Instance.PlayingField.SetTile(new Vector3Int(i, j), Tiles[0]);
+                //LocalPlayerActions.Instance.PlayingField.SetTile(new Vector3Int(i, j), Tiles[0]);
+                foreach(PlanesPlayer _player in PlanesPlayers)
+                {
+                    try { _player.UpdateTile(new Vector3Int(i, j), 0); }
+                    catch { Debug.Log("player not present"); }
+                }
+                map.SetTile(new Vector3Int(i, j), Tiles[0]);
                 ServerVisibleGrid.Row[i].Column[j] = 0;
             }
         }
@@ -1263,9 +1303,12 @@ public class ServerActions : MonoBehaviour
         {
             for (int j = 0; j < BoardSize; j++)
             {
-                if(ServerVisibleGrid.Row[i].Column[j] == LocalPlayerActions.Instance.LocalPlayerIndex + 5)
+                if(ServerVisibleGrid.Row[i].Column[j] > 4)
                 {
-                    LocalPlayerActions.Instance.PlayingField.SetTile(new Vector3Int(i, j), Tiles[ServerVisibleGrid.Row[i].Column[j]]);
+                    if (ServerVisibleGrid.Row[i].Column[j] - 5 > PlanesPlayers.Count - 1)
+                        continue;
+                    //LocalPlayerActions.Instance.PlayingField.SetTile(new Vector3Int(i, j), Tiles[ServerVisibleGrid.Row[i].Column[j]]);
+                    PlanesPlayers[ServerVisibleGrid.Row[i].Column[j] - 5].UpdateTile(new Vector3Int(i, j), ServerVisibleGrid.Row[i].Column[j]);
                 }
                 
             }
@@ -1281,7 +1324,13 @@ public class ServerActions : MonoBehaviour
             {
                 if (ServerVisibleGrid.Row[i].Column[j] < 5)
                 {
-                    LocalPlayerActions.Instance.PlayingField.SetTile(new Vector3Int(i, j), Tiles[ServerVisibleGrid.Row[i].Column[j]]);
+                    foreach (PlanesPlayer _player in PlanesPlayers)
+                    {
+                        try { _player.UpdateTile(new Vector3Int(i, j), ServerVisibleGrid.Row[i].Column[j]); }
+                        catch { Debug.Log("Player not present"); }
+                    }
+                        
+                    //LocalPlayerActions.Instance.PlayingField.SetTile(new Vector3Int(i, j), Tiles[ServerVisibleGrid.Row[i].Column[j]]);
                 }
 
             }
@@ -1300,18 +1349,18 @@ public class ServerActions : MonoBehaviour
         }    
         await Task.Yield();
     }
-    public async Task ResetBoard()
+    public void ResetBoard()
     {
         //For Debugging purposes on reset, remove after completion
-        LocalPlayerActions.Instance.LocalPlayerIndex = 0;
+        //LocalPlayerActions.Instance.LocalPlayerIndex = 0;
         //
-        SetupInProgress = true;
+        SetupInProgress = true;        
         CurrentPlayerTurn = 0;
         PlayersList.Clear();
+        PlanesPlayers.Clear();
         AvailableBuildSpaces.Clear();
         //AvailableTreasureSpaces.Clear();
-        SetupBoard();
-        await Task.Yield();
+        //SetupBoard();        
     }
     public void DebugPlayerIndexSwitcher()
     {
@@ -1330,20 +1379,53 @@ public class ServerActions : MonoBehaviour
 
     }
     #endregion
-    //DisplayBoardToEachPlayer
 
-    public PlanesPlayer PlayerAtIndex(int index)
+    private async Task IncreaseTurn()
     {
-        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-        if(players.Length > 0)
-            foreach(GameObject p in players)
-            {
-                PlanesPlayer _player = p.GetComponent<PlanesPlayer>();
-                if (_player.playerIndex == index)
-                {
-                    return _player;
-                }
-            }
-        return null;
+        int whileCounter = 0;
+        do
+        {
+            CurrentPlayerTurn++;
+            CurrentPlayerTurn = CurrentPlayerTurn % PlanesPlayers.Count;
+            whileCounter++;
+        }
+        while (PlayersList[CurrentPlayerTurn].isDestroyed && whileCounter < 20);
+
+        if (whileCounter >= 20)
+            Debug.LogWarning("out of whiles [Increase Turn]");
+
+        await Task.Yield();
     }
+
+    public void CheckTurn(int PlayerIndex)
+    {
+        playerShipDestroy(PlayerIndex);
+
+        Debug.Log("Current player turn " + CurrentPlayerTurn);
+        int whileCounter = 0;
+
+
+        //CurrentPlayerTurn = CurrentPlayerTurn % PlanesPlayers.Count;
+        while (PlayersList[CurrentPlayerTurn].isDestroyed && whileCounter < 20)
+        {
+            CurrentPlayerTurn++;
+            CurrentPlayerTurn = CurrentPlayerTurn % PlanesPlayers.Count;
+            whileCounter++;
+        }
+        Debug.Log("new player turn " + CurrentPlayerTurn);
+        if (whileCounter >= 20)
+            Debug.LogWarning("out of whiles [Check Turn]");
+    }
+
+    private void FinishGame()
+    {
+        SetupInProgress = true;
+        //PlanesPlayers[0].FinishGame();
+        foreach(PlayerShipStructure ship in PlayersList)
+        {
+            if(!ship.isDestroyed)
+                PlanesPlayers[PlayersList.IndexOf(ship)].FinishGame();
+        }
+    }
+    //DisplayBoardToEachPlayer   
 }

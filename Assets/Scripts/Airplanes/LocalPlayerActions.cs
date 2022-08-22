@@ -5,6 +5,9 @@ using Mirror;
 using System;
 using UnityEngine.Tilemaps;
 using System.Threading.Tasks;
+using UnityEngine.UI;
+using TMPro;
+using UnityEngine.SceneManagement;
 
 public class LocalPlayerActions : MonoBehaviour
 {
@@ -14,9 +17,14 @@ public class LocalPlayerActions : MonoBehaviour
     //public GridBaseStructure PlayerVisibleGrid;
     //public int CurrentPowerup;
     public int LocalPlayerIndex;
+    [SerializeField] GameObject StartGameButton;
+    [SerializeField] TextMeshProUGUI NameField;
+    [SerializeField] GameObject EndGame;
+    [SerializeField] Image BGPlayer;
+    [SerializeField] TextMeshProUGUI SmallConsole;
 
 
-    
+
     [SerializeField]
     public GameObject BackPanel;
     public GameObject PlayerCamera;
@@ -29,10 +37,35 @@ public class LocalPlayerActions : MonoBehaviour
     }
     private void Start()
     {
+        EndGame.SetActive(false);
         SetBackPanelToGridSize();
+        if (Application.isBatchMode)
+        {
+            Debug.Log("I am planes server");
+        }    
+       
     }
     private void Update()
     {
+        if (Application.isBatchMode) return;
+        if (PlanesPlayer.localPlayer == null) return;
+
+        UpdateName();
+
+        if (PlanesPlayer.localPlayer.playerIndex != 0 || !ServerActions.Instance.SetupInProgress)
+            StartGameButton.SetActive(false);
+        else
+            StartGameButton.SetActive(true);
+
+
+        if (!ServerActions.Instance.SetupInProgress  && ServerActions.Instance.CurrentPlayerTurn == PlanesPlayer.localPlayer.playerIndex && !ServerActions.Instance.HitCalled)
+        {
+            BGPlayer.color = Color.green;
+        }
+        else
+        {
+            BGPlayer.color = Color.white;
+        }
         if (!ServerActions.Instance.SetupInProgress && Input.GetMouseButtonDown(0) && ServerActions.Instance.CurrentPlayerTurn == PlanesPlayer.localPlayer.playerIndex && !ServerActions.Instance.HitCalled)
         {
             RaycastToTile();
@@ -125,4 +158,28 @@ public class LocalPlayerActions : MonoBehaviour
     }*/
     #endregion
     //UseDiscoveredPowers
+
+    public void StartGame()
+    {
+        PlanesPlayer.localPlayer.StartGame();
+    }
+
+    private void UpdateName()
+    {
+        NameField.text = PlanesPlayer.localPlayer.Nome;
+    }
+
+    public void FinishGame()
+    {
+        EndGame.SetActive(true);
+    }
+
+    public void DC()
+    {
+        NetworkManager.singleton.StopClient();
+    }
+    public void ShowText(string STR)
+    {
+        SmallConsole.text = STR;
+    }
 }

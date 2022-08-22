@@ -14,7 +14,7 @@ public class PlanesPlayer : NetworkBehaviour
         if (isLocalPlayer)
         {
             localPlayer = this;
-            if (!HitSlapRazboi.instance.InititalSetupDone)
+            if (ServerActions.Instance.SetupInProgress)
             {
                 {
                     SetPlayerIndex();
@@ -32,11 +32,35 @@ public class PlanesPlayer : NetworkBehaviour
         ServerActions.Instance.SetupBoard();
     }
 
-    [ClientRpc]
-    public void SetUpDone()
+    public override void OnStopServer()
     {
-        ServerActions.Instance.SetupInProgress = false;
+        Debug.Log($"Client {name}, index {playerIndex} Stopped on Server");
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+
+        if ((players.Length - 1) == 0)
+        {
+            Debug.Log($"No Players Left. Resetting ...");
+            ServerActions.Instance.ResetBoard();
+            return;
+        }
+
+        if (!HasEntered)
+        {
+            Debug.Log("Player tried to join with no space left");
+        }
+        else
+        {
+            //HitSlapRazboi.instance.RemovePlayer(playerIndex);
+            //ServerActions.Instance.PlanesPlayers.Remove(this);
+            ServerActions.Instance.CheckTurn(playerIndex);
+        }
     }
+
+    [ClientRpc]
+    public void SetUpProgress(bool bul)
+    {
+        ServerActions.Instance.SetupInProgress = bul;
+    }   
     [Command]
     public async void HitTile(Vector3Int TilePos)
     {
@@ -57,7 +81,8 @@ public class PlanesPlayer : NetworkBehaviour
     public void UpdateTile(Vector3Int pos, int TileIndex)
     {
         LocalPlayerActions.Instance.PlayingField.SetTile(pos, ServerActions.Instance.Tiles[TileIndex]);
-    }
+        LocalPlayerActions.Instance.ShowText(pos.ToString());
+    }  
 
     [ClientRpc]
     public void SetHitCalled(bool bul)
@@ -77,6 +102,11 @@ public class PlanesPlayer : NetworkBehaviour
         //ClientDisconnect();
     }
 
+    [ClientRpc]
+    public void FinishGame()
+    {
+        LocalPlayerActions.Instance.FinishGame();
+    }
     [Command]
     void SetPlayerIndex()
     {
@@ -90,6 +120,8 @@ public class PlanesPlayer : NetworkBehaviour
         {
             HasEntered = true;
             //AddDeck();
+            ServerActions.Instance.PlanesPlayers.Add(this);
+            playerIndex = ServerActions.Instance.PlanesPlayers.IndexOf(this);
             SetName();
             Debug.Log($"Setting {name} index to : " + playerIndex);
         }
@@ -98,7 +130,7 @@ public class PlanesPlayer : NetworkBehaviour
     void SetName()
     {
         Nome = "P " + (playerIndex + 1).ToString();
-        HitSlapRazboi.instance.PlayerNames.Add(Nome);
+        //HitSlapRazboi.instance.PlayerNames.Add(Nome);
         Debug.Log($"Setting {name} name to : " + Nome);
     }
 }
