@@ -27,6 +27,7 @@ public class HitSlapRazboi : NetworkBehaviour
     public static UnityEvent<int>  CheckUI;
     public static UnityEvent  EndGame;
     public static UnityEvent<string, int> SlapSuccess;
+    public static UnityEvent SlapAnimation;
     public DeckControllerRazboi RefToController;
     public bool RoundEndTriggered = false;
     public List<List<CardValueType>> PlayerDecks = new List<List<CardValueType>>();
