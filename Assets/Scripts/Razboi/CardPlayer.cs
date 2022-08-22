@@ -67,6 +67,12 @@ public class CardPlayer : NetworkBehaviour
     {
         HitSlapRazboi.instance.InititalSetupDone = true;
     }
+
+    [ClientRpc]
+    public void SlapMojo()
+    {
+        HitSlapRazboi.SlapAnimation.Invoke();
+    }
     [Command]
     public void SendRulesUpdateToServer(int sliderInput)
     {
@@ -112,10 +118,10 @@ public class CardPlayer : NetworkBehaviour
     {
         Debug.Log($"Trying to slap cards {name} with index {playerIndex}");
         HitSlapRazboi.instance.SlapCards(playerIndex,Nome, out bool Success, out int timeSpan);
-
+        SlapMojo();
        // ChangeDecks(HitSlapRazboi.instance.PlayerDecks, HitSlapRazboi.instance.Players);
 
-        if(Success) { RegisterWinningSlap(Nome, timeSpan ); }
+        if (Success) { RegisterWinningSlap(Nome, timeSpan ); }
     }
 
     [ClientRpc]

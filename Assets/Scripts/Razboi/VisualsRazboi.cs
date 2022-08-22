@@ -34,6 +34,7 @@ public class VisualsRazboi : MonoBehaviour
     [SerializeField] GameObject StartGame;
     TextMeshProUGUI SlapName;
     TextMeshProUGUI ReactionTxt;
+    Animator SlapAnimator;
 
 
     private void Awake()
@@ -49,10 +50,11 @@ public class VisualsRazboi : MonoBehaviour
         HitSlapRazboi.CheckUI.AddListener(CheckUIButtons);
         HitSlapRazboi.EndGame.AddListener(ExecuteEndGame);
         HitSlapRazboi.SlapSuccess.AddListener(SuccessSlap);
-
+        HitSlapRazboi.SlapAnimation.AddListener(SlapAnimation);
         StartCoroutine(WaitForLocal());
         SlapName = SlapPanel.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
         ReactionTxt = SlapPanel.transform.GetChild(2).GetComponent<TextMeshProUGUI>();
+        SlapAnimator = GameObject.Find("Glass").GetComponent<Animator>();
 
     }
 
@@ -254,6 +256,11 @@ public class VisualsRazboi : MonoBehaviour
         ReactionTxt.text = ReactionTime.ToString();
 
         StartCoroutine(StopSlapPanel(5));
+    }
+    public void SlapAnimation()
+    {
+
+        SlapAnimator.Play("Glass_Shaking");
     }
 
     IEnumerator StopSlapPanel(float WaitTime)
