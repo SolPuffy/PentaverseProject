@@ -530,6 +530,8 @@ public class ServerActions : NetworkBehaviour
     //DrawBoardForServer
     public async void SetupBoard()
     {
+        PlanesPlayers[0].SetClientBoard(BoardSize);
+
         if (!SetupInProgress)
             return;
 
@@ -543,6 +545,7 @@ public class ServerActions : NetworkBehaviour
         //await ShowTotalMap();
         SetupInProgress = false;
         PlanesPlayers[0].SetUpProgress(false);
+        
         activeShipsCount = 5;
     }
     private async Task FillMapWithWater()

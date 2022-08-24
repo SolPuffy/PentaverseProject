@@ -17,11 +17,12 @@ public class LocalPlayerActions : MonoBehaviour
     //public GridBaseStructure PlayerVisibleGrid;
     //public int CurrentPowerup;
     public int LocalPlayerIndex;
-    [SerializeField] GameObject StartGameButton;
+    [SerializeField] GameObject HostMenu;
     [SerializeField] TextMeshProUGUI NameField;
     [SerializeField] GameObject EndGame;
     [SerializeField] Image BGPlayer;
     [SerializeField] TextMeshProUGUI SmallConsole;
+    [SerializeField] TMP_Dropdown choice;
 
 
 
@@ -38,7 +39,7 @@ public class LocalPlayerActions : MonoBehaviour
     private void Start()
     {
         EndGame.SetActive(false);
-        SetBackPanelToGridSize();
+        //SetBackPanelToGridSize();
         if (Application.isBatchMode)
         {
             Debug.Log("I am planes server");
@@ -53,9 +54,9 @@ public class LocalPlayerActions : MonoBehaviour
         UpdateName();
 
         if (PlanesPlayer.localPlayer.playerIndex != 0 || !ServerActions.Instance.SetupInProgress)
-            StartGameButton.SetActive(false);
+            HostMenu.SetActive(false);
         else
-            StartGameButton.SetActive(true);
+            HostMenu.SetActive(true);
 
 
         if (!ServerActions.Instance.SetupInProgress  && ServerActions.Instance.CurrentPlayerTurn == PlanesPlayer.localPlayer.playerIndex && !ServerActions.Instance.HitCalled)
@@ -128,12 +129,12 @@ public class LocalPlayerActions : MonoBehaviour
         }
         SendTileInformationToServer();
     }
-    public void SetBackPanelToGridSize()
+    public void SetBackPanelToGridSize(int Bardsize)
     {
-        float BoardScaling = ((0.28f * ServerActions.Instance.BoardSize) + ServerActions.Instance.BoardSize) / 2f;
+        float BoardScaling = ((0.28f * Bardsize) + Bardsize) / 2f;
         BackPanel.transform.position = new Vector3(BoardScaling, BoardScaling,0);
-        PlayerCamera.transform.position = new Vector3(BoardScaling, BoardScaling, -((0.28f * ServerActions.Instance.BoardSize) + ServerActions.Instance.BoardSize));
-        BoardScaling = ((0.28f * ServerActions.Instance.BoardSize) + ServerActions.Instance.BoardSize) / 10f;
+        PlayerCamera.transform.position = new Vector3(BoardScaling, BoardScaling, -((0.28f * Bardsize) + Bardsize));
+        BoardScaling = ((0.28f * Bardsize) + Bardsize) / 10f;
         BackPanel.transform.localScale = new Vector3(BoardScaling, 1, BoardScaling);
     }
     public async Task Cast3dRayTo2dCell(Ray SnapshotOfRay)
@@ -161,6 +162,7 @@ public class LocalPlayerActions : MonoBehaviour
 
     public void StartGame()
     {
+        PlanesPlayer.localPlayer.ChangeBoardSize(ChangeSquare());
         PlanesPlayer.localPlayer.StartGame();
     }
 
@@ -181,5 +183,35 @@ public class LocalPlayerActions : MonoBehaviour
     public void ShowText(string STR)
     {
         SmallConsole.text = STR;
+    }
+
+    private int ChangeSquare()
+    {
+        int size;
+        switch(choice.value)
+        {
+            case 0:
+                size = 21;
+                break;
+            case 1:
+                size = 24;
+                break;
+            case 2:
+                size = 27;
+                break;
+            case 3:
+                size = 30;
+                break;
+            case 4:
+                size = 33;
+                break;
+            case 5:
+                size = 42;
+                break;
+            default:
+                size = 21;
+                break;
+        }
+        return size;
     }
 }

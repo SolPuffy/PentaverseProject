@@ -133,4 +133,16 @@ public class PlanesPlayer : NetworkBehaviour
         //HitSlapRazboi.instance.PlayerNames.Add(Nome);
         Debug.Log($"Setting {name} name to : " + Nome);
     }
+
+    [Command]
+    public void ChangeBoardSize(int size)
+    {
+        ServerActions.Instance.BoardSize = size;
+    }
+
+    [ClientRpc]
+    public void SetClientBoard(int size)
+    {
+        LocalPlayerActions.Instance.SetBackPanelToGridSize(size);
+    }
 }
