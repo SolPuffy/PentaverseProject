@@ -32,6 +32,8 @@ public class LocalPlayerActions : MonoBehaviour
     public Tilemap PlayingField;
     public Vector3Int TargetedTileLocation;
 
+    private int BardSize = 21;
+
     private void Awake()
     {
         Instance = this;
@@ -131,15 +133,16 @@ public class LocalPlayerActions : MonoBehaviour
     }
     public void SetBackPanelToGridSize(int Bardsize)
     {
+        BardSize = Bardsize;
         float BoardScaling = ((0.28f * Bardsize) + Bardsize) / 2f;
         BackPanel.transform.position = new Vector3(BoardScaling, BoardScaling,0);
         PlayerCamera.transform.position = new Vector3(BoardScaling, BoardScaling, -((0.28f * Bardsize) + Bardsize));
         BoardScaling = ((0.28f * Bardsize) + Bardsize) / 10f;
-        BackPanel.transform.localScale = new Vector3(BoardScaling, 1, BoardScaling);
+        BackPanel.transform.localScale = new Vector3(BoardScaling, 1, BoardScaling);        
     }
     public async Task Cast3dRayTo2dCell(Ray SnapshotOfRay)
     {
-        if (Physics.Raycast(SnapshotOfRay.origin, SnapshotOfRay.direction, out RaycastHit RayH, ServerActions.Instance.BoardSize * 2.5f, 1 << LayerMask.NameToLayer("Tilemap")))
+        if (Physics.Raycast(SnapshotOfRay.origin, SnapshotOfRay.direction, out RaycastHit RayH, BardSize * 2.5f, 1 << LayerMask.NameToLayer("Tilemap")))
         {
             Debug.DrawLine(SnapshotOfRay.origin, RayH.point, Color.red, 3f);
             TargetedTileLocation = PlayingField.WorldToCell(RayH.point);
