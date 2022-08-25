@@ -46,6 +46,7 @@ public class VisualsRazboi : MonoBehaviour
         if (HitSlapRazboi.CheckUI == null) { HitSlapRazboi.CheckUI = new UnityEvent<int>(); }
         if (HitSlapRazboi.EndGame == null) { HitSlapRazboi.EndGame = new UnityEvent(); }
         if (HitSlapRazboi.SlapSuccess == null) { HitSlapRazboi.SlapSuccess = new UnityEvent<string, int>(); }
+        if (HitSlapRazboi.SlapAnimation == null) { HitSlapRazboi.SlapAnimation = new UnityEvent(); }
 
         HitSlapRazboi.CheckUI.AddListener(CheckUIButtons);
         HitSlapRazboi.EndGame.AddListener(ExecuteEndGame);
@@ -95,7 +96,7 @@ public class VisualsRazboi : MonoBehaviour
         {
             if (CardPlayer.localPlayer.playerIndex == 0)
             {
-                Debug.Log("I am HOST");
+                //Debug.Log("I am HOST");
                 StartGame.SetActive(true);
             }
             else
