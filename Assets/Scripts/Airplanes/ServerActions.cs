@@ -16,6 +16,8 @@ public class PlayerShipStructure
     public int Health = 8;
     public string Orientation = "";
     public bool isDestroyed = false;
+    public bool isShielded = false;
+    public bool Misfire = false;
 }
 public class ServerActions : NetworkBehaviour
 {
@@ -58,7 +60,7 @@ public class ServerActions : NetworkBehaviour
     // tile 7 = player 2
     // tile 8 = player 3
     // tile 9 = player 4
-    // tile 10 = destroyed player
+    // tile 10 = fake player
 
     //[TargetRpc]
     public async Task HitCalledOnTileLocation(Vector3Int targetedTile)
@@ -84,6 +86,13 @@ public class ServerActions : NetworkBehaviour
                     PlayersList[playerIndexBeforeUpdate].CurrentHeldPowerup = WeightedPowerUpChoice[RollWeight].PowerUp;
                     PlayersList[playerIndexBeforeUpdate].PowerupPity = 0;
                     ActivePowerupsList[ActivePowerupsList.IndexOf(WeightedPowerUpChoice[RollWeight])].AvailableQuanity--;
+
+                    //checkIfPowerupIsPassive
+                    if(PlayersList[playerIndexBeforeUpdate].CurrentHeldPowerup.IsRetroactive)
+                    {
+                        await PlayersList[CurrentPlayerTurn].CurrentHeldPowerup.OnUse(playerIndexBeforeUpdate);
+                        PlayersList[CurrentPlayerTurn].CurrentHeldPowerup = null;
+                    }
                 }
                 else
                 {
@@ -168,6 +177,18 @@ public class ServerActions : NetworkBehaviour
             //Player 0 To Success Hit //DamagePlayer0 //InstakillPlayer0 If targetedTile = head position
             case 5:
                 {
+                    if (PlayersList[0].isShielded)
+                    {
+                        PlayersList[0].isShielded = false;
+                        do
+                        {
+                            targetedTile.x += UnityEngine.Random.Range(-1, 1);
+                            targetedTile.y += UnityEngine.Random.Range(-1, 1);
+                        }
+                        while (ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] == 5);
+                        DebugStatement += "(Shielded) TileType Player0 To Suceess"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 4;
+                        return;
+                    }
                     DebugStatement += "TileType Player0 To Suceess"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 4;
                     PlayersList[0].Health--;
                     try { PlanesPlayers[0].UpdateTile(new Vector3Int(targetedTile.x, targetedTile.y), 4); }
@@ -184,6 +205,18 @@ public class ServerActions : NetworkBehaviour
             //Player 1 To Success Hit //DamagePlayer1 //InstakillPlayer1 If targetedTile = head position
             case 6:
                 {
+                    if (PlayersList[1].isShielded)
+                    {
+                        PlayersList[1].isShielded = false;
+                        do
+                        {
+                            targetedTile.x += UnityEngine.Random.Range(-1, 1);
+                            targetedTile.y += UnityEngine.Random.Range(-1, 1);
+                        }
+                        while (ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] == 6);
+                        DebugStatement += "(Shielded) TileType Player1 To Suceess"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 4;
+                        return;
+                    }
                     DebugStatement += "TileType Player1 To Suceess"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 4;
                     PlayersList[1].Health--;
                     try { PlanesPlayers[1].UpdateTile(new Vector3Int(targetedTile.x, targetedTile.y), 4); }
@@ -199,6 +232,18 @@ public class ServerActions : NetworkBehaviour
             //Player 2 To Success Hit //DamagePlayer2 //InstakillPlayer2 If targetedTile = head position
             case 7:
                 {
+                    if (PlayersList[2].isShielded)
+                    {
+                        PlayersList[2].isShielded = false;
+                        do
+                        {
+                            targetedTile.x += UnityEngine.Random.Range(-1, 1);
+                            targetedTile.y += UnityEngine.Random.Range(-1, 1);
+                        }
+                        while (ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] == 7);
+                        DebugStatement += "(Shielded) TileType Player2 To Suceess"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 4;
+                        return;
+                    }
                     DebugStatement += "TileType Player2 To Suceess"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 4;
                     PlayersList[2].Health--;
                     try { PlanesPlayers[2].UpdateTile(new Vector3Int(targetedTile.x, targetedTile.y), 4); }
@@ -214,6 +259,18 @@ public class ServerActions : NetworkBehaviour
             //Player 3 To Success Hit //DamagePlayer3 //InstakillPlayer3 If targetedTile = head position
             case 8:
                 {
+                    if (PlayersList[3].isShielded)
+                    {
+                        PlayersList[3].isShielded = false;
+                        do
+                        {
+                            targetedTile.x += UnityEngine.Random.Range(-1, 1);
+                            targetedTile.y += UnityEngine.Random.Range(-1, 1);
+                        }
+                        while (ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] == 8);
+                        DebugStatement += "(Shielded) TileType Player3 To Suceess"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 4;
+                        return;
+                    }
                     DebugStatement += "TileType Player3 To Suceess"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 4;
                     PlayersList[3].Health--;
                     try { PlanesPlayers[3].UpdateTile(new Vector3Int(targetedTile.x, targetedTile.y), 4); }
@@ -229,6 +286,18 @@ public class ServerActions : NetworkBehaviour
             //Player 4 To Success Hit //DamagePlayer4 //InstakillPlayer4 If targetedTile = head position
             case 9:
                 {
+                    if (PlayersList[4].isShielded)
+                    {
+                        PlayersList[4].isShielded = false;
+                        do
+                        {
+                            targetedTile.x += UnityEngine.Random.Range(-1, 1);
+                            targetedTile.y += UnityEngine.Random.Range(-1, 1);
+                        }
+                        while (ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] == 9);
+                        DebugStatement += "(Shielded) TileType Player4 To Suceess"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 4;
+                        return;
+                    }
                     DebugStatement += "TileType Player4 To Suceess"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 4;
                     PlayersList[4].Health--;
                     try { PlanesPlayers[4].UpdateTile(new Vector3Int(targetedTile.x, targetedTile.y), 4); }
@@ -239,7 +308,12 @@ public class ServerActions : NetworkBehaviour
                         playerShipDestroy(4);
                     }
                     break;
-                }                
+                }
+            case 10:
+                {
+                    DebugStatement += "TileType FakePlayer To Suceess"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 4;
+                    break;
+                }
             //Destroy To Destroy
             //case 10: { DebugStatement += "TileType Destroyed To Destroyed"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 10; break; }
             default: break;
@@ -273,6 +347,7 @@ public class ServerActions : NetworkBehaviour
     {
         Debug.Log("attempt pattern");
         bool hitPlayer = false;
+        bool[] shieldbreak = { false, false, false, false, false };
         for (int x = 0; x < targetedTiles.Length; x++)
         {
             if (map.GetTile(targetedTiles[x]) == null)
@@ -330,13 +405,25 @@ public class ServerActions : NetworkBehaviour
                 //Player 0 To Success Hit //DamagePlayer0 //InstakillPlayer0 If targetedTile = head position
                 case 5:
                     {
+                        if (PlayersList[0].isShielded)
+                        {
+                            shieldbreak[0] = true;
+                            do
+                            {
+                                targetedTiles[x].x += UnityEngine.Random.Range(-1, 1);
+                                targetedTiles[x].y += UnityEngine.Random.Range(-1, 1);
+                            }
+                            while (ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] == 5);
+                            DebugStatement += "(Shielded) TileType Player0 To Suceess"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 4;
+                            continue;
+                        }
                         hitPlayer = true;
                         DebugStatement += "TileType Player0 To Suceess"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 4;
                         PlayersList[0].Health--;
 
                         try { PlanesPlayers[0].UpdateTile(new Vector3Int(targetedTiles[x].x, targetedTiles[x].y), 4); }
                         catch { Debug.Log("Player not existent"); }
-                        
+
                         if (PlayersList[0].Health < 1 || (targetedTiles[x].x == PlayersList[0].PlayerShipHead.X && targetedTiles[x].y == PlayersList[0].PlayerShipHead.Y))
                         {
                             PlayersList[0].isDestroyed = true;
@@ -348,6 +435,18 @@ public class ServerActions : NetworkBehaviour
                 //Player 1 To Success Hit //DamagePlayer1 //InstakillPlayer1 If targetedTile = head position
                 case 6:
                     {
+                        if (PlayersList[1].isShielded)
+                        {
+                            shieldbreak[1] = true;
+                            do
+                            {
+                                targetedTiles[x].x += UnityEngine.Random.Range(-1, 1);
+                                targetedTiles[x].y += UnityEngine.Random.Range(-1, 1);
+                            }
+                            while (ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] == 6);
+                            DebugStatement += "(Shielded) TileType Player0 To Suceess"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 4;
+                            continue;
+                        }
                         hitPlayer = true;
                         DebugStatement += "TileType Player1 To Suceess"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 4;
                         PlayersList[1].Health--;
@@ -364,6 +463,18 @@ public class ServerActions : NetworkBehaviour
                 //Player 2 To Success Hit //DamagePlayer2 //InstakillPlayer2 If targetedTile = head position
                 case 7:
                     {
+                        if (PlayersList[2].isShielded)
+                        {
+                            shieldbreak[2] = true;
+                            do
+                            {
+                                targetedTiles[x].x += UnityEngine.Random.Range(-1, 1);
+                                targetedTiles[x].y += UnityEngine.Random.Range(-1, 1);
+                            }
+                            while (ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] == 7);
+                            DebugStatement += "(Shielded) TileType Player0 To Suceess"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 4;
+                            continue;
+                        }
                         hitPlayer = true;
                         DebugStatement += "TileType Player2 To Suceess"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 4;
                         PlayersList[2].Health--;
@@ -380,6 +491,18 @@ public class ServerActions : NetworkBehaviour
                 //Player 3 To Success Hit //DamagePlayer3 //InstakillPlayer3 If targetedTile = head position
                 case 8:
                     {
+                        if (PlayersList[3].isShielded)
+                        {
+                            shieldbreak[3] = true;
+                            do
+                            {
+                                targetedTiles[x].x += UnityEngine.Random.Range(-1, 1);
+                                targetedTiles[x].y += UnityEngine.Random.Range(-1, 1);
+                            }
+                            while (ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] == 8);
+                            DebugStatement += "(Shielded) TileType Player0 To Suceess"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 4;
+                            continue;
+                        }
                         hitPlayer = true;
                         DebugStatement += "TileType Player3 To Suceess"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 4;
                         PlayersList[3].Health--;
@@ -396,6 +519,18 @@ public class ServerActions : NetworkBehaviour
                 //Player 4 To Success Hit //DamagePlayer4 //InstakillPlayer4 If targetedTile = head position
                 case 9:
                     {
+                        if (PlayersList[4].isShielded)
+                        {
+                            shieldbreak[4] = true;
+                            do
+                            {
+                                targetedTiles[x].x += UnityEngine.Random.Range(-1, 1);
+                                targetedTiles[x].y += UnityEngine.Random.Range(-1, 1);
+                            }
+                            while (ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] == 9);
+                            DebugStatement += "(Shielded) TileType Player0 To Suceess"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 4;
+                            continue;
+                        }
                         hitPlayer = true;
                         DebugStatement += "TileType Player4 To Suceess"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 4;
                         PlayersList[4].Health--;
@@ -408,12 +543,24 @@ public class ServerActions : NetworkBehaviour
                         }
                         break;
                     }
+                case 10:
+                    {
+                        DebugStatement += "TileType FakePlayer To Suceess"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 4;
+                        break;
+                    }
                 //Destroy To Destroy
                 //case 10: { DebugStatement += "TileType Destroyed To Destroyed"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 10; break; }
                 default: break;
             }
         }
         PlayersList[CurrentPlayerTurn].CurrentHeldPowerup = null;
+        for (int i = 0; i < 5; i++)
+        {
+            if(shieldbreak[i])
+            {
+                PlayersList[i].isShielded = false;
+            }
+        }
         if (!hitPlayer)
         {
             await IncreaseTurn();
@@ -537,7 +684,7 @@ public class ServerActions : NetworkBehaviour
 
         await FillMapWithWater();
         await BuildEmptyAreaArray();
-        await AttemptToArrangePlayers();
+        await AttemptToArrangePlayers(false);
         await BuildPowerUpsPool();
         //Powerups are now handled by Hitting tiles
         //await AddPowerUps();
@@ -616,7 +763,7 @@ public class ServerActions : NetworkBehaviour
         }*/
         await Task.Yield();
     }    
-    private async Task AttemptToArrangePlayers()
+    private async Task AttemptToArrangePlayers(bool fake)
     {
         int localRandomIndex;
         int orientation;
@@ -625,13 +772,19 @@ public class ServerActions : NetworkBehaviour
 
         for (int i = 0; i < 5; i++)
         {
-            PlayersList.Add(new PlayerShipStructure());
+            if (fake)
+            {
+                i = 5;
+            }
+            else
+            {
+                PlayersList.Add(new PlayerShipStructure());
+            }
             localRandomIndex = UnityEngine.Random.Range(0, AvailableBuildSpaces.Count - 1);
             orientation = UnityEngine.Random.Range(0, 39) / 10;
-            
+
             CenterX = short.Parse(AvailableBuildSpaces[localRandomIndex].Substring(0, 2));
             CenterY = short.Parse(AvailableBuildSpaces[localRandomIndex].Substring(2, 2));
-
             //For your own sake, do not open this switch region
             #region SwitchSwitchSwitchSwitchSwitchSwitch
             switch (i + 5)
@@ -1080,79 +1233,165 @@ public class ServerActions : NetworkBehaviour
                         }
                         break;
                     }
+                case 10:
+                    {
+                        //CenterOfShip
+                        ServerVisibleGrid.Row[CenterX].Column[CenterY] = 10;
+
+                        //BodyOfShip
+                        switch (orientation)
+                        {
+                            //North
+                            case 0:
+                                {
+                                    ServerVisibleGrid.Row[CenterX].Column[CenterY + 1] = 10;
+                                    //HEAD
+                                    ServerVisibleGrid.Row[CenterX].Column[CenterY + 2] = 10;
+                                    //
+                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY + 1] = 10;
+                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY + 1] = 10;
+                                    ServerVisibleGrid.Row[CenterX - 2].Column[CenterY] = 10;
+                                    ServerVisibleGrid.Row[CenterX + 2].Column[CenterY] = 10;
+                                    ServerVisibleGrid.Row[CenterX].Column[CenterY - 1] = 10;
+                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY - 2] = 10;
+                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY - 2] = 10;
+                                    break;
+                                }
+                            //South
+                            case 1:
+                                {
+                                    PlayersList[i].Orientation = "South";
+                                    ServerVisibleGrid.Row[CenterX].Column[CenterY - 1] = 10;
+                                    //HEAD
+                                    ServerVisibleGrid.Row[CenterX].Column[CenterY - 2] = 10;
+                                    //
+                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY - 1] = 10;
+                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY - 1] = 10;
+                                    ServerVisibleGrid.Row[CenterX + 2].Column[CenterY] = 10;
+                                    ServerVisibleGrid.Row[CenterX - 2].Column[CenterY] = 10;
+                                    ServerVisibleGrid.Row[CenterX].Column[CenterY + 1] = 10;
+                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY + 2] = 10;
+                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY + 2] = 10;
+                                    break;
+                                }
+                            //West
+                            case 2:
+                                {
+                                    PlayersList[i].Orientation = "West";
+                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY] = 10;
+                                    //HEAD
+                                    ServerVisibleGrid.Row[CenterX - 2].Column[CenterY] = 10;
+                                    //
+                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY - 1] = 10;
+                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY + 1] = 10;
+                                    ServerVisibleGrid.Row[CenterX].Column[CenterY - 2] = 10;
+                                    ServerVisibleGrid.Row[CenterX].Column[CenterY + 2] = 10;
+                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY] = 10;
+                                    ServerVisibleGrid.Row[CenterX + 2].Column[CenterY - 1] = 10;
+                                    ServerVisibleGrid.Row[CenterX + 2].Column[CenterY + 1] = 10;
+                                    break;
+                                }
+                            //East
+                            case 3:
+                                {
+                                    PlayersList[i].Orientation = "East";
+                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY] = 10;
+                                    //HEAD
+                                    ServerVisibleGrid.Row[CenterX + 2].Column[CenterY] = 10;
+                                    //
+                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY + 1] = 10;
+                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY - 1] = 10;
+                                    ServerVisibleGrid.Row[CenterX].Column[CenterY + 2] = 10;
+                                    ServerVisibleGrid.Row[CenterX].Column[CenterY - 2] = 10;
+                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY] = 10;
+                                    ServerVisibleGrid.Row[CenterX - 2].Column[CenterY + 1] = 10;
+                                    ServerVisibleGrid.Row[CenterX - 2].Column[CenterY - 1] = 10;
+                                    break;
+                                }
+                        }
+                        break;
+                    }
                 default: { Debug.Log("Out of bounds lmao"); break; }
             }
             //UpdateTreasuresSlotsList
             await WorstThingOfMyLife(CenterX,CenterY,orientation);
             
-            //Erase ConsumedSpaces
-            switch (CenterX)
+            
+            if (fake)
             {
-                case 2: break;
-                case 3: CenterX -= 1;break;
-                case 4: CenterX -= 2;break;
-                case 5: CenterX -= 3;break;
-                default: CenterX -= 4;break;
+                //Display new ship to one who placed it don't remove build spaces
             }
-            switch(CenterY)
+            else
             {
-                case 2:break;
-                case 3: CenterY -= 1; break;
-                case 4: CenterY -= 2; break;
-                case 5: CenterY -= 3; break;
-                default: CenterY -= 4; break;
-            }
-            for(int j=0;j<9;j++)
-            {
-                for(int k=0;k<9;k++)
-                {  
-                    if(CenterX + j<10 && CenterY + k <10)
+                //Erase ConsumedSpaces
+                switch (CenterX)
+                {
+                    case 2: break;
+                    case 3: CenterX -= 1; break;
+                    case 4: CenterX -= 2; break;
+                    case 5: CenterX -= 3; break;
+                    default: CenterX -= 4; break;
+                }
+                switch (CenterY)
+                {
+                    case 2: break;
+                    case 3: CenterY -= 1; break;
+                    case 4: CenterY -= 2; break;
+                    case 5: CenterY -= 3; break;
+                    default: CenterY -= 4; break;
+                }
+                for (int j = 0; j < 9; j++)
+                {
+                    for (int k = 0; k < 9; k++)
                     {
-                        try
+                        if (CenterX + j < 10 && CenterY + k < 10)
                         {
-                            AvailableBuildSpaces.RemoveAt(AvailableBuildSpaces.IndexOf($"0{CenterX + j}0{CenterY + k}"));
+                            try
+                            {
+                                AvailableBuildSpaces.RemoveAt(AvailableBuildSpaces.IndexOf($"0{CenterX + j}0{CenterY + k}"));
+                            }
+                            catch
+                            {
+                                //Debug.Log("Trying To Delete Already Deleted Slot / Outside Border Overlap");
+                            }
+                            continue;
                         }
-                        catch 
+                        if (CenterX + j > 10 && CenterY + k < 10)
                         {
-                            //Debug.Log("Trying To Delete Already Deleted Slot / Outside Border Overlap");
+                            try
+                            {
+                                AvailableBuildSpaces.RemoveAt(AvailableBuildSpaces.IndexOf($"{CenterX + j}0{CenterY + k}"));
+                            }
+                            catch
+                            {
+                                //Debug.Log("Trying To Delete Already Deleted Slot / Outside Border Overlap");
+                            }
+                            continue;
                         }
-                        continue;
-                    }
-                    if (CenterX + j > 10 && CenterY + k < 10)
-                    {
-                        try
+                        if (CenterX + j < 10 && CenterY + k > 10)
                         {
-                            AvailableBuildSpaces.RemoveAt(AvailableBuildSpaces.IndexOf($"{CenterX + j}0{CenterY + k}"));
+                            try
+                            {
+                                AvailableBuildSpaces.RemoveAt(AvailableBuildSpaces.IndexOf($"0{CenterX + j}{CenterY + k}"));
+                            }
+                            catch
+                            {
+                                //Debug.Log("Trying To Delete Already Deleted Slot / Outside Border Overlap");
+                            }
+                            continue;
                         }
-                        catch 
+                        if (CenterX + j > 10 && CenterY + k > 10)
                         {
-                            //Debug.Log("Trying To Delete Already Deleted Slot / Outside Border Overlap");
+                            try
+                            {
+                                AvailableBuildSpaces.RemoveAt(AvailableBuildSpaces.IndexOf($"{CenterX + j}{CenterY + k}"));
+                            }
+                            catch
+                            {
+                                //Debug.Log("Trying To Delete Already Deleted Slot / Outside Border Overlap");
+                            }
+                            continue;
                         }
-                        continue;
-                    }
-                    if (CenterX + j < 10 && CenterY + k > 10)
-                    {
-                        try
-                        {
-                            AvailableBuildSpaces.RemoveAt(AvailableBuildSpaces.IndexOf($"0{CenterX + j}{CenterY + k}"));
-                        }
-                        catch
-                        {
-                            //Debug.Log("Trying To Delete Already Deleted Slot / Outside Border Overlap");
-                        }
-                        continue;
-                    }
-                    if (CenterX + j > 10 && CenterY + k > 10)
-                    {
-                        try
-                        {
-                            AvailableBuildSpaces.RemoveAt(AvailableBuildSpaces.IndexOf($"{CenterX + j}{CenterY + k}"));
-                        }
-                        catch
-                        {
-                            //Debug.Log("Trying To Delete Already Deleted Slot / Outside Border Overlap");
-                        }
-                        continue;
                     }
                 }
             }
@@ -1390,9 +1629,17 @@ public class ServerActions : NetworkBehaviour
         {
             CurrentPlayerTurn++;
             CurrentPlayerTurn = CurrentPlayerTurn % PlanesPlayers.Count;
+
+            if (PlayersList[CurrentPlayerTurn].Misfire)
+            {
+                CurrentPlayerTurn++;
+                CurrentPlayerTurn = CurrentPlayerTurn % PlanesPlayers.Count;
+                PlayersList[CurrentPlayerTurn].Misfire = false;
+            }
+
             whileCounter++;
         }
-        while (PlayersList[CurrentPlayerTurn].isDestroyed && whileCounter < 20);
+        while (PlayersList[CurrentPlayerTurn].Misfire || (PlayersList[CurrentPlayerTurn].isDestroyed  && whileCounter < 20));
 
         if (whileCounter >= 20)
             Debug.LogWarning("out of whiles [Increase Turn]");
@@ -1409,8 +1656,13 @@ public class ServerActions : NetworkBehaviour
 
 
         //CurrentPlayerTurn = CurrentPlayerTurn % PlanesPlayers.Count;
-        while (PlayersList[CurrentPlayerTurn].isDestroyed && whileCounter < 20)
+        while (PlayersList[CurrentPlayerTurn].Misfire || (PlayersList[CurrentPlayerTurn].isDestroyed  && whileCounter < 20))
         {
+            if(PlayersList[CurrentPlayerTurn].Misfire)
+            {
+                PlayersList[CurrentPlayerTurn].Misfire = false;
+            }
+
             CurrentPlayerTurn++;
             CurrentPlayerTurn = CurrentPlayerTurn % PlanesPlayers.Count;
             whileCounter++;

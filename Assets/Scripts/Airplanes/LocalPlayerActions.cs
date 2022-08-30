@@ -32,6 +32,8 @@ public class LocalPlayerActions : MonoBehaviour
     public Tilemap PlayingField;
     public Vector3Int TargetedTileLocation;
 
+    public PowerUp PowerupSlotForCommand;
+
     private void Awake()
     {
         Instance = this;
@@ -82,7 +84,7 @@ public class LocalPlayerActions : MonoBehaviour
         if (Input.GetKey(KeyCode.Keypad0) && Input.GetKeyDown(KeyCode.Keypad1))
         {
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-            ServerActions.Instance.ShowMap();
+            PlanesPlayer.localPlayer.GiveEveryonePowerups(PowerupSlotForCommand);
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
         }
         if(Input.GetKey(KeyCode.Keypad0) && Input.GetKeyDown(KeyCode.Keypad2))

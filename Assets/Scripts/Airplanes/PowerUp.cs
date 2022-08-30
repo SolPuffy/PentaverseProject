@@ -16,14 +16,17 @@ public class PowerUp : ScriptableObject
     [Range(1,100)]
     public int PowerUpRequiredWeight;
     public int AvailableQuanity = 5;
+    public bool IsRetroactive = false;
     [TextArea(10,10)]
     public string PatternStrike_Pattern;
-    public async Task OnUse(Vector3Int UseAtLocation)
+    public async Task OnUse(object Parameter)
     {
         switch((int)PowerUpType)
         {
-            case 0: { PatternStrikeTrigger(UseAtLocation);break; }
-            case 1: { /* new stuff here*/; break; }
+            case 0: { PatternStrikeTrigger((Vector3Int)Parameter);break; }
+            case 1: { ShieldBattery((int)Parameter); break; }
+            case 2: { SpawnClone((int)Parameter);break; }
+            case 3: { Misfire((int)Parameter);break; }
             default:break;
         }
         await Task.Yield();
@@ -32,6 +35,20 @@ public class PowerUp : ScriptableObject
      *  aDiff.text.Length - aDiff.text.Replace _(Environment.NewLine, string.Empty).Length;
      */
 
+    private async void ShieldBattery(int UseAtIndex)
+    {
+        ServerActions.Instance.PlayersList[UseAtIndex].isShielded = true;
+        await Task.Yield();
+    }    
+    private async void SpawnClone(int UseAtIndex)
+    {
+        await Task.Yield();
+    }
+    private async void Misfire(int UseAtIndex)
+    {
+        ServerActions.Instance.PlayersList[UseAtIndex].Misfire = true;
+        await Task.Yield();
+    }
     private async void PatternStrikeTrigger(Vector3Int UseAtLocation)
     {
         List<CoordsStructure> PatternPointsToStrike = new List<CoordsStructure>();
@@ -77,5 +94,7 @@ public class PowerUp : ScriptableObject
 public enum _PowerUpType
 {
     PatternStrike = 0,
-    Whatever = 1
+    ShieldBattery = 1,
+    Clone = 2,
+    Misfire = 3
 }
