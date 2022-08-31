@@ -6,9 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/ConnectScene.unity
-    guid: b354cc11d5f82884e99c1d2c7b3a2859
+    path: Assets/Scenes/ConnectPlanes.unity
+    guid: c6fab350bb2cc9a49967b3be7243ae59
   - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
-    guid: 9fc0d4010bbf28b4594072e72b8655ab
+    path: Assets/Scenes/Airplanes.unity
+    guid: 24100b2c887ea6c4796ffc361d37a976
   m_configObjects: {}

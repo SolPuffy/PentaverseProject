@@ -1422,7 +1422,7 @@ public class ServerActions : NetworkBehaviour
 
     private void FinishGame()
     {
-        SetupInProgress = true;
+        //SetupInProgress = true;
         //PlanesPlayers[0].FinishGame();
         foreach(PlayerShipStructure ship in PlayersList)
         {
