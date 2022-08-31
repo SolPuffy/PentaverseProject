@@ -27,6 +27,7 @@ public class LocalPlayerActions : MonoBehaviour
 
 
     [SerializeField]
+    public PowerUpSlot[] PowerupsInventory = new PowerUpSlot[4];
     public GameObject BackPanel;
     public GameObject PlayerCamera;
     public Tilemap PlayingField;

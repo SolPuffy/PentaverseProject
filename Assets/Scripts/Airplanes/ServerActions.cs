@@ -62,6 +62,7 @@ public class ServerActions : NetworkBehaviour
     // tile 9 = player 4
     // tile 10 = fake player
 
+    
     //[TargetRpc]
     public async Task HitCalledOnTileLocation(Vector3Int targetedTile)
     {
@@ -84,16 +85,19 @@ public class ServerActions : NetworkBehaviour
                 {
 
                     RollWeight = UnityEngine.Random.Range(0, WeightedPowerUpChoice.Count - 1);
-                    PlayersList[playerIndexBeforeUpdate].CurrentHeldPowerup = WeightedPowerUpChoice[RollWeight].PowerUp;
+
+                    PlanesPlayer.localPlayer.givePlayerPowerup(WeightedPowerUpChoice[RollWeight].PowerUp,playerIndexBeforeUpdate);
+                    //PlayersList[playerIndexBeforeUpdate].CurrentHeldPowerup = WeightedPowerUpChoice[RollWeight].PowerUp;
+
                     PlayersList[playerIndexBeforeUpdate].PowerupPity = 0;
                     ActivePowerupsList[ActivePowerupsList.IndexOf(WeightedPowerUpChoice[RollWeight])].AvailableQuanity--;
 
                     //checkIfPowerupIsPassive
-                    if(PlayersList[playerIndexBeforeUpdate].CurrentHeldPowerup.IsRetroactive)
+                    /*if(PlayersList[playerIndexBeforeUpdate].CurrentHeldPowerup.IsRetroactive)
                     {
                         await PlayersList[CurrentPlayerTurn].CurrentHeldPowerup.OnUse(playerIndexBeforeUpdate);
                         PlayersList[CurrentPlayerTurn].CurrentHeldPowerup = null;
-                    }
+                    }*/
                     Debug.Log($"Player Index {playerIndexBeforeUpdate} got power-up {WeightedPowerUpChoice[RollWeight].PowerUp.ToString()}");
                 }
                 else

@@ -26,6 +26,29 @@ public class PlanesPlayer : NetworkBehaviour
             }
         }
     }
+
+    [Command]
+    public void preparePowerup(int PlayerIndex, PowerUp power)
+    {
+        ServerActions.Instance.PlayersList[PlayerIndex].CurrentHeldPowerup = power;
+    }
+    [TargetRpc]
+    public void givePlayerPowerup(PowerUp power,int playerIndex)
+    {
+        for(int i=0;i<4;i++)
+        {
+            if(LocalPlayerActions.Instance.PowerupsInventory[i].CurrentlyHeldPowerup != null)
+            {
+                LocalPlayerActions.Instance.PowerupsInventory[i].CurrentlyHeldPowerup = power;
+                LocalPlayerActions.Instance.PowerupsInventory[i].IndexOfPlayerHoldingPowerup = playerIndex;
+            }
+            else
+            {
+                Debug.Log($"Powerup Slot {i} is occupied, ignoring.");
+            }
+        }
+    }
+
     [Command]
     public void StartGame()
     {

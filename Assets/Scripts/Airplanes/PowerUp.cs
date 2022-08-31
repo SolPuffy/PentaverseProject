@@ -12,6 +12,7 @@ public class PowerUp : ScriptableObject
 {
     [SerializeField]
     public _PowerUpType PowerUpType;
+    public Sprite PowerUpIcon;
     [SerializeField]
     [Range(1,100)]
     public int PowerUpRequiredWeight;
@@ -19,6 +20,18 @@ public class PowerUp : ScriptableObject
     public bool IsRetroactive = false;
     [TextArea(10,10)]
     public string PatternStrike_Pattern;
+    public async Task LoadPowerup(int PowerupType,PowerUp activatingPowerup,int IndexOfPlayerHoldingPowerup)
+    {
+         if(activatingPowerup.IsRetroactive)
+        {
+            await activatingPowerup.OnUse(IndexOfPlayerHoldingPowerup);
+        }
+         else
+        {
+            PlanesPlayer.localPlayer.preparePowerup(IndexOfPlayerHoldingPowerup,activatingPowerup);
+        }
+        await Task.Yield();
+    }
     public async Task OnUse(object Parameter)
     {
         switch((int)PowerUpType)

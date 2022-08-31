@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Pattern_X
   m_EditorClassIdentifier: 
   PowerUpType: 0
+  PowerUpIcon: {fileID: 21300000, guid: 0def9b252f86f0b4790325a05b9bde75, type: 3}
   PowerUpRequiredWeight: 2
   AvailableQuanity: 5
   IsRetroactive: 0

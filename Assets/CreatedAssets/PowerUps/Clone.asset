@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Clone
   m_EditorClassIdentifier: 
   PowerUpType: 2
+  PowerUpIcon: {fileID: 21300000, guid: c3558808abbd7ee42b287f77a93b7041, type: 3}
   PowerUpRequiredWeight: 2
   AvailableQuanity: 1
   IsRetroactive: 1

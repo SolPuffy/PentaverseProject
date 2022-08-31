@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Pattern_circle
   m_EditorClassIdentifier: 
   PowerUpType: 0
+  PowerUpIcon: {fileID: 21300000, guid: c140695ff1a9d31419bd8ac17da4a6e2, type: 3}
   PowerUpRequiredWeight: 2
   AvailableQuanity: 5
   IsRetroactive: 0
