@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ShieldBattery 1
   m_EditorClassIdentifier: 
   PowerUpType: 1
-  PowerUpRequiredWeight: 1
+  PowerUpRequiredWeight: 2
   AvailableQuanity: 5
   IsRetroactive: 1
   PatternStrike_Pattern: 

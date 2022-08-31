@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Clone
   m_EditorClassIdentifier: 
   PowerUpType: 2
-  PowerUpRequiredWeight: 1
-  AvailableQuanity: 5
+  PowerUpRequiredWeight: 2
+  AvailableQuanity: 1
   IsRetroactive: 1
   PatternStrike_Pattern: 

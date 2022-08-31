@@ -8,6 +8,7 @@ public class ConnectScript : MonoBehaviour
     [SerializeField] NetworkManager NManager;
     private void Awake()
     {
+        Application.targetFrameRate = 30;
         if (Application.isBatchMode)
             NManager.StartServer();
     }

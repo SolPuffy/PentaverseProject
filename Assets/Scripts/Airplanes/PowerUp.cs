@@ -42,7 +42,8 @@ public class PowerUp : ScriptableObject
     }    
     private async void SpawnClone(int UseAtIndex)
     {
-        await Task.Yield();
+        await ServerActions.Instance.AttemptToArrangePlayers(true, UseAtIndex);
+        //await Task.Yield();
     }
     private async void Misfire(int UseAtIndex)
     {

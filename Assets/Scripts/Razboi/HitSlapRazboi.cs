@@ -534,7 +534,8 @@ public class HitSlapRazboi : NetworkBehaviour
             PlayerDecks.RemoveAt(index);
             for (int i = 0; i < tempList.Count; i++)
             {
-                PlayerDecks[i % PlayerDecks.Count].Add(tempList[i]);
+                if(PlayerDecks[i % PlayerDecks.Count].Count > 0)
+                    PlayerDecks[i % PlayerDecks.Count].Add(tempList[i]);
             }
         }
 

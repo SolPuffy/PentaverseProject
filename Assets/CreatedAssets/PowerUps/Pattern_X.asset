@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: Pattern_X
   m_EditorClassIdentifier: 
   PowerUpType: 0
-  PowerUpRequiredWeight: 1
+  PowerUpRequiredWeight: 2
   AvailableQuanity: 5
+  IsRetroactive: 0
   PatternStrike_Pattern: 'XOOOX
 
     OXOXO

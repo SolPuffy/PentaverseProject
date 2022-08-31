@@ -70,7 +70,7 @@ public class ServerActions : NetworkBehaviour
         if (tileTypeBeforeUpdate < 1 || tileTypeBeforeUpdate > 4)
         {
             if (UnityEngine.Random.Range(0, 1164) > 999 / PowerupsDensity + PlayersList[playerIndexBeforeUpdate].PowerupPity)
-            {
+            {               
                 List<ToPlayersPowerUp> WeightedPowerUpChoice = new List<ToPlayersPowerUp>();
                 int RollWeight = UnityEngine.Random.Range(1, 100);
                 for (int i = 0; i < ActivePowerupsList.Count; i++)
@@ -82,6 +82,7 @@ public class ServerActions : NetworkBehaviour
                 }
                 if (WeightedPowerUpChoice.Count > 0)
                 {
+
                     RollWeight = UnityEngine.Random.Range(0, WeightedPowerUpChoice.Count - 1);
                     PlayersList[playerIndexBeforeUpdate].CurrentHeldPowerup = WeightedPowerUpChoice[RollWeight].PowerUp;
                     PlayersList[playerIndexBeforeUpdate].PowerupPity = 0;
@@ -93,6 +94,7 @@ public class ServerActions : NetworkBehaviour
                         await PlayersList[CurrentPlayerTurn].CurrentHeldPowerup.OnUse(playerIndexBeforeUpdate);
                         PlayersList[CurrentPlayerTurn].CurrentHeldPowerup = null;
                     }
+                    Debug.Log($"Player Index {playerIndexBeforeUpdate} got power-up {WeightedPowerUpChoice[RollWeight].PowerUp.ToString()}");
                 }
                 else
                 {
@@ -684,7 +686,7 @@ public class ServerActions : NetworkBehaviour
 
         await FillMapWithWater();
         await BuildEmptyAreaArray();
-        await AttemptToArrangePlayers(false);
+        await AttemptToArrangePlayers(false, 0);
         await BuildPowerUpsPool();
         //Powerups are now handled by Hitting tiles
         //await AddPowerUps();
@@ -763,7 +765,7 @@ public class ServerActions : NetworkBehaviour
         }*/
         await Task.Yield();
     }    
-    private async Task AttemptToArrangePlayers(bool fake)
+    public async Task AttemptToArrangePlayers(bool fake, int indexFake)
     {
         int localRandomIndex;
         int orientation;
@@ -1237,6 +1239,7 @@ public class ServerActions : NetworkBehaviour
                     {
                         //CenterOfShip
                         ServerVisibleGrid.Row[CenterX].Column[CenterY] = 10;
+                        Debug.Log($"Trying to spawn fake news at {CenterX} and {CenterY}");
 
                         //BodyOfShip
                         switch (orientation)
@@ -1260,7 +1263,7 @@ public class ServerActions : NetworkBehaviour
                             //South
                             case 1:
                                 {
-                                    PlayersList[i].Orientation = "South";
+                                   // PlayersList[i].Orientation = "South";
                                     ServerVisibleGrid.Row[CenterX].Column[CenterY - 1] = 10;
                                     //HEAD
                                     ServerVisibleGrid.Row[CenterX].Column[CenterY - 2] = 10;
@@ -1277,7 +1280,7 @@ public class ServerActions : NetworkBehaviour
                             //West
                             case 2:
                                 {
-                                    PlayersList[i].Orientation = "West";
+                                    //PlayersList[i].Orientation = "West";
                                     ServerVisibleGrid.Row[CenterX - 1].Column[CenterY] = 10;
                                     //HEAD
                                     ServerVisibleGrid.Row[CenterX - 2].Column[CenterY] = 10;
@@ -1294,7 +1297,7 @@ public class ServerActions : NetworkBehaviour
                             //East
                             case 3:
                                 {
-                                    PlayersList[i].Orientation = "East";
+                                    //PlayersList[i].Orientation = "East";
                                     ServerVisibleGrid.Row[CenterX + 1].Column[CenterY] = 10;
                                     //HEAD
                                     ServerVisibleGrid.Row[CenterX + 2].Column[CenterY] = 10;
@@ -1308,7 +1311,9 @@ public class ServerActions : NetworkBehaviour
                                     ServerVisibleGrid.Row[CenterX - 2].Column[CenterY - 1] = 10;
                                     break;
                                 }
+
                         }
+                        ShowFakeShip(indexFake);
                         break;
                     }
                 default: { Debug.Log("Out of bounds lmao"); break; }
@@ -1402,16 +1407,19 @@ public class ServerActions : NetworkBehaviour
 
     private async Task BuildPowerUpsPool()
     {
+        ActivePowerupsList.Clear();
         int randomMemory;
         int targetCount = BasePowerupsList.Count;
+        List<PowerUp> TempList = new List<PowerUp>();
+        TempList.AddRange(BasePowerupsList);
         for (int i = 0;i<Math.Min(targetCount,5);i++)
         {
-            randomMemory = UnityEngine.Random.Range(0, BasePowerupsList.Count - 1);
+            randomMemory = UnityEngine.Random.Range(0, TempList.Count - 1);
             ToPlayersPowerUp tppu = new ToPlayersPowerUp();
-            tppu.PowerUp = BasePowerupsList[randomMemory];
-            tppu.AvailableQuanity = BasePowerupsList[randomMemory].AvailableQuanity;
+            tppu.PowerUp = TempList[randomMemory];
+            tppu.AvailableQuanity = TempList[randomMemory].AvailableQuanity;
             ActivePowerupsList.Add(tppu);
-            BasePowerupsList.RemoveAt(randomMemory);
+            TempList.RemoveAt(randomMemory);
         }
         await Task.Yield();
     }
@@ -1680,6 +1688,20 @@ public class ServerActions : NetworkBehaviour
         {
             if(!ship.isDestroyed)
                 PlanesPlayers[PlayersList.IndexOf(ship)].FinishGame();
+        }
+    }
+
+    private void ShowFakeShip(int indexPlayer)
+    {
+        for (int i = 0; i < BoardSize; i++)
+        {
+            for (int j = 0; j < BoardSize; j++)
+            {
+                if (ServerVisibleGrid.Row[i].Column[j] == 10)
+                {                    
+                    PlanesPlayers[indexPlayer].UpdateTile(new Vector3Int(i, j), ServerVisibleGrid.Row[i].Column[j]);
+                }
+            }
         }
     }
     //DisplayBoardToEachPlayer   

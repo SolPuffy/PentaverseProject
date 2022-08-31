@@ -33,6 +33,7 @@ public class LocalPlayerActions : MonoBehaviour
     public Vector3Int TargetedTileLocation;
 
     private int BardSize = 21;
+    public PowerUp PowerupSlotForCommand;
 
     private void Awake()
     {
