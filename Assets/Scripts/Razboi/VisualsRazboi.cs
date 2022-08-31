@@ -35,6 +35,7 @@ public class VisualsRazboi : MonoBehaviour
     TextMeshProUGUI SlapName;
     TextMeshProUGUI ReactionTxt;
     Animator SlapAnimator;
+    AudioSource SlapSoundEffect;
 
 
     private void Awake()
@@ -56,6 +57,7 @@ public class VisualsRazboi : MonoBehaviour
         SlapName = SlapPanel.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
         ReactionTxt = SlapPanel.transform.GetChild(2).GetComponent<TextMeshProUGUI>();
         SlapAnimator = GameObject.Find("Glass").GetComponent<Animator>();
+        SlapSoundEffect = GameObject.Find("Table").GetComponent<AudioSource>();
 
     }
 
@@ -260,7 +262,7 @@ public class VisualsRazboi : MonoBehaviour
     }
     public void SlapAnimation()
     {
-
+        SlapSoundEffect.Play(0);
         SlapAnimator.Play("Glass_Shaking");
     }
 

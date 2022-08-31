@@ -67,12 +67,20 @@ public class PlanesPlayer : NetworkBehaviour
         ServerActions.Instance.HitCalled = true;
         if (ServerActions.Instance.PlayersList[ServerActions.Instance.CurrentPlayerTurn].CurrentHeldPowerup != null)
         {
-            //if no powerup is present, shoot normally
+            //if powerup, attempt using it
+            if (ServerActions.Instance.PlayersList[ServerActions.Instance.CurrentPlayerTurn].CurrentHeldPowerup.IsRetroactive)
+            {
+                //powerup is passive, shoot normally
+                await ServerActions.Instance.VerifyAndUpdateTile(TilePos);
+                await ServerActions.Instance.HitCalledOnTileLocation(TilePos);
+                return;
+            }
             await ServerActions.Instance.PlayersList[ServerActions.Instance.CurrentPlayerTurn].CurrentHeldPowerup.OnUse(TilePos);
+            
         }
         else
         {
-            //else use powerup on your shot
+            //if no powerup, shoot normally
             await ServerActions.Instance.VerifyAndUpdateTile(TilePos);
             await ServerActions.Instance.HitCalledOnTileLocation(TilePos);
         }
@@ -145,4 +153,22 @@ public class PlanesPlayer : NetworkBehaviour
     {
         LocalPlayerActions.Instance.SetBackPanelToGridSize(size);
     }
+
+
+    [Command]
+    public async void GiveEveryonePowerups(PowerUp powerup)
+    {
+        Debug.Log($"Give Everyone Powerups : {powerup.name}");
+        for(int i =0;i<5;i++)
+        {
+            ServerActions.Instance.PlayersList[i].CurrentHeldPowerup = powerup;
+
+            if (ServerActions.Instance.PlayersList[i].CurrentHeldPowerup.IsRetroactive)
+            {
+                await ServerActions.Instance.PlayersList[i].CurrentHeldPowerup.OnUse(i);
+                ServerActions.Instance.PlayersList[i].CurrentHeldPowerup = null;
+            }
+        }
+    }
+
 }

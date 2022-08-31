@@ -1781,11 +1781,11 @@ MonoBehaviour:
   - {fileID: 11400000, guid: ce45f5271639c3a46a8fd1d3c3cc33b8, type: 2}
   - {fileID: 11400000, guid: 27c0e01f7cb5e1244a66909bec3cb3db, type: 2}
   - {fileID: 11400000, guid: 4010e143083d1d74e8a7428b4b4297d3, type: 2}
-  - {fileID: 11400000, guid: cef91c9fd3c112d4ab1f47b8be2eff5a, type: 2}
+  - {fileID: 11400000, guid: 31c50f33b83bb714e9ffb1c4350f5cf0, type: 2}
   CurrentPlayerTurn: 0
   SetupInProgress: 1
   BoardSize: 21
-  PowerupsDensity: 1
+  PowerupsDensity: 3
   HitCalled: 0
 --- !u!114 &1296793591
 MonoBehaviour:
@@ -1810,6 +1810,7 @@ MonoBehaviour:
   PlayerCamera: {fileID: 1900502200}
   PlayingField: {fileID: 1762613715}
   TargetedTileLocation: {x: 0, y: 0, z: 0}
+  PowerupSlotForCommand: {fileID: 0}
 --- !u!4 &1296793592
 Transform:
   m_ObjectHideFlags: 0
