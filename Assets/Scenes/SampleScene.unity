@@ -5184,6 +5184,7 @@ GameObject:
   - component: {fileID: 963194227}
   - component: {fileID: 963194226}
   - component: {fileID: 963194229}
+  - component: {fileID: 963194230}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -5269,6 +5270,69 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e5d02d93fc85fb4d9f32e9d65cbdeef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &963194230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963194225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 641e411d863bd264e84ca0ae887cdb95, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Sounds:
+  - name: FastDeal
+    clip: {fileID: 8300000, guid: 4519a2133933b9c41afdfd05c5691a64, type: 3}
+    volume: 0.515
+    pitch: 0
+    source: {fileID: 0}
+  - name: FastDeal2
+    clip: {fileID: 8300000, guid: 556e1b7b3f554954fb7ed6b9b0944091, type: 3}
+    volume: 0.523
+    pitch: 0.1
+    source: {fileID: 0}
+  - name: StartUp
+    clip: {fileID: 8300000, guid: 3604600fa52033c48bd6d7788283c2c5, type: 3}
+    volume: 0.523
+    pitch: 0.1
+    source: {fileID: 0}
+  - name: BanjoEnd
+    clip: {fileID: 8300000, guid: 5e081444376536a47811f82a2c043284, type: 3}
+    volume: 0.523
+    pitch: 0.1
+    source: {fileID: 0}
+  - name: BluesLick
+    clip: {fileID: 8300000, guid: 0627864909154d6408d3fdccc465f573, type: 3}
+    volume: 0.523
+    pitch: 0.1
+    source: {fileID: 0}
+  - name: YouLoseYouLick
+    clip: {fileID: 8300000, guid: 8899d0818efb7784a8ee0a8ee4ceddab, type: 3}
+    volume: 0.523
+    pitch: 0.1
+    source: {fileID: 0}
+  - name: CardHit1
+    clip: {fileID: 8300000, guid: 961db8cc54174104bab600fd3307e25d, type: 3}
+    volume: 0.523
+    pitch: 0.1
+    source: {fileID: 0}
+  - name: CardHit2
+    clip: {fileID: 8300000, guid: 70f3720375696b1439dbd335a67f42bd, type: 3}
+    volume: 0.523
+    pitch: 0.1
+    source: {fileID: 0}
+  - name: CardHit3
+    clip: {fileID: 8300000, guid: e3821b141b8f43d4b84fe8eff7fcaac4, type: 3}
+    volume: 0.523
+    pitch: 0.1
+    source: {fileID: 0}
+  - name: CardHit4
+    clip: {fileID: 8300000, guid: c90930fba86bee84f8a1becad499143a, type: 3}
+    volume: 0.523
+    pitch: 0.1
+    source: {fileID: 0}
 --- !u!1 &977772684
 GameObject:
   m_ObjectHideFlags: 0
