@@ -752,6 +752,7 @@ MonoBehaviour:
   SlotButtonInstance: {fileID: 577194994}
   CurrentlyHeldPowerup: {fileID: 0}
   IndexOfPlayerHoldingPowerup: 0
+  powerupSlot: 1
 --- !u!1 &600667201
 GameObject:
   m_ObjectHideFlags: 0
@@ -1024,6 +1025,7 @@ MonoBehaviour:
   SlotButtonInstance: {fileID: 674794913}
   CurrentlyHeldPowerup: {fileID: 0}
   IndexOfPlayerHoldingPowerup: 0
+  powerupSlot: 2
 --- !u!1 &749200331
 GameObject:
   m_ObjectHideFlags: 0
@@ -3549,6 +3551,7 @@ MonoBehaviour:
   SlotButtonInstance: {fileID: 1778713743}
   CurrentlyHeldPowerup: {fileID: 0}
   IndexOfPlayerHoldingPowerup: 0
+  powerupSlot: 3
 --- !u!1 &1798032951
 GameObject:
   m_ObjectHideFlags: 0
@@ -3981,6 +3984,7 @@ MonoBehaviour:
   SlotButtonInstance: {fileID: 1925100528}
   CurrentlyHeldPowerup: {fileID: 0}
   IndexOfPlayerHoldingPowerup: 0
+  powerupSlot: 0
 --- !u!1 &1951359284
 GameObject:
   m_ObjectHideFlags: 0

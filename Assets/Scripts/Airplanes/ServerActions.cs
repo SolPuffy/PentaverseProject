@@ -13,6 +13,7 @@ public class PlayerShipStructure
     public CoordsStructure PlayerShipHead = new CoordsStructure();
     public PowerUp CurrentHeldPowerup;
     public float PowerupPity = 0;
+    public int PowerupSlotIndex = 0;
     public int Health = 8;
     public string Orientation = "";
     public bool isDestroyed = false;

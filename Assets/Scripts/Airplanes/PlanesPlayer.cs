@@ -28,14 +28,17 @@ public class PlanesPlayer : NetworkBehaviour
     }
 
     [Command]
-    public void preparePowerup(int PlayerIndex, PowerUp power)
+    public void preparePowerup(int PlayerIndex, PowerUp power,int powerupSlot)
     {
+        ReturnDebugToServer($"Player {PlayerIndex}, is preparing powerup {power} in slot {powerupSlot}!");
         ServerActions.Instance.PlayersList[PlayerIndex].CurrentHeldPowerup = power;
+        ServerActions.Instance.PlayersList[PlayerIndex].PowerupSlotIndex = powerupSlot;
     }
     [TargetRpc]
     public void givePlayerPowerup(PowerUp power,int playerIndex)
     {
-        for(int i=0;i<4;i++)
+        ReturnDebugToServer($"Give player {playerIndex}, powerup {power}!");
+        for (int i=0;i<4;i++)
         {
             if(LocalPlayerActions.Instance.PowerupsInventory[i].CurrentlyHeldPowerup != null)
             {
@@ -47,6 +50,18 @@ public class PlanesPlayer : NetworkBehaviour
                 Debug.Log($"Powerup Slot {i} is occupied, ignoring.");
             }
         }
+    }
+    [TargetRpc]
+    public void takePlayerPowerup(int powerupSlot)
+    {
+        ReturnDebugToServer("Take Player's Powerup!");
+        LocalPlayerActions.Instance.PowerupsInventory[powerupSlot].CurrentlyHeldPowerup = null;
+        LocalPlayerActions.Instance.PowerupsInventory[powerupSlot].SlotButtonInstance.image = null;
+    }
+    [Command]
+    public void ReturnDebugToServer(string DebugInfo)
+    {
+        Debug.Log($"{DebugInfo}");
     }
 
     [Command]
@@ -98,7 +113,7 @@ public class PlanesPlayer : NetworkBehaviour
                 await ServerActions.Instance.HitCalledOnTileLocation(TilePos);
                 return;
             }
-            await ServerActions.Instance.PlayersList[ServerActions.Instance.CurrentPlayerTurn].CurrentHeldPowerup.OnUse(TilePos);
+            await ServerActions.Instance.PlayersList[ServerActions.Instance.CurrentPlayerTurn].CurrentHeldPowerup.OnUse(TilePos, ServerActions.Instance.PlayersList[ServerActions.Instance.CurrentPlayerTurn].PowerupSlotIndex);
             
         }
         else
@@ -188,7 +203,7 @@ public class PlanesPlayer : NetworkBehaviour
 
             if (ServerActions.Instance.PlayersList[i].CurrentHeldPowerup.IsRetroactive)
             {
-                await ServerActions.Instance.PlayersList[i].CurrentHeldPowerup.OnUse(i);
+                await ServerActions.Instance.PlayersList[i].CurrentHeldPowerup.OnUse(i,0);
                 ServerActions.Instance.PlayersList[i].CurrentHeldPowerup = null;
             }
         }

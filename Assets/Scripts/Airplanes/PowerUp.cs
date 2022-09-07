@@ -20,19 +20,20 @@ public class PowerUp : ScriptableObject
     public bool IsRetroactive = false;
     [TextArea(10,10)]
     public string PatternStrike_Pattern;
-    public async Task LoadPowerup(int PowerupType,PowerUp activatingPowerup,int IndexOfPlayerHoldingPowerup)
+    public async Task LoadPowerup(int PowerupType,PowerUp activatingPowerup,int IndexOfPlayerHoldingPowerup,int powerupSlot)
     {
+        PlanesPlayer.localPlayer.ReturnDebugToServer($"Loading player for player {IndexOfPlayerHoldingPowerup}");
          if(activatingPowerup.IsRetroactive)
         {
-            await activatingPowerup.OnUse(IndexOfPlayerHoldingPowerup);
+            await activatingPowerup.OnUse(IndexOfPlayerHoldingPowerup,powerupSlot);
         }
          else
         {
-            PlanesPlayer.localPlayer.preparePowerup(IndexOfPlayerHoldingPowerup,activatingPowerup);
+            PlanesPlayer.localPlayer.preparePowerup(IndexOfPlayerHoldingPowerup,activatingPowerup,powerupSlot);
         }
         await Task.Yield();
     }
-    public async Task OnUse(object Parameter)
+    public async Task OnUse(object Parameter,int powerupSlot)
     {
         switch((int)PowerUpType)
         {
@@ -42,6 +43,7 @@ public class PowerUp : ScriptableObject
             case 3: { Misfire((int)Parameter);break; }
             default:break;
         }
+        PlanesPlayer.localPlayer.takePlayerPowerup(powerupSlot);
         await Task.Yield();
     }
     /*
