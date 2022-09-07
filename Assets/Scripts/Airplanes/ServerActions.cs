@@ -67,7 +67,7 @@ public class ServerActions : NetworkBehaviour
     //[TargetRpc]
     public async Task HitCalledOnTileLocation(Vector3Int targetedTile)
     {
-        //Debug.Log(targetedTile);
+        Debug.Log(targetedTile);
         //LocalPlayerActions.Instance.PlayerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = TValue;
         if (tileTypeBeforeUpdate < 1 || tileTypeBeforeUpdate > 4)
         {
@@ -87,7 +87,7 @@ public class ServerActions : NetworkBehaviour
 
                     RollWeight = UnityEngine.Random.Range(0, WeightedPowerUpChoice.Count - 1);
 
-                    PlanesPlayer.localPlayer.givePlayerPowerup(WeightedPowerUpChoice[RollWeight].PowerUp,playerIndexBeforeUpdate);
+                    PlanesPlayers[playerIndexBeforeUpdate].givePlayerPowerup(WeightedPowerUpChoice[RollWeight].PowerUp,playerIndexBeforeUpdate);
                     //PlayersList[playerIndexBeforeUpdate].CurrentHeldPowerup = WeightedPowerUpChoice[RollWeight].PowerUp;
 
                     PlayersList[playerIndexBeforeUpdate].PowerupPity = 0;
@@ -1614,6 +1614,10 @@ public class ServerActions : NetworkBehaviour
         PlayersList.Clear();
         PlanesPlayers.Clear();
         AvailableBuildSpaces.Clear();
+        foreach(PlayerShipStructure ship in PlayersList)
+        {
+            ship.Misfire = false;
+        }
         //AvailableTreasureSpaces.Clear();
         //SetupBoard();        
     }

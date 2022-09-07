@@ -9,13 +9,13 @@ public class PowerUpSlot : MonoBehaviour
     public PowerUp CurrentlyHeldPowerup;
     public int IndexOfPlayerHoldingPowerup;
     public int powerupSlot;
+    public bool isOccupied = false;
 
-    public async void OnButtonPress()
+    public void OnButtonPress()
     {
-        if(CurrentlyHeldPowerup != null)
+        if(isOccupied)
         {
-            await CurrentlyHeldPowerup.LoadPowerup((int)CurrentlyHeldPowerup.PowerUpType,CurrentlyHeldPowerup,IndexOfPlayerHoldingPowerup,powerupSlot);
-        }
-        CurrentlyHeldPowerup = null;
+            PlanesPlayer.localPlayer.LoadPowerup(CurrentlyHeldPowerup,IndexOfPlayerHoldingPowerup,powerupSlot);
+        }        
     }    
 }

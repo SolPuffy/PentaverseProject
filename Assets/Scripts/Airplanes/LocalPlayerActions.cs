@@ -13,6 +13,7 @@ public class LocalPlayerActions : MonoBehaviour
 {
     public static LocalPlayerActions Instance;
 
+    public Sprite[] SpriteBun;
 
     //public GridBaseStructure PlayerVisibleGrid;
     //public int CurrentPowerup;

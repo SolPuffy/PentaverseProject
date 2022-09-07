@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Pattern_horizont
   m_EditorClassIdentifier: 
   PowerUpType: 0
-  PowerUpIcon: {fileID: 21300000, guid: 28c3e05a8d373c947b9b9e3f2ff721d0, type: 3}
+  PowerUpIconIndex: 3
   PowerUpRequiredWeight: 2
   AvailableQuanity: 5
   IsRetroactive: 0
