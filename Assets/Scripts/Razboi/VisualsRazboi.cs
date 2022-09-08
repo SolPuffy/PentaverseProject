@@ -17,7 +17,7 @@ public class VisualsRazboi : MonoBehaviour
     [SerializeField] Color PlayerDefaultColor;
     [SerializeField] Color ActivePlayerColor;
     [SerializeField] List<int> correctOrder = new List<int>();
-    [SerializeField] List<Image> PlayerPortrait = new List<Image>();    
+    [SerializeField] List<Sprite> PlayerPortrait = new List<Sprite>();    
     [SerializeField] List<TextMeshProUGUI> PlayerName = new List<TextMeshProUGUI>();
     [SerializeField] List<TextMeshProUGUI> PlayerCardCount = new List<TextMeshProUGUI>();
     [SerializeField] List<GameObject> PlayerVisualDecks = new List<GameObject>();  
@@ -32,6 +32,7 @@ public class VisualsRazboi : MonoBehaviour
     [SerializeField] Button HitButton;
     [SerializeField] Button SlapButton;    
     [SerializeField] GameObject StartGame;
+    [SerializeField] SpriteRenderer Table;
     TextMeshProUGUI SlapName;
     TextMeshProUGUI ReactionTxt;
     Animator SlapAnimator;
@@ -195,14 +196,9 @@ public class VisualsRazboi : MonoBehaviour
     {
         try
         {
-            foreach (Image portrait in PlayerPortrait)
-            {
-                portrait.color = PlayerDefaultColor;
-            }
-
             if (HitSlapRazboi.instance.InititalSetupDone)
             {
-                PlayerPortrait[correctOrder.IndexOf(HitSlapRazboi.instance.IndexOfActivePlayer)].color = ActivePlayerColor;
+                Table.sprite = PlayerPortrait[correctOrder.IndexOf(HitSlapRazboi.instance.IndexOfActivePlayer)];
             }
         }
 
@@ -225,14 +221,14 @@ public class VisualsRazboi : MonoBehaviour
         for (int i = 0; i < 5; i++)
         {
             PlayerVisualDecks[i].SetActive(false);
-            PlayerPortrait[i].gameObject.SetActive(false);
+            //PlayerPortrait[i].gameObject.SetActive(false);
             PlayerCardCount[i].gameObject.SetActive(false);
         }
     }
     public void ActivateVisualDecks(int index)
     {
         PlayerVisualDecks[index].SetActive(true);
-        PlayerPortrait[index].gameObject.SetActive(true);
+        //PlayerPortrait[index].gameObject.SetActive(true);
         PlayerCardCount[index].gameObject.SetActive(true);
     }
 
