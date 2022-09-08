@@ -8,7 +8,7 @@ public class SoundManager : MonoBehaviour
 
     public static SoundManager instance;
 
-    // Start is called before the first frame update
+    
     void Awake()
     {
         if (instance == null)
@@ -23,15 +23,18 @@ public class SoundManager : MonoBehaviour
         {
             s.source = gameObject.AddComponent<AudioSource>();
             s.source.clip = s.clip;
-
+            s.source.playOnAwake = false;
             s.source.volume = s.volume;
-            s.source.pitch = s.pitch;
+            s.source.pitch = s.pitch;           
+            s.source.loop = s.loop;
+        }
+        if (!Application.isBatchMode)
+        {
+            Sounds[10].source.Play();
         }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    
+
+   
 }

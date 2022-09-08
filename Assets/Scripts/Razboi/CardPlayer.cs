@@ -96,6 +96,16 @@ public class CardPlayer : NetworkBehaviour
         HitSlapRazboi.EndGame.Invoke();
        // HitSlapRazboi.instance.ExecuteEndGame();
     }
+    [ClientRpc]
+    public void HitEvent()
+    {
+        HitSlapRazboi.HitCard.Invoke();
+    }
+    [ClientRpc]
+    public void StartEvent()
+    {
+        HitSlapRazboi.StartGame.Invoke();
+    }
     
     [ClientRpc]
     public void CheckTurn(int index)
@@ -110,6 +120,7 @@ public class CardPlayer : NetworkBehaviour
         if(playerIndex != HitSlapRazboi.instance.IndexOfActivePlayer) { Debug.LogWarning($"WrongHit turn {name}"); return; }
         Debug.Log($"hitting cards {name} with index {playerIndex}");
         HitSlapRazboi.instance.HitCards(playerIndex,Nome);
+        HitEvent();
         //ChangeDecks(HitSlapRazboi.instance.PlayerDecks, HitSlapRazboi.instance.Players);
     }
 
@@ -134,6 +145,7 @@ public class CardPlayer : NetworkBehaviour
     public void BuildDeck()
     {
         DeckControllerRazboi.instance.BuildDeck();
+        StartEvent();
     }
     
     public void AddDeck()

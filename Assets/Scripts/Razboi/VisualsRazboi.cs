@@ -48,16 +48,21 @@ public class VisualsRazboi : MonoBehaviour
         if (HitSlapRazboi.EndGame == null) { HitSlapRazboi.EndGame = new UnityEvent(); }
         if (HitSlapRazboi.SlapSuccess == null) { HitSlapRazboi.SlapSuccess = new UnityEvent<string, int>(); }
         if (HitSlapRazboi.SlapAnimation == null) { HitSlapRazboi.SlapAnimation = new UnityEvent(); }
+        if (HitSlapRazboi.HitCard == null) { HitSlapRazboi.HitCard = new UnityEvent(); }
+        if (HitSlapRazboi.StartGame == null) { HitSlapRazboi.StartGame = new UnityEvent(); }
 
         HitSlapRazboi.CheckUI.AddListener(CheckUIButtons);
         HitSlapRazboi.EndGame.AddListener(ExecuteEndGame);
         HitSlapRazboi.SlapSuccess.AddListener(SuccessSlap);
         HitSlapRazboi.SlapAnimation.AddListener(SlapAnimation);
+        HitSlapRazboi.HitCard.AddListener(HitEvent);
+        HitSlapRazboi.StartGame.AddListener(StartEvent);
+
         StartCoroutine(WaitForLocal());
         SlapName = SlapPanel.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
         ReactionTxt = SlapPanel.transform.GetChild(2).GetComponent<TextMeshProUGUI>();
         SlapAnimator = GameObject.Find("Glass").GetComponent<Animator>();
-        SlapSoundEffect = GameObject.Find("Table").GetComponent<AudioSource>();
+        SlapSoundEffect = GameObject.Find("Table").GetComponent<AudioSource>();       
 
     }
 
@@ -126,11 +131,18 @@ public class VisualsRazboi : MonoBehaviour
 
     public void CardCountUpdate()
     {
-        for (int i = 0; i < correctOrder.Count; i++)
+        try
         {
-            PlayerCardCount[correctOrder.IndexOf(i)].text = HitSlapRazboi.instance.CardCount[i].ToString();
+            for (int i = 0; i < correctOrder.Count; i++)
+            {
+                PlayerCardCount[correctOrder.IndexOf(i)].text = HitSlapRazboi.instance.CardCount[i].ToString();
+            }
+            hitCounter.text = HitSlapRazboi.instance.CardsToHit.ToString();
         }
-        hitCounter.text = HitSlapRazboi.instance.CardsToHit.ToString();
+        catch(Exception e)
+        {
+            Debug.Log(e);
+        }
         try { slapCounter.text = HitSlapRazboi.instance.SlapsLeft[CardPlayer.localPlayer.playerIndex].ToString(); }
         catch { Debug.Log("slap error. IGNORE ME"); }
 
@@ -181,15 +193,24 @@ public class VisualsRazboi : MonoBehaviour
     }
     void AssignColors()
     {
-        foreach(Image portrait in PlayerPortrait)
+        try
         {
-            portrait.color = PlayerDefaultColor;
+            foreach (Image portrait in PlayerPortrait)
+            {
+                portrait.color = PlayerDefaultColor;
+            }
+
+            if (HitSlapRazboi.instance.InititalSetupDone)
+            {
+                PlayerPortrait[correctOrder.IndexOf(HitSlapRazboi.instance.IndexOfActivePlayer)].color = ActivePlayerColor;
+            }
+        }
+
+        catch(Exception e)
+        {
+            Debug.Log(e);
         }
         
-        if (HitSlapRazboi.instance.InititalSetupDone)
-        {
-            PlayerPortrait[correctOrder.IndexOf(HitSlapRazboi.instance.IndexOfActivePlayer)].color = ActivePlayerColor;
-        }
     }
     void SetNames()
     {
@@ -233,6 +254,8 @@ public class VisualsRazboi : MonoBehaviour
         HitButton.gameObject.SetActive(false);
         SlapButton.gameObject.SetActive(false);
         EndGame.SetActive(true);
+        SoundManager.instance.Sounds[10].source.Stop();
+        SoundManager.instance.Sounds[UnityEngine.Random.Range(3, 6)].source.Play();
     }
 
     void CheckSlapButton()
@@ -260,7 +283,7 @@ public class VisualsRazboi : MonoBehaviour
 
         StartCoroutine(StopSlapPanel(5));
     }
-    public void SlapAnimation()
+    void SlapAnimation()
     {
         SlapSoundEffect.Play(0);
         SlapAnimator.Play("Glass_Shaking");
@@ -273,5 +296,13 @@ public class VisualsRazboi : MonoBehaviour
         SlapPanel.SetActive(false);
     }
 
- 
+    void HitEvent()
+    {
+        SoundManager.instance.Sounds[UnityEngine.Random.Range(6, 10)].source.Play();
+    }
+
+    void StartEvent()
+    {
+        SoundManager.instance.Sounds[UnityEngine.Random.Range(1, 3)].source.Play();
+    }
 }
