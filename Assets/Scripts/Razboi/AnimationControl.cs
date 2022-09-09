@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 [System.Serializable]
 public class AnimList
 {
-    public AnimationClip AnimationName;
+    public AnimationClip AnimationClip;
     public float AnimationDelay;
 }
 public class AnimationControl : MonoBehaviour
@@ -20,38 +20,27 @@ public class AnimationControl : MonoBehaviour
     public List<AnimList> ListOfAnimations = new List<AnimList>();
     private async void Start()
     {
-        await Task.Delay((int)(ListOfAnimations[IndexOfAnimationToIdle].AnimationDelay + Random.Range(0.3f,2.7f)) * 1000);
-        StartIdleAnimation = true;
-    }
-
-    private async void Start()
-    {
-        if (StartIdleAnimation)
+        if(DoIdleAnimation)
         {
-            await StartDelay();
+            await Task.Delay((int)(ListOfAnimations[IndexOfAnimationToIdle].AnimationDelay + Random.Range(0.3f, 2.7f)) * 1000);
+            StartIdleAnimation = true;
         }
     }
     private async void Update()
     {
-        if (DoAnimation)
+        if (StartIdleAnimation)
         {
             await IdleAnimation();
         }
     }
-
-    private async Task StartDelay()
-    {
-        await Task.Delay((int)(Random.Range(0.3f, 2.7f) * 1000));
-        DoAnimation = true;
-    }
     private async Task IdleAnimation()
     {
-        ObjectAnimator.Play(ListOfAnimations[IndexOfAnimationToIdle].AnimationName.name);
+        ObjectAnimator.Play(ListOfAnimations[IndexOfAnimationToIdle].AnimationClip.name);
         await Task.Delay((int)(ListOfAnimations[IndexOfAnimationToIdle].AnimationDelay + Random.Range(0.3f, 2.7f)) * 1000);
     }
     public void PlayAnimationOfIndex(int Index)
     {
-        ObjectAnimator.Play(ListOfAnimations[Index].AnimationName.name);
+        ObjectAnimator.Play(ListOfAnimations[Index].AnimationClip.name);
     }
 
 }
