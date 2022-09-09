@@ -14,15 +14,19 @@ public class AnimList
 public class AnimationControl : MonoBehaviour
 {
     public Animator ObjectAnimator;
-    public bool DoIdleAnimation;
-    private bool DoAnimation;
+    public bool DoIdleAnimation = true;
+    private bool StartIdleAnimation = false;
     public int IndexOfAnimationToIdle;
     public List<AnimList> ListOfAnimations = new List<AnimList>();
+    private async void Start()
+    {
+        await Task.Delay((int)(ListOfAnimations[IndexOfAnimationToIdle].AnimationDelay + Random.Range(0.3f,2.7f)) * 1000);
+        StartIdleAnimation = true;
+    }
 
     private async void Start()
     {
-       
-        if (DoIdleAnimation)
+        if (StartIdleAnimation)
         {
             await StartDelay();
         }
@@ -43,7 +47,7 @@ public class AnimationControl : MonoBehaviour
     private async Task IdleAnimation()
     {
         ObjectAnimator.Play(ListOfAnimations[IndexOfAnimationToIdle].AnimationName.name);
-        await Task.Delay((int)(ListOfAnimations[IndexOfAnimationToIdle].AnimationDelay + Random.Range(0.5f,2.5f))  * 1000);
+        await Task.Delay((int)(ListOfAnimations[IndexOfAnimationToIdle].AnimationDelay + Random.Range(0.3f, 2.7f)) * 1000);
     }
     public void PlayAnimationOfIndex(int Index)
     {
