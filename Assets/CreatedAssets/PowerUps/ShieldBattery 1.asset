@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PowerUpType: 1
   PowerUpIconIndex: 7
-  PowerUpRequiredWeight: 2
+  PowerUpRequiredWeight: 33
   AvailableQuanity: 5
   IsRetroactive: 1
   PatternStrike_Pattern: 

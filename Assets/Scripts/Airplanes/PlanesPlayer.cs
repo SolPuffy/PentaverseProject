@@ -28,7 +28,7 @@ public class PlanesPlayer : NetworkBehaviour
     }
     
     [TargetRpc]
-    public void givePlayerPowerup(PowerUp power,int playerIndex)
+    public async void givePlayerPowerup(PowerUp power,int playerIndex)
     {
         ReturnDebugToServer($"Give player {playerIndex}, powerup {power}!");
         for (int i=0;i<4;i++)
@@ -40,6 +40,14 @@ public class PlanesPlayer : NetworkBehaviour
                 LocalPlayerActions.Instance.PowerupsInventory[i].IndexOfPlayerHoldingPowerup = playerIndex;
                 LocalPlayerActions.Instance.PowerupsInventory[i].SlotButtonInstance.image.sprite = LocalPlayerActions.Instance.SpriteBun[power.PowerUpIconIndex];
                 LocalPlayerActions.Instance.PowerupsInventory[i].powerupSlot = i;
+
+                //Instantly trigger if gained powerup is misfire
+                if ((int)power.PowerUpType == 3)
+                {
+                    await LocalPlayerActions.Instance.PowerupsInventory[i].CurrentlyHeldPowerup.OnUse(playerIndex, i, playerIndex);
+                    ReturnDebugToServer($"Player at index {i} has Misfired!");
+                }
+
                 break;
             }
             else

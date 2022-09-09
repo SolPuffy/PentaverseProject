@@ -2140,6 +2140,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 926a5ac91a3931a46a21d3ad84654c68, type: 2}
   - {fileID: 11400000, guid: 97c42dc40f3c8e44e9251c6e38d79bfe, type: 2}
   - {fileID: 11400000, guid: cbf56f7f7aa26344dad3e0872288516f, type: 2}
+  - {fileID: 11400000, guid: 0abd3a4e727af094ea46429ca4a1d948, type: 2}
   ActivePowerupsList: []
   PlayersList: []
   Tiles:
@@ -2157,7 +2158,7 @@ MonoBehaviour:
   CurrentPlayerTurn: 0
   SetupInProgress: 1
   BoardSize: 21
-  PowerupsDensity: 3
+  PowerupsDensity: 1
   HitCalled: 0
 --- !u!114 &1296793591
 MonoBehaviour:
@@ -2180,6 +2181,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: a95adecec21ac074b89c3c5fba6edae4, type: 3}
   - {fileID: 21300000, guid: 0def9b252f86f0b4790325a05b9bde75, type: 3}
   - {fileID: 21300000, guid: 2915dde68e0ecfd4ab003d6279a8228d, type: 3}
+  - {fileID: 21300000, guid: 57f84d92bbcbbae4ca2affa159371bf2, type: 3}
   LocalPlayerIndex: 0
   HostMenu: {fileID: 950393296}
   NameField: {fileID: 1577008652}

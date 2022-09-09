@@ -88,6 +88,7 @@ public class ServerActions : NetworkBehaviour
                     RollWeight = UnityEngine.Random.Range(0, WeightedPowerUpChoice.Count - 1);
 
                     PlanesPlayers[playerIndexBeforeUpdate].givePlayerPowerup(WeightedPowerUpChoice[RollWeight].PowerUp,playerIndexBeforeUpdate);
+
                     //PlayersList[playerIndexBeforeUpdate].CurrentHeldPowerup = WeightedPowerUpChoice[RollWeight].PowerUp;
 
                     PlayersList[playerIndexBeforeUpdate].PowerupPity = 0;
@@ -109,7 +110,7 @@ public class ServerActions : NetworkBehaviour
             }
             else
             {
-                PlayersList[playerIndexBeforeUpdate].PowerupPity += 0.25f;
+                PlayersList[playerIndexBeforeUpdate].PowerupPity += 0.10f;
             }
         }
         PlanesPlayers[playerIndexBeforeUpdate].UpdateTile(targetedTile, ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y]);        
@@ -1649,9 +1650,8 @@ public class ServerActions : NetworkBehaviour
 
             if (PlayersList[CurrentPlayerTurn].Misfire)
             {
-                CurrentPlayerTurn++;
-                CurrentPlayerTurn = CurrentPlayerTurn % PlanesPlayers.Count;
                 PlayersList[CurrentPlayerTurn].Misfire = false;
+                continue;
             }
 
             whileCounter++;
@@ -1673,17 +1673,20 @@ public class ServerActions : NetworkBehaviour
 
 
         //CurrentPlayerTurn = CurrentPlayerTurn % PlanesPlayers.Count;
-        while (PlayersList[CurrentPlayerTurn].Misfire || (PlayersList[CurrentPlayerTurn].isDestroyed  && whileCounter < 20))
+        do
         {
-            if(PlayersList[CurrentPlayerTurn].Misfire)
-            {
-                PlayersList[CurrentPlayerTurn].Misfire = false;
-            }
-
             CurrentPlayerTurn++;
             CurrentPlayerTurn = CurrentPlayerTurn % PlanesPlayers.Count;
+
+            if (PlayersList[CurrentPlayerTurn].Misfire)
+            {
+                PlayersList[CurrentPlayerTurn].Misfire = false;
+                continue;
+            }
+
             whileCounter++;
         }
+        while (PlayersList[CurrentPlayerTurn].Misfire || (PlayersList[CurrentPlayerTurn].isDestroyed && whileCounter < 20));
         Debug.Log("new player turn " + CurrentPlayerTurn);
         if (whileCounter >= 20)
             Debug.LogWarning("out of whiles [Check Turn]");
