@@ -370,6 +370,7 @@ GameObject:
   - component: {fileID: 27689213}
   - component: {fileID: 27689215}
   - component: {fileID: 27689214}
+  - component: {fileID: 27689216}
   m_Layer: 0
   m_Name: RedGuy
   m_TagString: Untagged
@@ -466,6 +467,26 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &27689216
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 27689212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08fa37510cd136f4c8d98ffaa140d527, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObjectAnimator: {fileID: 27689214}
+  DoIdleAnimation: 0
+  IndexOfAnimationToIdle: 0
+  ListOfAnimations:
+  - AnimationName: {fileID: 7400000, guid: 8f048d39a6f5c1a4e9d06c4d417f5a6d, type: 2}
+    AnimationDelay: 7
+  - AnimationName: {fileID: 7400000, guid: 5850c466c9498f14684df0cc73afb5b9, type: 2}
+    AnimationDelay: 5
 --- !u!1 &61041154
 GameObject:
   m_ObjectHideFlags: 0
@@ -2016,6 +2037,7 @@ GameObject:
   - component: {fileID: 364342569}
   - component: {fileID: 364342570}
   - component: {fileID: 364342571}
+  - component: {fileID: 364342572}
   m_Layer: 0
   m_Name: Soparla
   m_TagString: Untagged
@@ -2110,6 +2132,24 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &364342572
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 364342568}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08fa37510cd136f4c8d98ffaa140d527, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObjectAnimator: {fileID: 364342571}
+  DoIdleAnimation: 0
+  IndexOfAnimationToIdle: 0
+  ListOfAnimations:
+  - AnimationName: {fileID: 7400000, guid: d224be9cc2f187244bde686936b5e6c5, type: 2}
+    AnimationDelay: 6
 --- !u!1 &366997417
 GameObject:
   m_ObjectHideFlags: 0
@@ -2121,6 +2161,7 @@ GameObject:
   - component: {fileID: 366997418}
   - component: {fileID: 366997420}
   - component: {fileID: 366997419}
+  - component: {fileID: 366997421}
   m_Layer: 0
   m_Name: HandPurple
   m_TagString: Untagged
@@ -2215,6 +2256,24 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &366997421
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 366997417}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08fa37510cd136f4c8d98ffaa140d527, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObjectAnimator: {fileID: 366997419}
+  DoIdleAnimation: 0
+  IndexOfAnimationToIdle: 0
+  ListOfAnimations:
+  - AnimationName: {fileID: 7400000, guid: 1932e8cc61e8b824f9b836e4c6708db0, type: 2}
+    AnimationDelay: 0
 --- !u!1 &373872558
 GameObject:
   m_ObjectHideFlags: 0
@@ -3728,6 +3787,7 @@ GameObject:
   - component: {fileID: 703983947}
   - component: {fileID: 703983949}
   - component: {fileID: 703983948}
+  - component: {fileID: 703983950}
   m_Layer: 0
   m_Name: Handblondie
   m_TagString: Untagged
@@ -3822,6 +3882,24 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &703983950
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 703983946}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08fa37510cd136f4c8d98ffaa140d527, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObjectAnimator: {fileID: 703983948}
+  DoIdleAnimation: 0
+  IndexOfAnimationToIdle: 0
+  ListOfAnimations:
+  - AnimationName: {fileID: 7400000, guid: 6908d83d4b00420419c0fa3c64cf8522, type: 2}
+    AnimationDelay: 8
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -4742,6 +4820,7 @@ GameObject:
   - component: {fileID: 886616344}
   - component: {fileID: 886616345}
   - component: {fileID: 886616346}
+  - component: {fileID: 886616347}
   m_Layer: 0
   m_Name: snad
   m_TagString: Untagged
@@ -4836,6 +4915,24 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &886616347
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 886616343}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08fa37510cd136f4c8d98ffaa140d527, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObjectAnimator: {fileID: 886616346}
+  DoIdleAnimation: 0
+  IndexOfAnimationToIdle: 0
+  ListOfAnimations:
+  - AnimationName: {fileID: 7400000, guid: eabaec0e9d21fb14a8fa080afc8c9559, type: 2}
+    AnimationDelay: 10
 --- !u!1 &956303003
 GameObject:
   m_ObjectHideFlags: 0
@@ -5334,6 +5431,7 @@ GameObject:
   - component: {fileID: 978408369}
   - component: {fileID: 978408371}
   - component: {fileID: 978408370}
+  - component: {fileID: 978408372}
   m_Layer: 0
   m_Name: Girl
   m_TagString: Untagged
@@ -5430,6 +5528,24 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &978408372
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 978408368}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08fa37510cd136f4c8d98ffaa140d527, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObjectAnimator: {fileID: 978408370}
+  DoIdleAnimation: 0
+  IndexOfAnimationToIdle: 0
+  ListOfAnimations:
+  - AnimationName: {fileID: 7400000, guid: f11df5caed29eae4ab2007cd4ef6fd85, type: 2}
+    AnimationDelay: 7
 --- !u!1 &979329840
 GameObject:
   m_ObjectHideFlags: 0
@@ -7885,6 +8001,7 @@ GameObject:
   - component: {fileID: 1559204436}
   - component: {fileID: 1559204438}
   - component: {fileID: 1559204437}
+  - component: {fileID: 1559204439}
   m_Layer: 0
   m_Name: StripesHand2
   m_TagString: Untagged
@@ -7979,6 +8096,24 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1559204439
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1559204435}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08fa37510cd136f4c8d98ffaa140d527, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObjectAnimator: {fileID: 1559204437}
+  DoIdleAnimation: 0
+  IndexOfAnimationToIdle: 0
+  ListOfAnimations:
+  - AnimationName: {fileID: 7400000, guid: 16f1f4a6a99f69a418009d5f97354316, type: 2}
+    AnimationDelay: 8
 --- !u!1 &1568559683
 GameObject:
   m_ObjectHideFlags: 0
@@ -9447,6 +9582,7 @@ GameObject:
   - component: {fileID: 1667927402}
   - component: {fileID: 1667927403}
   - component: {fileID: 1667927404}
+  - component: {fileID: 1667927405}
   m_Layer: 0
   m_Name: HandFront
   m_TagString: Untagged
@@ -9541,6 +9677,24 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &1667927405
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1667927401}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08fa37510cd136f4c8d98ffaa140d527, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObjectAnimator: {fileID: 1667927404}
+  DoIdleAnimation: 0
+  IndexOfAnimationToIdle: 0
+  ListOfAnimations:
+  - AnimationName: {fileID: 7400000, guid: 9cd713a618251884abdccd0d3005561b, type: 2}
+    AnimationDelay: 3
 --- !u!1 &1678925032
 GameObject:
   m_ObjectHideFlags: 0
@@ -10279,6 +10433,7 @@ GameObject:
   - component: {fileID: 1841224758}
   - component: {fileID: 1841224759}
   - component: {fileID: 1841224760}
+  - component: {fileID: 1841224761}
   m_Layer: 0
   m_Name: Snackkk
   m_TagString: Untagged
@@ -10373,6 +10528,24 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &1841224761
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1841224757}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08fa37510cd136f4c8d98ffaa140d527, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObjectAnimator: {fileID: 1841224760}
+  DoIdleAnimation: 0
+  IndexOfAnimationToIdle: 0
+  ListOfAnimations:
+  - AnimationName: {fileID: 7400000, guid: 5ea4fb8e8f8583f449d6047ce96e25bf, type: 2}
+    AnimationDelay: 3
 --- !u!1 &1859474273
 GameObject:
   m_ObjectHideFlags: 0
@@ -10695,6 +10868,7 @@ GameObject:
   - component: {fileID: 1959491675}
   - component: {fileID: 1959491676}
   - component: {fileID: 1959491677}
+  - component: {fileID: 1959491678}
   m_Layer: 0
   m_Name: Stripes
   m_TagString: Untagged
@@ -10791,6 +10965,24 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &1959491678
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1959491674}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08fa37510cd136f4c8d98ffaa140d527, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObjectAnimator: {fileID: 1959491677}
+  DoIdleAnimation: 0
+  IndexOfAnimationToIdle: 0
+  ListOfAnimations:
+  - AnimationName: {fileID: 7400000, guid: 7b4aae7c49731e143a85e6a895c1683b, type: 2}
+    AnimationDelay: 4
 --- !u!1 &1982880455
 GameObject:
   m_ObjectHideFlags: 0
