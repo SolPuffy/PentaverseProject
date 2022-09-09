@@ -5323,7 +5323,7 @@ MonoBehaviour:
     source: {fileID: 0}
     loop: 0
   - name: StarUp
-    clip: {fileID: 8300000, guid: 3604600fa52033c48bd6d7788283c2c5, type: 3}
+    clip: {fileID: 8300000, guid: e40b634db57961943b076ae4e4397fbe, type: 3}
     volume: 0.2
     pitch: 1
     source: {fileID: 0}
