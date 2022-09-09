@@ -232,14 +232,14 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 15690463}
-  m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 61041155}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0.74, y: 4.46}
@@ -480,12 +480,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ObjectAnimator: {fileID: 27689214}
-  DoIdleAnimation: 0
+  DoIdleAnimation: 1
   IndexOfAnimationToIdle: 0
   ListOfAnimations:
-  - AnimationName: {fileID: 7400000, guid: 8f048d39a6f5c1a4e9d06c4d417f5a6d, type: 2}
+  - AnimationClip: {fileID: 7400000, guid: 8f048d39a6f5c1a4e9d06c4d417f5a6d, type: 2}
     AnimationDelay: 7
-  - AnimationName: {fileID: 7400000, guid: 5850c466c9498f14684df0cc73afb5b9, type: 2}
+  - AnimationClip: {fileID: 7400000, guid: 5850c466c9498f14684df0cc73afb5b9, type: 2}
     AnimationDelay: 5
 --- !u!1 &61041154
 GameObject:
@@ -701,17 +701,17 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 69171377}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 61041155}
   m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 6, y: 1.95}
+  m_AnchoredPosition: {x: 6, y: 1.7}
   m_SizeDelta: {x: 1.5, y: 1.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &69171379
@@ -1851,17 +1851,17 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 276532980}
-  m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
+  m_LocalRotation: {x: 0, y: 0, z: 0.92387956, w: 0.38268343}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 61041155}
   m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 135}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -3.1399999, y: -3.2500002}
+  m_AnchoredPosition: {x: -2.68, y: -3.01}
   m_SizeDelta: {x: 1.5, y: 1.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &276532982
@@ -2145,10 +2145,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ObjectAnimator: {fileID: 364342571}
-  DoIdleAnimation: 0
+  DoIdleAnimation: 1
   IndexOfAnimationToIdle: 0
   ListOfAnimations:
-  - AnimationName: {fileID: 7400000, guid: d224be9cc2f187244bde686936b5e6c5, type: 2}
+  - AnimationClip: {fileID: 7400000, guid: d224be9cc2f187244bde686936b5e6c5, type: 2}
     AnimationDelay: 6
 --- !u!1 &366997417
 GameObject:
@@ -2269,11 +2269,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ObjectAnimator: {fileID: 366997419}
-  DoIdleAnimation: 0
+  DoIdleAnimation: 1
   IndexOfAnimationToIdle: 0
   ListOfAnimations:
-  - AnimationName: {fileID: 7400000, guid: 1932e8cc61e8b824f9b836e4c6708db0, type: 2}
-    AnimationDelay: 0
+  - AnimationClip: {fileID: 7400000, guid: 1932e8cc61e8b824f9b836e4c6708db0, type: 2}
+    AnimationDelay: 7
 --- !u!1 &373872558
 GameObject:
   m_ObjectHideFlags: 0
@@ -3895,10 +3895,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ObjectAnimator: {fileID: 703983948}
-  DoIdleAnimation: 0
+  DoIdleAnimation: 1
   IndexOfAnimationToIdle: 0
   ListOfAnimations:
-  - AnimationName: {fileID: 7400000, guid: 6908d83d4b00420419c0fa3c64cf8522, type: 2}
+  - AnimationClip: {fileID: 7400000, guid: 6908d83d4b00420419c0fa3c64cf8522, type: 2}
     AnimationDelay: 8
 --- !u!1 &705507993
 GameObject:
@@ -4928,10 +4928,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ObjectAnimator: {fileID: 886616346}
-  DoIdleAnimation: 0
+  DoIdleAnimation: 1
   IndexOfAnimationToIdle: 0
   ListOfAnimations:
-  - AnimationName: {fileID: 7400000, guid: eabaec0e9d21fb14a8fa080afc8c9559, type: 2}
+  - AnimationClip: {fileID: 7400000, guid: eabaec0e9d21fb14a8fa080afc8c9559, type: 2}
     AnimationDelay: 10
 --- !u!1 &956303003
 GameObject:
@@ -5516,7 +5516,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 7
+  m_SortingOrder: 5
   m_Sprite: {fileID: 21300000, guid: af0aab8f51f2a5d479c0380d9546fef9, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -5541,10 +5541,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ObjectAnimator: {fileID: 978408370}
-  DoIdleAnimation: 0
+  DoIdleAnimation: 1
   IndexOfAnimationToIdle: 0
   ListOfAnimations:
-  - AnimationName: {fileID: 7400000, guid: f11df5caed29eae4ab2007cd4ef6fd85, type: 2}
+  - AnimationClip: {fileID: 7400000, guid: f11df5caed29eae4ab2007cd4ef6fd85, type: 2}
     AnimationDelay: 7
 --- !u!1 &979329840
 GameObject:
@@ -6073,17 +6073,17 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1121563000}
-  m_LocalRotation: {x: 0, y: 0, z: 1, w: 0}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0, z: -0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 61041155}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 180}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -4.78, y: 1.02}
+  m_AnchoredPosition: {x: -4.38, y: 1.23}
   m_SizeDelta: {x: 1.5, y: 1.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1121563002
@@ -8109,10 +8109,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ObjectAnimator: {fileID: 1559204437}
-  DoIdleAnimation: 0
+  DoIdleAnimation: 1
   IndexOfAnimationToIdle: 0
   ListOfAnimations:
-  - AnimationName: {fileID: 7400000, guid: 16f1f4a6a99f69a418009d5f97354316, type: 2}
+  - AnimationClip: {fileID: 7400000, guid: 16f1f4a6a99f69a418009d5f97354316, type: 2}
     AnimationDelay: 8
 --- !u!1 &1568559683
 GameObject:
@@ -9690,10 +9690,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ObjectAnimator: {fileID: 1667927404}
-  DoIdleAnimation: 0
+  DoIdleAnimation: 1
   IndexOfAnimationToIdle: 0
   ListOfAnimations:
-  - AnimationName: {fileID: 7400000, guid: 9cd713a618251884abdccd0d3005561b, type: 2}
+  - AnimationClip: {fileID: 7400000, guid: 9cd713a618251884abdccd0d3005561b, type: 2}
     AnimationDelay: 3
 --- !u!1 &1678925032
 GameObject:
@@ -10497,7 +10497,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 6
-  m_Sprite: {fileID: 21300000, guid: 87f02dba20a257644bd82c28fbf24405, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 0a5ac25d42cc44d418fae41478df6944, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -10541,10 +10541,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ObjectAnimator: {fileID: 1841224760}
-  DoIdleAnimation: 0
+  DoIdleAnimation: 1
   IndexOfAnimationToIdle: 0
   ListOfAnimations:
-  - AnimationName: {fileID: 7400000, guid: 5ea4fb8e8f8583f449d6047ce96e25bf, type: 2}
+  - AnimationClip: {fileID: 7400000, guid: 5ea4fb8e8f8583f449d6047ce96e25bf, type: 2}
     AnimationDelay: 3
 --- !u!1 &1859474273
 GameObject:
@@ -10978,10 +10978,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ObjectAnimator: {fileID: 1959491677}
-  DoIdleAnimation: 0
+  DoIdleAnimation: 1
   IndexOfAnimationToIdle: 0
   ListOfAnimations:
-  - AnimationName: {fileID: 7400000, guid: 7b4aae7c49731e143a85e6a895c1683b, type: 2}
+  - AnimationClip: {fileID: 7400000, guid: 7b4aae7c49731e143a85e6a895c1683b, type: 2}
     AnimationDelay: 4
 --- !u!1 &1982880455
 GameObject:
@@ -11670,14 +11670,14 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2135580535}
-  m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
+  m_LocalRotation: {x: 0, y: 0, z: 0.38268343, w: 0.92387956}
   m_LocalPosition: {x: 0, y: 0, z: -0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 61041155}
   m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 45}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 3.66, y: -3.11}
