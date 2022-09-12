@@ -5,8 +5,8 @@ using UnityEngine.UI;
 
 public class LocalKeyboardInput : MonoBehaviour
 {
-    public string KeyCodeForHit;
-    public string KeyCodeForSlap;
+    public KeyCode KeyCodeForHit;
+    public KeyCode KeyCodeForSlap;
 
     public Button linkToHitButton;
     public Button linkToSlapButton;

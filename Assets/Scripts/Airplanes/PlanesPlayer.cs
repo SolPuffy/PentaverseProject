@@ -26,7 +26,11 @@ public class PlanesPlayer : NetworkBehaviour
             }
         }
     }
-    
+    [ClientRpc]
+    public void UPDATESTUFF(List<PlayerShipStructure> shipsBruh)
+    {
+        ServerActions.Instance.PlayersList = shipsBruh;
+    }
     [TargetRpc]
     public async void givePlayerPowerup(PowerUp power,int playerIndex)
     {
@@ -96,6 +100,9 @@ public class PlanesPlayer : NetworkBehaviour
     public override void OnStopServer()
     {
         Debug.Log($"Client {name}, index {playerIndex} Stopped on Server");
+        try { ServerActions.Instance.PlayersList[playerIndex].Disconnected = true; }
+        catch { }
+        
         GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
 
         if ((players.Length - 1) == 0)

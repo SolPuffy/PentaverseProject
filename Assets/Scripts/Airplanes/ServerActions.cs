@@ -19,12 +19,23 @@ public class PlayerShipStructure
     public bool isDestroyed = false;
     public bool isShielded = false;
     public bool Misfire = false;
+    public bool Disconnected = false;
+    public override string ToString()
+    {
+        string ret;
+        ret = $"Coords (head/center): {PlayerShipHead.ToString()};  {PlayerShipHead.ToString()} \nHealth :{Health}; Orientation :{Orientation}; \nIsDestroyed :{isDestroyed}; Disconnected :{Disconnected} \nPowerUpPity :{PowerupPity}";
+        return ret;
+    }
 }
 public class ServerActions : NetworkBehaviour
 {
     [SyncVar] public int activeShipsCount;
     public static ServerActions Instance;
-    public List<PlanesPlayer> PlanesPlayers = new List<PlanesPlayer>();
+
+    public SyncList<PlanesPlayer> PlanesPlayers = new SyncList<PlanesPlayer>();
+    public List<PlayerShipStructure> PlayersList = new List<PlayerShipStructure>();
+
+
     [SerializeField] Tilemap map;
    
     public GridBaseStructure ServerVisibleGrid;
@@ -32,7 +43,7 @@ public class ServerActions : NetworkBehaviour
     //public List<string> AvailableTreasureSpaces = new List<string>();
     public List<PowerUp> BasePowerupsList = new List<PowerUp>();
     public List<ToPlayersPowerUp> ActivePowerupsList = new List<ToPlayersPowerUp>();
-    public List<PlayerShipStructure> PlayersList = new List<PlayerShipStructure>();
+   
 
     public Tile[] Tiles = new Tile[10];
 
@@ -49,7 +60,7 @@ public class ServerActions : NetworkBehaviour
     private void Awake()
     {
         Instance = this;
-    }      
+    }
 
     // tile 0 = normal water
     // tile 1 = undiscovered treasure                                                                                        //deprecated, not used anymore.
@@ -63,7 +74,12 @@ public class ServerActions : NetworkBehaviour
     // tile 9 = player 4
     // tile 10 = fake player
 
-    
+    private void Update()
+    {
+        if (!Application.isBatchMode) return;
+        if (SetupInProgress) return;
+        PlanesPlayers[0].UPDATESTUFF(PlayersList);
+    }
     //[TargetRpc]
     public async Task HitCalledOnTileLocation(Vector3Int targetedTile)
     {

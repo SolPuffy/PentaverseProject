@@ -57,6 +57,7 @@ public class LocalPlayerActions : MonoBehaviour
         if (PlanesPlayer.localPlayer == null) return;
 
         UpdateName();
+        UpdatePortraits();
 
         if (PlanesPlayer.localPlayer.playerIndex != 0 || !ServerActions.Instance.SetupInProgress)
             HostMenu.SetActive(false);
@@ -64,14 +65,7 @@ public class LocalPlayerActions : MonoBehaviour
             HostMenu.SetActive(true);
 
 
-        if (!ServerActions.Instance.SetupInProgress  && ServerActions.Instance.CurrentPlayerTurn == PlanesPlayer.localPlayer.playerIndex && !ServerActions.Instance.HitCalled)
-        {
-            BGPlayer.color = Color.green;
-        }
-        else
-        {
-            BGPlayer.color = Color.white;
-        }
+        
         if (!ServerActions.Instance.SetupInProgress && Input.GetMouseButtonDown(0) && ServerActions.Instance.CurrentPlayerTurn == PlanesPlayer.localPlayer.playerIndex && !ServerActions.Instance.HitCalled)
         {
             RaycastToTile();
@@ -203,13 +197,13 @@ public class LocalPlayerActions : MonoBehaviour
                 size = 42;
                 break;
             case 2:
-                size = 50;
+                size = 51;
                 break;
             case 3:
                 size = 69;
                 break;
             case 4:
-                size = 80;
+                size = 81;
                 break;
             case 5:
                 size = 99;
@@ -219,5 +213,50 @@ public class LocalPlayerActions : MonoBehaviour
                 break;
         }
         return size;
+    }
+
+    private void UpdatePortraits()
+    {
+        for (int i = 0; i < OrbControl.accessPlayerSlots.Length; i++)
+        {
+            OrbControl.accessPlayerSlots[i].SetActive(false);
+            OrbControl.acessLocalPlayer[i].enabled = false;
+        }
+
+        for(int i = 0; i<ServerActions.Instance.PlanesPlayers.Count; i++)
+        {
+            OrbControl.accessPlayerSlots[i].SetActive(true);
+
+            if(PlanesPlayer.localPlayer.playerIndex == i)
+                OrbControl.acessLocalPlayer[i].enabled = true;
+
+            if (!ServerActions.Instance.SetupInProgress)
+                Debug.Log($"player with index {i} : {ServerActions.Instance.PlayersList[i].ToString()}");
+
+            if (!ServerActions.Instance.SetupInProgress && ServerActions.Instance.CurrentPlayerTurn == i)
+                OrbControl.ChangeOrbCustom(i, 0);
+            else
+                OrbControl.ChangeOrbCustom(i, 1);           
+
+            if (!ServerActions.Instance.SetupInProgress && ServerActions.Instance.PlayersList[i].Misfire)
+                OrbControl.ChangeOrbCustom(i, 4);
+
+            if (!ServerActions.Instance.SetupInProgress && ServerActions.Instance.PlayersList[i].Disconnected)
+                OrbControl.ChangeOrbCustom(i, 3);
+
+            if (!ServerActions.Instance.SetupInProgress && ServerActions.Instance.PlayersList[i].isDestroyed)
+                OrbControl.ChangeOrbCustom(i, 2);
+        }
+
+        /*
+        if (!ServerActions.Instance.SetupInProgress && ServerActions.Instance.CurrentPlayerTurn == PlanesPlayer.localPlayer.playerIndex && !ServerActions.Instance.HitCalled)
+        {
+            BGPlayer.color = Color.green;
+        }
+        else
+        {
+            BGPlayer.color = Color.white;
+        }
+        */
     }
 }
