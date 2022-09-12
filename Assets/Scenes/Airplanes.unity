@@ -135,7 +135,7 @@ GameObject:
   - component: {fileID: 71955933}
   - component: {fileID: 71955932}
   m_Layer: 5
-  m_Name: Image
+  m_Name: Player0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -515,7 +515,7 @@ GameObject:
   - component: {fileID: 202400214}
   - component: {fileID: 202400213}
   m_Layer: 5
-  m_Name: Image (3)
+  m_Name: Portrait
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -627,6 +627,7 @@ GameObject:
   - component: {fileID: 308148408}
   - component: {fileID: 308148410}
   - component: {fileID: 308148409}
+  - component: {fileID: 308148411}
   m_Layer: 5
   m_Name: Portraits
   m_TagString: Untagged
@@ -693,6 +694,30 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 308148407}
   m_CullTransparentMesh: 1
+--- !u!114 &308148411
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 308148407}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 359f8ac28094bdf4cb5b0da80f1ee612, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OrbSlots:
+  - {fileID: 1054582022}
+  - {fileID: 459978768}
+  - {fileID: 1017330868}
+  - {fileID: 1383236311}
+  - {fileID: 1679620040}
+  OrbSprites:
+  - {fileID: 21300000, guid: 7162d57efed855949aeb0ad17bf1f9ef, type: 3}
+  - {fileID: 21300000, guid: 91b0582d173e9ca4f953c4652b720846, type: 3}
+  - {fileID: 21300000, guid: db6ac31e3ae44d843844eedd7b9230eb, type: 3}
+  - {fileID: 21300000, guid: 424c07016b12fdf4ea9e9e22c552f700, type: 3}
+  - {fileID: 21300000, guid: 706c6b038b25c7b4083b22664d08a0e6, type: 3}
 --- !u!1 &369204562
 GameObject:
   m_ObjectHideFlags: 0
@@ -858,7 +883,7 @@ GameObject:
   - component: {fileID: 459978769}
   - component: {fileID: 459978768}
   m_Layer: 5
-  m_Name: Image (2)
+  m_Name: LightOrb1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -904,7 +929,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: db6ac31e3ae44d843844eedd7b9230eb, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -934,7 +959,7 @@ GameObject:
   - component: {fileID: 463474236}
   - component: {fileID: 463474235}
   m_Layer: 5
-  m_Name: Image (4)
+  m_Name: Player4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -953,6 +978,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1077767661}
+  - {fileID: 1679620039}
   m_Father: {fileID: 1909293072}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1297,7 +1323,7 @@ GameObject:
   - component: {fileID: 669593523}
   - component: {fileID: 669593522}
   m_Layer: 5
-  m_Name: Image (3)
+  m_Name: Player3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2352,7 +2378,7 @@ GameObject:
   - component: {fileID: 1017330869}
   - component: {fileID: 1017330868}
   m_Layer: 5
-  m_Name: Image (3)
+  m_Name: LightOrb2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2398,7 +2424,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 91b0582d173e9ca4f953c4652b720846, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2428,7 +2454,7 @@ GameObject:
   - component: {fileID: 1049182592}
   - component: {fileID: 1049182591}
   m_Layer: 5
-  m_Name: Image (1)
+  m_Name: Portrait
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2504,7 +2530,7 @@ GameObject:
   - component: {fileID: 1054582023}
   - component: {fileID: 1054582022}
   m_Layer: 5
-  m_Name: Image (1)
+  m_Name: LightOrb0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2550,7 +2576,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 7162d57efed855949aeb0ad17bf1f9ef, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2580,7 +2606,7 @@ GameObject:
   - component: {fileID: 1077767663}
   - component: {fileID: 1077767662}
   m_Layer: 5
-  m_Name: Image (4)
+  m_Name: Portrait
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3009,7 +3035,7 @@ GameObject:
   - component: {fileID: 1339507931}
   - component: {fileID: 1339507930}
   m_Layer: 5
-  m_Name: Image (1)
+  m_Name: Player1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3087,7 +3113,7 @@ GameObject:
   - component: {fileID: 1383236312}
   - component: {fileID: 1383236311}
   m_Layer: 5
-  m_Name: Image (4)
+  m_Name: LightOrb3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3133,7 +3159,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 706c6b038b25c7b4083b22664d08a0e6, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -4115,6 +4141,82 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1667903730}
   m_CullTransparentMesh: 1
+--- !u!1 &1679620038
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1679620039}
+  - component: {fileID: 1679620041}
+  - component: {fileID: 1679620040}
+  m_Layer: 5
+  m_Name: LightOrb4
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1679620039
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1679620038}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 463474234}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 55, y: 0}
+  m_SizeDelta: {x: 25, y: 25}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1679620040
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1679620038}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: 424c07016b12fdf4ea9e9e22c552f700, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1679620041
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1679620038}
+  m_CullTransparentMesh: 1
 --- !u!1 &1759320238
 GameObject:
   m_ObjectHideFlags: 0
@@ -4611,7 +4713,7 @@ GameObject:
   - component: {fileID: 1891618844}
   - component: {fileID: 1891618843}
   m_Layer: 5
-  m_Name: Image
+  m_Name: Portrait
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5444,7 +5546,7 @@ GameObject:
   - component: {fileID: 1972411814}
   - component: {fileID: 1972411813}
   m_Layer: 5
-  m_Name: Image (2)
+  m_Name: Player2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5522,7 +5624,7 @@ GameObject:
   - component: {fileID: 2055300572}
   - component: {fileID: 2055300571}
   m_Layer: 5
-  m_Name: Image (2)
+  m_Name: Portrait
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
