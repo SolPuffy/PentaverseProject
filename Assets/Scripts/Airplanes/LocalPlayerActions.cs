@@ -197,25 +197,25 @@ public class LocalPlayerActions : MonoBehaviour
         switch(choice.value)
         {
             case 0:
-                size = 21;
-                break;
-            case 1:
-                size = 24;
-                break;
-            case 2:
-                size = 27;
-                break;
-            case 3:
-                size = 30;
-                break;
-            case 4:
                 size = 33;
                 break;
-            case 5:
+            case 1:
                 size = 42;
                 break;
+            case 2:
+                size = 50;
+                break;
+            case 3:
+                size = 69;
+                break;
+            case 4:
+                size = 80;
+                break;
+            case 5:
+                size = 99;
+                break;
             default:
-                size = 21;
+                size = 33;
                 break;
         }
         return size;
