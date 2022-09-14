@@ -55,15 +55,7 @@ public class HitSlapRazboi : NetworkBehaviour
 
     public CardPlayer firstPlayer { get 
         {
-            GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-            if(players.Length > 0)
-            {
-                return players[0].GetComponent<CardPlayer>();
-            }
-            else
-            {
-                return null;
-            }
+            return Players[0];
         } 
         set { } }
 
@@ -293,7 +285,9 @@ public class HitSlapRazboi : NetworkBehaviour
         if (SlapsLeft[IndexOfSlappingPlayer] <= 0) return;
         if (PlayerDecks[IndexOfSlappingPlayer].Count <= 0) return;
         if (CardsOnGround.Count < 2) return;
-  
+
+        firstPlayer.SlapMojo();
+
         SlapsLeft[IndexOfSlappingPlayer]--;
 
         SlapTime = Time.realtimeSinceStartup;

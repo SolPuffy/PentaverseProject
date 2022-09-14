@@ -300,5 +300,6 @@ public class VisualsRazboi : MonoBehaviour
     void StartEvent()
     {
         SoundManager.instance.Sounds[UnityEngine.Random.Range(1, 3)].source.Play();
+
     }
 }

@@ -17,25 +17,31 @@ public class AnimationControl : MonoBehaviour
     public bool DoIdleAnimation = true;
     public int IndexOfAnimationToIdle;
     public List<AnimList> ListOfAnimations = new List<AnimList>();
-    private async void Start()
+    private void Start()
     {
+        //fakeConsole.MoreText($"{name} Animation starting ...");
+        StartCoroutine(InfiniteLOOP());
+    }
 
-        if(DoIdleAnimation)
+    IEnumerator InfiniteLOOP()
+    {
+        yield return new WaitForSeconds(ListOfAnimations[IndexOfAnimationToIdle].AnimationDelay + Random.Range(0.3f, 2.7f));
+        while(true)
         {
-            await Task.Delay((int)(ListOfAnimations[IndexOfAnimationToIdle].AnimationDelay + Random.Range(0.3f, 2.7f)) * 1000);
-            await IdleAnimation();
+            IdleAnimation();
+            yield return new WaitForSeconds(ListOfAnimations[IndexOfAnimationToIdle].AnimationDelay + Random.Range(0.3f, 2.7f));
         }
-    }
 
-    private async Task IdleAnimation()
+    }
+    private void  IdleAnimation()
     {
+        if (ObjectAnimator == null) return;
+
+        //fakeConsole.MoreText($"{name} Trying to start Idle ...");
         ObjectAnimator.Play(ListOfAnimations[IndexOfAnimationToIdle].AnimationClip.name);
-        await Task.Delay((int)(ListOfAnimations[IndexOfAnimationToIdle].AnimationDelay + Random.Range(0.3f, 2.7f)) * 1000);
-        await IdleAnimation();
-    }
-    public void PlayAnimationOfIndex(int Index)
-    {
-        ObjectAnimator.Play(ListOfAnimations[Index].AnimationClip.name);
-    }
+        //fakeConsole.MoreText($"{name} Idle done ...");
+        //await Task.Delay((int)(ListOfAnimations[IndexOfAnimationToIdle].AnimationDelay + Random.Range(0.3f, 2.7f)) * 1000);
+        //IdleAnimation();
+    } 
 
 }

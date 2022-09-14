@@ -128,8 +128,7 @@ public class CardPlayer : NetworkBehaviour
     public void SlapCards()
     {
         Debug.Log($"Trying to slap cards {name} with index {playerIndex}");
-        HitSlapRazboi.instance.SlapCards(playerIndex,Nome, out bool Success, out int timeSpan);
-        SlapMojo();
+        HitSlapRazboi.instance.SlapCards(playerIndex,Nome, out bool Success, out int timeSpan);        
        // ChangeDecks(HitSlapRazboi.instance.PlayerDecks, HitSlapRazboi.instance.Players);
 
         if (Success) { RegisterWinningSlap(Nome, timeSpan ); }

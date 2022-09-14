@@ -19,7 +19,7 @@ public class SoundManager : MonoBehaviour
             return;
         }
 
-      foreach(Sound s in Sounds)
+        foreach(Sound s in Sounds)
         {
             s.source = gameObject.AddComponent<AudioSource>();
             s.source.clip = s.clip;
@@ -31,6 +31,7 @@ public class SoundManager : MonoBehaviour
         if (!Application.isBatchMode)
         {
             Sounds[10].source.Play();
+            Sounds[4].source.Play();
         }
     }
 
