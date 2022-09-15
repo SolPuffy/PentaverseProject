@@ -46,7 +46,7 @@ public class VisualsRazboi : MonoBehaviour
         StartGame.SetActive(false);
         SlapPanel.SetActive(false);
         if (HitSlapRazboi.CheckUI == null) { HitSlapRazboi.CheckUI = new UnityEvent<int>(); }
-        if (HitSlapRazboi.EndGame == null) { HitSlapRazboi.EndGame = new UnityEvent(); }
+        if (HitSlapRazboi.EndGame == null) { HitSlapRazboi.EndGame = new UnityEvent<List<string>>(); }
         if (HitSlapRazboi.SlapSuccess == null) { HitSlapRazboi.SlapSuccess = new UnityEvent<string, int>(); }
         if (HitSlapRazboi.SlapAnimation == null) { HitSlapRazboi.SlapAnimation = new UnityEvent(); }
         if (HitSlapRazboi.HitCard == null) { HitSlapRazboi.HitCard = new UnityEvent(); }
@@ -76,9 +76,7 @@ public class VisualsRazboi : MonoBehaviour
         {
             ActivateVisualDecks(i);
         }
-        try
-        { CalculateCorrectOrder(correctOrder); }
-        catch { Debug.LogWarning("temp Error"); }
+       
        
         CardCountUpdate();
         CardsOnGroundVisual();
@@ -245,13 +243,21 @@ public class VisualsRazboi : MonoBehaviour
         }
     }
 
-    void ExecuteEndGame()
+    void ExecuteEndGame(List<string> winOrder)
     {
         HitButton.gameObject.SetActive(false);
         SlapButton.gameObject.SetActive(false);
         EndGame.SetActive(true);
         SoundManager.instance.Sounds[10].source.Stop();
-        SoundManager.instance.Sounds[UnityEngine.Random.Range(3, 6)].source.Play();
+        if(CardPlayer.localPlayer.name == winOrder[0])
+        {
+            SoundManager.instance.Sounds[3].source.Play();
+        }
+        else
+        {
+            SoundManager.instance.Sounds[5].source.Play();
+        }
+        
     }
 
     void CheckSlapButton()
@@ -300,6 +306,9 @@ public class VisualsRazboi : MonoBehaviour
     void StartEvent()
     {
         SoundManager.instance.Sounds[UnityEngine.Random.Range(1, 3)].source.Play();
+        try
+        { CalculateCorrectOrder(correctOrder); }
+        catch { Debug.LogWarning("temp Error"); }
 
     }
 }

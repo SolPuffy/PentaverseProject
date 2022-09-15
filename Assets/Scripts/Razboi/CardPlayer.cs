@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class CardPlayer : NetworkBehaviour
 {
     public static CardPlayer localPlayer;
-    [SyncVar] public int playerIndex = 20;
+    [SyncVar] public int playerIndex = 20;    
     [SyncVar] public string Nome = "P";
     [SyncVar] public bool HasEntered = false;
     //List<CardPlayer> cardPlayers = new List<CardPlayer>();
@@ -51,10 +51,15 @@ public class CardPlayer : NetworkBehaviour
         }
         else
         {
-            HitSlapRazboi.instance.RemovePlayer(playerIndex);
+            if(HitSlapRazboi.instance.InititalSetupDone)
+            {
+                HitSlapRazboi.instance.RemovePlayerInGame(playerIndex);
+            }
+            else
+            {
+                HitSlapRazboi.instance.RemovePlayerBeforeGame(playerIndex);
+            }            
         }
-
-
     }
 
     public override void OnStartServer()
@@ -91,9 +96,9 @@ public class CardPlayer : NetworkBehaviour
     }
     
     [ClientRpc]
-    public void EndGame()
+    public void EndGame(List<string> winOrder)
     {
-        HitSlapRazboi.EndGame.Invoke();
+        HitSlapRazboi.EndGame.Invoke(winOrder);
        // HitSlapRazboi.instance.ExecuteEndGame();
     }
     [ClientRpc]
@@ -153,7 +158,7 @@ public class CardPlayer : NetworkBehaviour
         HitSlapRazboi.instance.SlapsLeft.Add(HitSlapRazboi.instance.InitialSlapConter);
         HitSlapRazboi.instance.CardCount.Add(0);
         HitSlapRazboi.instance.Players.Add(this);
-        playerIndex = HitSlapRazboi.instance.Players.IndexOf(this);       
+        playerIndex = HitSlapRazboi.instance.Players.IndexOf(this);        
     }
   
     [TargetRpc]

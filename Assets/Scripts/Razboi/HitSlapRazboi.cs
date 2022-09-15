@@ -25,7 +25,7 @@ public class HitSlapRazboi : NetworkBehaviour
     public float DelayBeforeResetBoard = 1;
     public int SwitchCaseDeckRules = 0;
     public static UnityEvent<int>  CheckUI;
-    public static UnityEvent  EndGame;
+    public static UnityEvent<List<string>> EndGame ;
     public static UnityEvent<string, int> SlapSuccess;
     public static UnityEvent SlapAnimation;
     public static UnityEvent HitCard;
@@ -44,21 +44,20 @@ public class HitSlapRazboi : NetworkBehaviour
     [SyncVar] public int IndexOfActivePlayer = 0;    
     [SyncVar] public CardValueType SlapCard;
     public SyncList<int> SlapsLeft = new SyncList<int>();   
-    public SyncListCards CardsOnGround = new SyncListCards();
-    
+    public SyncListCards CardsOnGround = new SyncListCards();    
 
     public SyncList<int> CardCount = new SyncList<int>();
     public SyncList<string> PlayerNames = new SyncList<string>();
 
-
-
+    public List<string> WinOrder = new List<string>();
+    private int PlayersLeft = 0;
 
     public CardPlayer firstPlayer { get 
         {
             return Players[0];
         } 
-        set { } }
-
+        set { } 
+    }
     
     private void Awake()
     {
@@ -94,6 +93,7 @@ public class HitSlapRazboi : NetworkBehaviour
         Debug.Log("dispersing cards");
         IndexOfActivePlayer = 0;
         DisperseCardsBetweenPlayers();
+        PlayersLeft = Players.Count;
         SlapCard = null;
     }
 
@@ -108,14 +108,14 @@ public class HitSlapRazboi : NetworkBehaviour
         SlapCard = null;
         SlapsLeft.Clear();
         CardCount.Clear();
-        PlayerNames.Clear();
-        //SlapsLeft = 3;
+        PlayerNames.Clear();        
         CardsToHit = 1;
         PlayerDecks.Clear();
         Players.Clear();
         DeckControllerRazboi.instance.AssambledDeck.Clear();
         StopAllCoroutines();
         StartCoroutine(Setup());
+        PlayersLeft = 0;
     }
 
     void UpdateValuesForVisuals()
@@ -176,6 +176,10 @@ public class HitSlapRazboi : NetworkBehaviour
             {
                 StaySamePlayer();
             }
+        }
+        if(PlayerDecks[indexLocalPlayer].Count <=0 )
+        {
+            PlayerLoses(indexLocalPlayer);
         }
         //
     }
@@ -306,9 +310,12 @@ public class HitSlapRazboi : NetworkBehaviour
             
                 SlapCard = PlayerDecks[IndexOfSlappingPlayer][0];
                 CardsLostToSlap.Add(PlayerDecks[IndexOfSlappingPlayer][0]);
-                PlayerDecks[IndexOfSlappingPlayer].RemoveAt(0);   
-
-                Debug.Log($"Slap result : {Success.ToString()}  {ReactionTime.ToString()}");
+                PlayerDecks[IndexOfSlappingPlayer].RemoveAt(0);
+                if (PlayerDecks[IndexOfSlappingPlayer].Count <= 0)
+                {
+                    PlayerLoses(IndexOfSlappingPlayer);
+                }
+            Debug.Log($"Slap result : {Success.ToString()}  {ReactionTime.ToString()}");
             }
 
         //CONSOLE OUTPUT
@@ -395,7 +402,7 @@ public class HitSlapRazboi : NetworkBehaviour
 
         firstPlayer.CheckTurn(indexLocalPlayer);
 
-        CheckPlayerVictory(indexLocalPlayer);
+        //CheckPlayerVictory(indexLocalPlayer);
     }
 
     void IncrementActivePlayer()
@@ -431,7 +438,7 @@ public class HitSlapRazboi : NetworkBehaviour
     {
         if (PlayerDecks[indexLocalPlayer].Count == RefToController.AssambledDeck.Count)
         {
-            firstPlayer.EndGame();
+            firstPlayer.EndGame(WinOrder);
             ServerBackup.PerformServerBackup();
             return;           
         }
@@ -511,41 +518,76 @@ public class HitSlapRazboi : NetworkBehaviour
         return false;
     }
 
-    public void RemovePlayer(int index)
+    public void RemovePlayerInGame(int index)
     {
-        Debug.Log($"Removing player with index {index}");
-        SlapsLeft.RemoveAt(index);
-        CardCount.RemoveAt(index);
+        Debug.Log($"Removing player in Game with index {index}");        
         Players.RemoveAt(index);
-        PlayerNames.RemoveAt(index);
+        PlayerLoses(index);       
 
         //split cards
-        if (PlayerDecks[index].Count <= 0)
+        if (PlayerDecks[index].Count > 0)        
         {
-            PlayerDecks.RemoveAt(index);
-        }
-        else 
-        {
-            List<CardValueType> tempList = PlayerDecks[index];
-            PlayerDecks.RemoveAt(index);
+            List<CardValueType> tempList = new List<CardValueType>();
+            tempList.AddRange(PlayerDecks[index]);
+            PlayerDecks[index].Clear();
             for (int i = 0; i < tempList.Count; i++)
             {
                 if(PlayerDecks[i % PlayerDecks.Count].Count > 0)
                     PlayerDecks[i % PlayerDecks.Count].Add(tempList[i]);
             }
         }
+        
+        //RefreshTurn
+        if(index == IndexOfActivePlayer) { NextPlayer(); }        
+    }
 
-        //rename indexes
+    public void RemovePlayerBeforeGame(int index)
+    {
+        Debug.Log($"Removing player pre Game with index {index}");
+        SlapsLeft.RemoveAt(index);
+        CardCount.RemoveAt(index);
+        Players.RemoveAt(index);        
+        PlayerNames.RemoveAt(index);
+        PlayerDecks.RemoveAt(index);
+
+        //rename indexes        
         foreach(CardPlayer player in Players)
         {
             int newIndex = Players.IndexOf(player);
             player.playerIndex = newIndex;
             player.InstantIndexUpdate(newIndex);
-        }
+        }        
+    }
 
-        //RefreshTurn
-        if(index < IndexOfActivePlayer) {IndexOfActivePlayer--;}
-        StaySamePlayer();
+    private void PlayerLoses(int index)
+    {
+        if(!WinOrder.Contains(PlayerNames[index]))
+        {
+            PlayersLeft--;
+            WinOrder.Insert(0, PlayerNames[index]);
+            if(RoundEndTriggered && IndexOfPlayerWhoTriggeredRoundEnd == index)
+            {
+                RoundEndTriggered = false;
+                CardsToHit = 1;
+            }
+        }     
+        
+        if(PlayersLeft < 2)
+        {
+            foreach(string name in PlayerNames)
+            {
+                if(!WinOrder.Contains(name))
+                {
+                    WinOrder.Insert(0, name);
+                }
+            }
+
+            if(WinOrder.Count == Players.Count)
+            {
+                firstPlayer.EndGame(WinOrder);
+                ServerBackup.PerformServerBackup();
+            }
+        }
     }
    
     #endregion
