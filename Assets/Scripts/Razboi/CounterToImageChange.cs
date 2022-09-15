@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,17 +12,35 @@ public class CounterToImageChange : MonoBehaviour
     public Sprite imageOnHigherThanZero;
     public Sprite imageOnZero;
 
+    public bool slap = false;
+
     private void Update()
     {
-        if(counter.text.ConvertTo<int>() > 0)
+        if (slap)
         {
-            counter.enabled = true;
-            imageToChange.image.sprite = imageOnHigherThanZero;
+            if (int.Parse(counter.text) > 0 && HitSlapRazboi.instance.InititalSetupDone && HitSlapRazboi.instance.CardCount[CardPlayer.localPlayer.playerIndex] > 0)
+            {
+                counter.enabled = true;
+                imageToChange.image.sprite = imageOnHigherThanZero;
+            }
+            else
+            {
+                counter.enabled = false;
+                imageToChange.image.sprite = imageOnZero;
+            }
         }
         else
         {
-            counter.enabled = false;
-            imageToChange.image.sprite = imageOnZero;
+            if (HitSlapRazboi.instance.IndexOfActivePlayer == CardPlayer.localPlayer.playerIndex && HitSlapRazboi.instance.InititalSetupDone)
+            {
+                counter.enabled = true;
+                imageToChange.image.sprite = imageOnHigherThanZero;
+            }
+            else
+            {
+                counter.enabled = false;
+                imageToChange.image.sprite = imageOnZero;
+            }
         }
     }
 }

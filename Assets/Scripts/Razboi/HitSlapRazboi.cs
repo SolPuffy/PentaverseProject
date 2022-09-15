@@ -106,6 +106,7 @@ public class HitSlapRazboi : NetworkBehaviour
         CardsOnGround.Clear();
         CardsLostToSlap.Clear();
         SlapCard = null;
+        WinOrder.Clear();
         SlapsLeft.Clear();
         CardCount.Clear();
         PlayerNames.Clear();        
@@ -530,10 +531,14 @@ public class HitSlapRazboi : NetworkBehaviour
             List<CardValueType> tempList = new List<CardValueType>();
             tempList.AddRange(PlayerDecks[index]);
             PlayerDecks[index].Clear();
+            int offset = 0;
             for (int i = 0; i < tempList.Count; i++)
             {
-                if(PlayerDecks[i % PlayerDecks.Count].Count > 0)
-                    PlayerDecks[i % PlayerDecks.Count].Add(tempList[i]);
+                while(PlayerDecks[(i + offset) % PlayerDecks.Count].Count <= 0)
+                {
+                    offset++;
+                }
+                PlayerDecks[(i + offset) % PlayerDecks.Count].Add(tempList[i]);
             }
         }
         
@@ -561,9 +566,12 @@ public class HitSlapRazboi : NetworkBehaviour
 
     private void PlayerLoses(int index)
     {
+       
         if(!WinOrder.Contains(PlayerNames[index]))
         {
+           
             PlayersLeft--;
+            Debug.Log($"Player with index {index} and name {PlayerNames[index]} left. {PlayersLeft} players left in game");
             WinOrder.Insert(0, PlayerNames[index]);
             if(RoundEndTriggered && IndexOfPlayerWhoTriggeredRoundEnd == index)
             {
@@ -581,9 +589,11 @@ public class HitSlapRazboi : NetworkBehaviour
                     WinOrder.Insert(0, name);
                 }
             }
+            Debug.Log($"Should be end with player {WinOrder[0]} winning. WinOrder count : {WinOrder.Count}.");
 
-            if(WinOrder.Count == Players.Count)
+            if (WinOrder.Count == PlayerNames.Count)
             {
+                Debug.Log("ending .. . . . . . .");
                 firstPlayer.EndGame(WinOrder);
                 ServerBackup.PerformServerBackup();
             }

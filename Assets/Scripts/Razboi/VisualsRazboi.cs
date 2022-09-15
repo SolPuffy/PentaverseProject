@@ -12,6 +12,9 @@ public class VisualsRazboi : MonoBehaviour
     [SerializeField] TextMeshProUGUI hitCounter;
     [SerializeField] TextMeshProUGUI slapCounter;
     [SerializeField] GameObject EndGame;
+    [SerializeField] GameObject WIN;
+    [SerializeField] GameObject LOSE;
+
     [SerializeField] GameObject SlapPanel;
     [Header("PlayerSpots")]
     [SerializeField] Color PlayerDefaultColor;
@@ -43,6 +46,8 @@ public class VisualsRazboi : MonoBehaviour
     {
         if(Application.isBatchMode) { Destroy(this); }
         EndGame.SetActive(false);
+        WIN.SetActive(false);
+        LOSE.SetActive(false);
         StartGame.SetActive(false);
         SlapPanel.SetActive(false);
         if (HitSlapRazboi.CheckUI == null) { HitSlapRazboi.CheckUI = new UnityEvent<int>(); }
@@ -249,12 +254,14 @@ public class VisualsRazboi : MonoBehaviour
         SlapButton.gameObject.SetActive(false);
         EndGame.SetActive(true);
         SoundManager.instance.Sounds[10].source.Stop();
-        if(CardPlayer.localPlayer.name == winOrder[0])
+        if(CardPlayer.localPlayer.Nome == winOrder[0])
         {
             SoundManager.instance.Sounds[3].source.Play();
+            WIN.SetActive(true);
         }
         else
         {
+            LOSE.SetActive(true);
             SoundManager.instance.Sounds[5].source.Play();
         }
         
@@ -278,12 +285,12 @@ public class VisualsRazboi : MonoBehaviour
 
     void SuccessSlap(string Name, int ReactionTime)
     {
-        StopAllCoroutines();
+        //StopAllCoroutines();
 
         SlapName.text = Name;
         ReactionTxt.text = ReactionTime.ToString();
 
-        StartCoroutine(StopSlapPanel(5));
+        //StartCoroutine(StopSlapPanel(5));
     }
     void SlapAnimation()
     {
@@ -310,5 +317,10 @@ public class VisualsRazboi : MonoBehaviour
         { CalculateCorrectOrder(correctOrder); }
         catch { Debug.LogWarning("temp Error"); }
 
+    }
+
+    public void ToggleConsole()
+    {
+        SlapPanel.SetActive(!SlapPanel.activeSelf);
     }
 }
