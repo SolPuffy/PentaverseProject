@@ -5,6 +5,7 @@ using UnityEngine.Tilemaps;
 using Mirror;
 using System;
 using System.Threading.Tasks;
+using Unity.VisualScripting;
 
 [System.Serializable]
 public class PlayerShipStructure
@@ -19,6 +20,7 @@ public class PlayerShipStructure
     public bool isDestroyed = false;
     public bool isShielded = false;
     public bool Misfire = false;
+    public bool ReceivedCloneBefore = false;
     public bool Disconnected = false;
     public override string ToString()
     {
@@ -103,12 +105,31 @@ public class ServerActions : NetworkBehaviour
 
                     RollWeight = UnityEngine.Random.Range(0, WeightedPowerUpChoice.Count - 1);
 
-                    PlanesPlayers[playerIndexBeforeUpdate].givePlayerPowerup(WeightedPowerUpChoice[RollWeight].PowerUp,playerIndexBeforeUpdate);
+                    if ((int)WeightedPowerUpChoice[RollWeight].PowerUp.PowerUpType == 2 && PlayersList[playerIndexBeforeUpdate].ReceivedCloneBefore)
+                    {
+                        PlanesPlayers[playerIndexBeforeUpdate].ReturnDebugToServer($"Player {playerIndexBeforeUpdate} has already received a 'Powerup.Type(Clone). Trying to give another powerup.");
 
-                    //PlayersList[playerIndexBeforeUpdate].CurrentHeldPowerup = WeightedPowerUpChoice[RollWeight].PowerUp;
+                        WeightedPowerUpChoice.Remove(WeightedPowerUpChoice[RollWeight]);
 
-                    PlayersList[playerIndexBeforeUpdate].PowerupPity = 0;
-                    ActivePowerupsList[ActivePowerupsList.IndexOf(WeightedPowerUpChoice[RollWeight])].AvailableQuanity--;
+                        //If there's anything remaining in weighted powerup choice, roll for it and continue normally, else cancel operation
+                        if (WeightedPowerUpChoice.Count > 0)
+                        {
+                            RollWeight = UnityEngine.Random.Range(0, WeightedPowerUpChoice.Count - 1);
+
+                            //here sequence
+                            GivePowerupSequence(WeightedPowerUpChoice, RollWeight);
+                        }
+                        else
+                        {
+                            PlanesPlayers[playerIndexBeforeUpdate].ReturnDebugToServer($"No powerup left available for rerolling, canceling operation.");
+                        }
+                    }
+                    else
+                    {
+                        //here sequence
+                        GivePowerupSequence(WeightedPowerUpChoice, RollWeight);
+                    }
+
 
                     //checkIfPowerupIsPassive
                     /*if(PlayersList[playerIndexBeforeUpdate].CurrentHeldPowerup.IsRetroactive)
@@ -116,7 +137,6 @@ public class ServerActions : NetworkBehaviour
                         await PlayersList[CurrentPlayerTurn].CurrentHeldPowerup.OnUse(playerIndexBeforeUpdate);
                         PlayersList[CurrentPlayerTurn].CurrentHeldPowerup = null;
                     }*/
-                    Debug.Log($"Player Index {playerIndexBeforeUpdate} got power-up {WeightedPowerUpChoice[RollWeight].PowerUp.ToString()}");
                 }
                 else
                 {
@@ -133,6 +153,23 @@ public class ServerActions : NetworkBehaviour
         //LocalPlayerActions.Instance.PlayingField.SetTile(targetedTile, Tiles[ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y]]);
         HitCalled = false;
         await Task.Yield();
+    }
+
+    private void GivePowerupSequence(List<ToPlayersPowerUp> WeightedPowerUpChoice,int RollWeight)
+    {
+        PlanesPlayers[playerIndexBeforeUpdate].givePlayerPowerup(WeightedPowerUpChoice[RollWeight].PowerUp, playerIndexBeforeUpdate);
+
+        //PlayersList[playerIndexBeforeUpdate].CurrentHeldPowerup = WeightedPowerUpChoice[RollWeight].PowerUp;
+
+        PlayersList[playerIndexBeforeUpdate].PowerupPity = 0;
+        ActivePowerupsList[ActivePowerupsList.IndexOf(WeightedPowerUpChoice[RollWeight])].AvailableQuanity--;
+
+        if ((int)WeightedPowerUpChoice[RollWeight].PowerUp.PowerUpType == 2)
+        {
+            PlayersList[playerIndexBeforeUpdate].ReceivedCloneBefore = true;
+        }
+
+        Debug.Log($"Player Index {playerIndexBeforeUpdate} got power-up {WeightedPowerUpChoice[RollWeight].PowerUp.ToString()}");
     }
     /*public bool RequestPowerupInformation()
     {

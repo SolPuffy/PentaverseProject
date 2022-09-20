@@ -10,35 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 63928577f30e18645a8760d787b3ca07, type: 3}
-  m_Name: Nuke
+  m_Name: SpreadStrike
   m_EditorClassIdentifier: 
   PowerUpType: 0
-  PowerUpIconIndex: 8
-  PowerUpRequiredWeight: 70
-  AvailableQuanity: 1
+  PowerUpIconIndex: 9
+  PowerUpRequiredWeight: 15
+  AvailableQuanity: 5
   IsRetroactive: 0
-  PatternStrike_Pattern: 'OOOOXXXXXOOOO
+  PatternStrike_Pattern: 'OXOXO
 
-    OOOXXXXXXXOOO
+    OOOOO
 
-    OOXXXXXXXXXOO
+    XOXOX
 
-    OXXXXXXXXXXXO
+    OOOOO
 
-    XXXXXXXXXXXXX
-
-    XXXXXXXXXXXXX
-
-    XXXXXXXXXXXXX
-
-    XXXXXXXXXXXXX
-
-    XXXXXXXXXXXXX
-
-    OXXXXXXXXXXXO
-
-    OOXXXXXXXXXOO
-
-    OOOXXXXXXXOOO
-
-    OOOOXXXXXOOOO'
+    OXOXO'
