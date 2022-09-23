@@ -16,7 +16,6 @@ public class SyncListCards : SyncList<CardValueType> { }
 [System.Serializable]
 public class SyncListDecks : List<List<CardValueType>> { }
 
-
 public class HitSlapRazboi : NetworkBehaviour
 {
     public static HitSlapRazboi instance;
@@ -119,13 +118,7 @@ public class HitSlapRazboi : NetworkBehaviour
         PlayersLeft = 0;
     }
 
-    void UpdateValuesForVisuals()
-    {
-        for(int i = 0; i < PlayerDecks.Count; i++ )
-        {
-            CardCount[i] = PlayerDecks[i].Count;            
-        }
-    }
+   
     #region HandlePlayerInput
 
 
@@ -334,11 +327,13 @@ public class HitSlapRazboi : NetworkBehaviour
     #endregion
     #region Visuals
 
-
-
-
-
-
+    void UpdateValuesForVisuals()
+    {
+        for (int i = 0; i < PlayerDecks.Count; i++)
+        {
+            CardCount[i] = PlayerDecks[i].Count;
+        }
+    }
 
     #endregion
     #region Other

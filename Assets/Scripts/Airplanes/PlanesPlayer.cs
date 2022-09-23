@@ -241,4 +241,17 @@ public class PlanesPlayer : NetworkBehaviour
         }
     }
 
+    //Visually update card images
+    [Command]
+    public void SendRequestToUpdateCards(int[] numbers)
+    {
+
+    }
+    [ClientRpc]
+    public void UpdateCardImagesToAllPlayers(int[] numbers)
+    {
+
+    }
+
+
 }

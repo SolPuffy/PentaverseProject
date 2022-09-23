@@ -6,6 +6,14 @@ using TMPro;
 using System;
 using UnityEngine.Events;
 
+[System.Serializable]
+public class ControllerImageCounter
+{
+    public Sprite[] CardsCollection = new Sprite[10];
+    public Image[] ImageConstruction = new Image[2];
+    public int[] cardIndexes = new int[2];
+}
+
 public class VisualsRazboi : MonoBehaviour
 {
     [Header("UI Elements")]
@@ -19,6 +27,7 @@ public class VisualsRazboi : MonoBehaviour
     [Header("PlayerSpots")]
     [SerializeField] Color PlayerDefaultColor;
     [SerializeField] Color ActivePlayerColor;
+    public ControllerImageCounter[] playerCardImages = new ControllerImageCounter[5];
     [SerializeField] List<int> correctOrder = new List<int>();
     [SerializeField] List<Sprite> PlayerPortrait = new List<Sprite>();    
     [SerializeField] List<TextMeshProUGUI> PlayerName = new List<TextMeshProUGUI>();
@@ -90,6 +99,38 @@ public class VisualsRazboi : MonoBehaviour
         CheckSlapButton();
     }
 
+    public void UpdateVisualsForIndex(int Index)
+    {
+        string localCardCount = HitSlapRazboi.instance.CardCount[Index].ToString();
+        switch (localCardCount.Length)
+        {
+            case 1:
+                {
+                    playerCardImages[Index].cardIndexes[0] = 0;
+                    playerCardImages[Index].cardIndexes[1] = (int)localCardCount[0];
+                    break;
+                }
+            case 2:
+                {
+                    playerCardImages[Index].cardIndexes[0] = (int)localCardCount[0];
+                    playerCardImages[Index].cardIndexes[1] = (int)localCardCount[1];
+                    break;
+                }
+            default:
+                {
+                    playerCardImages[Index].cardIndexes[0] = 0;
+                    playerCardImages[Index].cardIndexes[1] = 0;
+                    Debug.Log("PANICA PANICA PANICA");
+                    break;
+                }
+        }
+
+        for (int i = 0; i < 2; i++)
+        {
+            playerCardImages[Index].ImageConstruction[i].sprite = playerCardImages[Index].CardsCollection[playerCardImages[Index].cardIndexes[i]];
+        }
+    }
+
     IEnumerator WaitForLocal()
     {
         Debug.Log("waiting for local");
@@ -140,6 +181,7 @@ public class VisualsRazboi : MonoBehaviour
             for (int i = 0; i < correctOrder.Count; i++)
             {
                 PlayerCardCount[correctOrder.IndexOf(i)].text = HitSlapRazboi.instance.CardCount[i].ToString();
+                UpdateVisualsForIndex(i);
             }
             hitCounter.text = HitSlapRazboi.instance.CardsToHit.ToString();
         }
