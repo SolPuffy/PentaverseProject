@@ -13,6 +13,11 @@ public class CounterToImageChange : MonoBehaviour
     public Sprite imageOnZero;
 
     public bool slap = false;
+    private void Awake()
+    {
+        if (Application.isBatchMode)
+            Destroy(this);
+    }
 
     private void Update()
     {

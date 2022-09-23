@@ -190,7 +190,7 @@ public class PlanesPlayer : NetworkBehaviour
     {
         GameObject[] Players = GameObject.FindGameObjectsWithTag("Player");
 
-        if (Players.Length > 4)
+        if (Players.Length > 5)
         {
             DC();
         }
