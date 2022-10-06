@@ -11532,19 +11532,19 @@ MonoBehaviour:
   ActivePlayerColor: {r: 0, g: 1, b: 0.065425634, a: 1}
   playerCardImages:
   - CardsCollection:
-    - {fileID: 21300000, guid: 06ee72400db9cd0479631789120019b7, type: 3}
-    - {fileID: 21300000, guid: d768b096a3b84bb48a0bfdef708996bb, type: 3}
-    - {fileID: 21300000, guid: cf672672a0b58bb44b48fe606fd18340, type: 3}
-    - {fileID: 21300000, guid: a58fcfe1c312f32429096b0bbdcd95b7, type: 3}
-    - {fileID: 21300000, guid: 47e5294d1d122514e9f3344c5d0f30f6, type: 3}
-    - {fileID: 21300000, guid: c1e5eb9fcef9a5b4b827ead8ea3d8659, type: 3}
-    - {fileID: 21300000, guid: fd35c6cb32c51b546b9b84dee58eac85, type: 3}
-    - {fileID: 21300000, guid: 6bd54f911e1b3d84d89b805b2a7abcd3, type: 3}
-    - {fileID: 21300000, guid: 73a2390e20bee8645a0f6d85d8be21db, type: 3}
-    - {fileID: 21300000, guid: 32dee050fe955f14ea7277b4b39c4e7e, type: 3}
+    - {fileID: 21300000, guid: 35f7ddb54262121449e557833e143097, type: 3}
+    - {fileID: 21300000, guid: 5de67195cc4759748b14446ad9737acb, type: 3}
+    - {fileID: 21300000, guid: e742411929a4195489c463f467cf7430, type: 3}
+    - {fileID: 21300000, guid: a5918d3159fdd3b478811fc6f377d3c3, type: 3}
+    - {fileID: 21300000, guid: 5e327f6afc0298142ab92f7dc7455566, type: 3}
+    - {fileID: 21300000, guid: 77224b34a39aeb8418c316d7d5213440, type: 3}
+    - {fileID: 21300000, guid: 2e6a24e22c6368849941be87bcbd97b3, type: 3}
+    - {fileID: 21300000, guid: 9c5e41115620c5741a74fb437a4eec59, type: 3}
+    - {fileID: 21300000, guid: 1bec1287d92204745b8510081d070bf7, type: 3}
+    - {fileID: 21300000, guid: db8c14cf9c5d0fd4a90bc4db3f42239d, type: 3}
     ImageConstruction:
-    - {fileID: 1912162622}
-    - {fileID: 814639904}
+    - {fileID: 1613496426}
+    - {fileID: 1942943442}
     cardIndexes: 0000000000000000
   - CardsCollection:
     - {fileID: 21300000, guid: 120b6bad9e0bf0a44922bae01b23e246, type: 3}
@@ -11558,8 +11558,8 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 6798529d3f1975941ab912f12f2cae12, type: 3}
     - {fileID: 21300000, guid: 7fe59f9549a36a34e832505a9f0a0947, type: 3}
     ImageConstruction:
-    - {fileID: 414335771}
-    - {fileID: 1529284090}
+    - {fileID: 1912162622}
+    - {fileID: 814639904}
     cardIndexes: 0000000000000000
   - CardsCollection:
     - {fileID: 21300000, guid: ed6b900231dd60048bd93c1de259dbcd, type: 3}
@@ -11573,8 +11573,8 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 2065accfac3f3ce4693e2567c39e129b, type: 3}
     - {fileID: 21300000, guid: 213f1c33afa560b45aa6a8af2aa536a9, type: 3}
     ImageConstruction:
-    - {fileID: 1881547273}
-    - {fileID: 803633046}
+    - {fileID: 1787109577}
+    - {fileID: 1832901082}
     cardIndexes: 0000000000000000
   - CardsCollection:
     - {fileID: 21300000, guid: 06ee72400db9cd0479631789120019b7, type: 3}
@@ -11588,8 +11588,8 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 73a2390e20bee8645a0f6d85d8be21db, type: 3}
     - {fileID: 21300000, guid: 32dee050fe955f14ea7277b4b39c4e7e, type: 3}
     ImageConstruction:
-    - {fileID: 1787109577}
-    - {fileID: 1832901082}
+    - {fileID: 1881547273}
+    - {fileID: 803633046}
     cardIndexes: 0000000000000000
   - CardsCollection:
     - {fileID: 21300000, guid: 31309037c3f4e714faabc2f59681c5bf, type: 3}
@@ -11603,8 +11603,8 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 404c87308e38ad44abc1d7298fc866ad, type: 3}
     - {fileID: 21300000, guid: 34000242d571eac4099b634963264424, type: 3}
     ImageConstruction:
-    - {fileID: 1613496426}
-    - {fileID: 1942943442}
+    - {fileID: 414335771}
+    - {fileID: 1529284090}
     cardIndexes: 0000000000000000
   correctOrder: 
   PlayerPortrait:

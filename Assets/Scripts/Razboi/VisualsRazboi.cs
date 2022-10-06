@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using TMPro;
 using System;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 
 [System.Serializable]
 public class ControllerImageCounter
@@ -107,13 +108,13 @@ public class VisualsRazboi : MonoBehaviour
             case 1:
                 {
                     playerCardImages[Index].cardIndexes[0] = 0;
-                    playerCardImages[Index].cardIndexes[1] = (int)localCardCount[0];
+                    playerCardImages[Index].cardIndexes[1] = Int32.Parse(localCardCount[0].ToString());
                     break;
                 }
             case 2:
                 {
-                    playerCardImages[Index].cardIndexes[0] = (int)localCardCount[0];
-                    playerCardImages[Index].cardIndexes[1] = (int)localCardCount[1];
+                    playerCardImages[Index].cardIndexes[0] = Int32.Parse(localCardCount[0].ToString());
+                    playerCardImages[Index].cardIndexes[1] = Int32.Parse(localCardCount[1].ToString());
                     break;
                 }
             default:
@@ -127,7 +128,10 @@ public class VisualsRazboi : MonoBehaviour
 
         for (int i = 0; i < 2; i++)
         {
-            playerCardImages[Index].ImageConstruction[i].sprite = playerCardImages[Index].CardsCollection[playerCardImages[Index].cardIndexes[i]];
+            Debug.Log(playerCardImages[Index].cardIndexes[0] + " " + playerCardImages[Index].cardIndexes[1]);
+
+            playerCardImages[Index].ImageConstruction[i].sprite =
+                playerCardImages[Index].CardsCollection[playerCardImages[Index].cardIndexes[i]];
         }
     }
 
@@ -176,7 +180,7 @@ public class VisualsRazboi : MonoBehaviour
 
     public void CardCountUpdate()
     {
-        try
+        //try
         {
             for (int i = 0; i < correctOrder.Count; i++)
             {
@@ -185,10 +189,11 @@ public class VisualsRazboi : MonoBehaviour
             }
             hitCounter.text = HitSlapRazboi.instance.CardsToHit.ToString();
         }
+        /*
         catch(Exception e)
         {
             Debug.Log(e);
-        }
+        }*/
         try { slapCounter.text = HitSlapRazboi.instance.SlapsLeft[CardPlayer.localPlayer.playerIndex].ToString(); }
         catch { Debug.Log("slap error. IGNORE ME"); }
 
@@ -364,5 +369,6 @@ public class VisualsRazboi : MonoBehaviour
     public void ToggleConsole()
     {
         SlapPanel.SetActive(!SlapPanel.activeSelf);
+        EventSystem.current.SetSelectedGameObject(null, null);
     }
 }

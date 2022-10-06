@@ -16,6 +16,8 @@ public class CounterToImageChange : MonoBehaviour
 
     private void Update()
     {
+        if (Application.isBatchMode) return;
+        if (CardPlayer.localPlayer == null) return;
         if (slap)
         {
             if (int.Parse(counter.text) > 0 && HitSlapRazboi.instance.InititalSetupDone && HitSlapRazboi.instance.CardCount[CardPlayer.localPlayer.playerIndex] > 0)
