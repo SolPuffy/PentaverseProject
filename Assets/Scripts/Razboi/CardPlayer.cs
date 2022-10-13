@@ -33,6 +33,7 @@ public class CardPlayer : NetworkBehaviour
         //ClientDisconnect();
     }
 
+
     public override void OnStopServer()
     {
         Debug.Log($"Client {name}, index {playerIndex} Stopped on Server");
@@ -172,7 +173,7 @@ public class CardPlayer : NetworkBehaviour
     {
         GameObject[] Players = GameObject.FindGameObjectsWithTag("Player");              
         
-        if (Players.Length > 4) 
+        if (Players.Length > 5) 
         {
             DC(); 
         }
