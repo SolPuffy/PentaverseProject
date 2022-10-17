@@ -318,7 +318,7 @@ MonoBehaviour:
   offlineScene: Assets/Scenes/ConnectPlanes.unity
   onlineScene: Assets/Scenes/Airplanes.unity
   transport: {fileID: 89520151}
-  networkAddress: nas.retinafilmproduction.com
+  networkAddress: localhost
   maxConnections: 100
   authenticator: {fileID: 0}
   playerPrefab: {fileID: 2448697939233033768, guid: 8855ea9ecc572ae4ea8492a65d739a34, type: 3}
@@ -1043,7 +1043,7 @@ Canvas:
   m_Enabled: 1
   serializedVersion: 3
   m_RenderMode: 0
-  m_Camera: {fileID: 0}
+  m_Camera: {fileID: 112180415}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
   m_ReceivesEvents: 1

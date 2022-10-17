@@ -33,6 +33,7 @@ public class CardPlayer : NetworkBehaviour
         //ClientDisconnect();
     }
 
+
     public override void OnStopServer()
     {
         Debug.Log($"Client {name}, index {playerIndex} Stopped on Server");
