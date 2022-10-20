@@ -36,6 +36,7 @@ public class LocalPlayerActions : MonoBehaviour
 
     private int BardSize = 21;
     public PowerUp PowerupSlotForCommand;
+    public Sprite BlankPixel;
 
     private void Awake()
     {
@@ -132,7 +133,7 @@ public class LocalPlayerActions : MonoBehaviour
     {
         BardSize = Bardsize;
         float BoardScaling = ((0.28f * Bardsize) + Bardsize) / 2f;
-        BackPanel.transform.position = new Vector3(BoardScaling, BoardScaling,0);
+        BackPanel.transform.position = new Vector3(BoardScaling + 2f, BoardScaling,0);
         PlayerCamera.transform.position = new Vector3(BoardScaling, BoardScaling, -((0.28f * Bardsize) + Bardsize));
         BoardScaling = ((0.28f * Bardsize) + Bardsize) / 10f;
         BackPanel.transform.localScale = new Vector3(BoardScaling, 1, BoardScaling);
