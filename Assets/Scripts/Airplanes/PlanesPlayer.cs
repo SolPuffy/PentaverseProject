@@ -66,7 +66,7 @@ public class PlanesPlayer : NetworkBehaviour
         ReturnDebugToServer("Take Player's Powerup!");
         LocalPlayerActions.Instance.PowerupsInventory[powerupSlot].CurrentlyHeldPowerup = null;
         LocalPlayerActions.Instance.PowerupsInventory[powerupSlot].isOccupied = false;
-        LocalPlayerActions.Instance.PowerupsInventory[powerupSlot].SlotButtonInstance.image.sprite = null;
+        LocalPlayerActions.Instance.PowerupsInventory[powerupSlot].SlotButtonInstance.image.sprite = LocalPlayerActions.Instance.BlankPixel;
     }
     [Command]
     public void ReturnDebugToServer(string DebugInfo)
