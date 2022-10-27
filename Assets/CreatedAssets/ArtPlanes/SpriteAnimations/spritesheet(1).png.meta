@@ -66,7 +66,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 2048
+    maxTextureSize: 16384
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -750,7 +750,6 @@ TextureImporter:
       spritesheet(1)_9: 2130331153
       spritesheet(1)_25: -913948561
       spritesheet(1)_13: -346878405
-      spritesheet(1)_26: -1312068852
       spritesheet(1)_28: -577615657
       spritesheet(1)_2: 940075047
       spritesheet(1)_24: 1149394379
@@ -758,6 +757,7 @@ TextureImporter:
       spritesheet(1)_6: 117206322
       spritesheet(1)_15: -804613343
       spritesheet(1)_5: -72597364
+      spritesheet(1)_14: -86832975
       spritesheet(1)_20: -1151153934
       spritesheet(1)_8: 1913284951
       spritesheet(1)_27: -1110142954
@@ -770,10 +770,10 @@ TextureImporter:
       spritesheet(1)_16: -904265206
       spritesheet(1)_12: 2100526209
       spritesheet(1)_19: 1052060619
-      spritesheet(1)_3: 1712022905
       spritesheet(1)_4: 414487691
       spritesheet(1)_11: -1495001336
-      spritesheet(1)_14: -86832975
+      spritesheet(1)_26: -1312068852
+      spritesheet(1)_3: 1712022905
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0
