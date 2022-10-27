@@ -353,7 +353,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   port: 7771
-  maxMessageSize: 16384
+  maxMessageSize: 32768
   handshakeMaxSize: 3000
   noDelay: 1
   sendTimeout: 5000

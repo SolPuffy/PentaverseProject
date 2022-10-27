@@ -230,9 +230,7 @@ public class LocalPlayerActions : MonoBehaviour
 
             if(PlanesPlayer.localPlayer.playerIndex == i)
                 OrbControl.acessLocalPlayer[i].enabled = true;
-
-            if (!ServerActions.Instance.SetupInProgress)
-                Debug.Log($"player with index {i} : {ServerActions.Instance.PlayersList[i].ToString()}");
+            
 
             if (!ServerActions.Instance.SetupInProgress && ServerActions.Instance.CurrentPlayerTurn == i)
                 OrbControl.ChangeOrbCustom(i, 0);
