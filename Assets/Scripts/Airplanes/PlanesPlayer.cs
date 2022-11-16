@@ -48,7 +48,7 @@ public class PlanesPlayer : NetworkBehaviour
                 //Instantly trigger if gained powerup is misfire
                 if ((int)power.PowerUpType == 3)
                 {
-                    await LocalPlayerActions.Instance.PowerupsInventory[i].CurrentlyHeldPowerup.OnUse(playerIndex, i, playerIndex);
+                    await LocalPlayerActions.Instance.PowerupsInventory[i].CurrentlyHeldPowerup.OnUse(playerIndex, i, playerIndex,localPlayer);
                     ReturnDebugToServer($"Player at index {i} has Misfired!");
                 }
 
@@ -86,7 +86,7 @@ public class PlanesPlayer : NetworkBehaviour
         Debug.Log($"Loading player for player {IndexOfPlayerHoldingPowerup}");
         if (activatingPowerup.IsRetroactive)
         {
-            await activatingPowerup.OnUse(IndexOfPlayerHoldingPowerup, powerupSlot, IndexOfPlayerHoldingPowerup);
+            await activatingPowerup.OnUse(IndexOfPlayerHoldingPowerup, powerupSlot, IndexOfPlayerHoldingPowerup,PlanesPlayer.localPlayer);
         }
         else
         {
@@ -145,7 +145,7 @@ public class PlanesPlayer : NetworkBehaviour
                 return;
             }
             */
-            await ServerActions.Instance.PlayersList[ServerActions.Instance.CurrentPlayerTurn].CurrentHeldPowerup.OnUse(TilePos, ServerActions.Instance.PlayersList[ServerActions.Instance.CurrentPlayerTurn].PowerupSlotIndex, ServerActions.Instance.CurrentPlayerTurn);
+            await ServerActions.Instance.PlayersList[ServerActions.Instance.CurrentPlayerTurn].CurrentHeldPowerup.OnUse(TilePos, ServerActions.Instance.PlayersList[ServerActions.Instance.CurrentPlayerTurn].PowerupSlotIndex, ServerActions.Instance.CurrentPlayerTurn,PlanesPlayer.localPlayer);
             
         }
         else
@@ -235,7 +235,7 @@ public class PlanesPlayer : NetworkBehaviour
 
             if (ServerActions.Instance.PlayersList[i].CurrentHeldPowerup.IsRetroactive)
             {
-                await ServerActions.Instance.PlayersList[i].CurrentHeldPowerup.OnUse(i,0, i);
+                await ServerActions.Instance.PlayersList[i].CurrentHeldPowerup.OnUse(i,0, i,PlanesPlayer.localPlayer);
                 ServerActions.Instance.PlayersList[i].CurrentHeldPowerup = null;
             }
         }
