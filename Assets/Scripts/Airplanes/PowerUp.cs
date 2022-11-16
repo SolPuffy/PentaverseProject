@@ -61,11 +61,21 @@ public class PowerUp : ScriptableObject
         List<Vector3Int> PatternCoordsToTiles = new List<Vector3Int>();
         await PatternDecoder(PatternPointsToStrike);
         await BuildDecodedArray(PatternPointsToStrike,PatternCoordsToTiles,UseAtLocation);
+        debugCoords(PatternCoordsToTiles.ToArray());
         await ServerActions.Instance.VerifyAndUpdatePattern(PatternCoordsToTiles.ToArray());
         debugCoords(PatternCoordsToTiles.ToArray());
         await ServerActions.Instance.PatternCalledOnTileLocation(PatternCoordsToTiles.ToArray());
-        debugCoords(PatternCoordsToTiles.ToArray());
-    }    
+    }
+    private void debugCoords(Vector3Int[] newCoords)
+    {
+        string localString = "";
+        for (int i = 0; i < newCoords.Length; i++)
+        {
+            localString += $"Tile:{newCoords[i]},Type:{ServerActions.Instance.ServerVisibleGrid.Row[newCoords[i].x].Column[newCoords[i].y]} ";
+        }
+        Debug.Log(localString);
+    }
+
     private async Task PatternDecoder(List<CoordsStructure> structure)
     {
         string[] lines = Regex.Split(PatternStrike_Pattern, "\\n");
@@ -91,15 +101,7 @@ public class PowerUp : ScriptableObject
         await Task.Yield();
     }
     
-    private void debugCoords(Vector3Int[] newCoords)
-    {
-        string localString = "";
-        for(int i=0;i<newCoords.Length;i++)
-        {
-            localString += newCoords.ToString() + " ";
-        }
-        Debug.Log(localString);
-    }    
+    
     private async Task BuildDecodedArray(List<CoordsStructure> structure,List<Vector3Int> targeting,Vector3Int center)
     {
         for (int i = 0; i < structure.Count; i++)
