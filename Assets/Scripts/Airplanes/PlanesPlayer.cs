@@ -223,8 +223,6 @@ public class PlanesPlayer : NetworkBehaviour
     {
         LocalPlayerActions.Instance.SetBackPanelToGridSize(size);
     }
-
-
     [Command]
     public async void GiveEveryonePowerups(PowerUp powerup)
     {

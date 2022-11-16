@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using System;
 using Mirror;
+using Unity.VisualScripting;
 
 [CreateAssetMenu(menuName = "FishyBusiness/PowerUp")]
 public class PowerUp : ScriptableObject
@@ -20,7 +21,7 @@ public class PowerUp : ScriptableObject
     public bool IsRetroactive = false;
     [TextArea(10,10)]
     public string PatternStrike_Pattern;
-   
+
     public async Task OnUse(object Parameter,int powerupSlot, int indexOfPlayer)
     {
         switch((int)PowerUpType)
@@ -61,7 +62,9 @@ public class PowerUp : ScriptableObject
         await PatternDecoder(PatternPointsToStrike);
         await BuildDecodedArray(PatternPointsToStrike,PatternCoordsToTiles,UseAtLocation);
         await ServerActions.Instance.VerifyAndUpdatePattern(PatternCoordsToTiles.ToArray());
-        await ServerActions.Instance.PatternCalledOnTileLocation(PatternCoordsToTiles.ToArray()); 
+        debugCoords(PatternCoordsToTiles.ToArray());
+        await ServerActions.Instance.PatternCalledOnTileLocation(PatternCoordsToTiles.ToArray());
+        debugCoords(PatternCoordsToTiles.ToArray());
     }    
     private async Task PatternDecoder(List<CoordsStructure> structure)
     {
@@ -87,6 +90,16 @@ public class PowerUp : ScriptableObject
         }
         await Task.Yield();
     }
+    
+    private void debugCoords(Vector3Int[] newCoords)
+    {
+        string localString = "";
+        for(int i=0;i<newCoords.Length;i++)
+        {
+            localString += newCoords.ToString() + " ";
+        }
+        Debug.Log(localString);
+    }    
     private async Task BuildDecodedArray(List<CoordsStructure> structure,List<Vector3Int> targeting,Vector3Int center)
     {
         for (int i = 0; i < structure.Count; i++)
