@@ -122,7 +122,7 @@ public class LocalPlayerActions : MonoBehaviour
         {
             return;
         }
-        if(Int16.Parse(PlayingField.GetTile(TargetedTileLocation).name) == LocalPlayerIndex + 5)
+        if(Int16.Parse(PlayingField.GetTile(TargetedTileLocation).name) == PlanesPlayer.localPlayer.playerIndex + 5)
         {
             Debug.Log("You can't target yourself. Dumbass.");
             return;
