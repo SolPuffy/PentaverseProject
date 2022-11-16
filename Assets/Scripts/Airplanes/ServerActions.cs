@@ -247,7 +247,7 @@ public class ServerActions : NetworkBehaviour
                             targetedTile.y += UnityEngine.Random.Range(-1, 1);
                         }
                         while (ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] == 5);
-                        DebugStatement += "(Shielded) TileType Player0 To Suceess"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 4;
+                        DebugStatement += "(Shielded) TileType Player0 To Suceess"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 3;
                         return;
                     }
                     DebugStatement += "TileType Player0 To Suceess"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 4;
@@ -275,7 +275,7 @@ public class ServerActions : NetworkBehaviour
                             targetedTile.y += UnityEngine.Random.Range(-1, 1);
                         }
                         while (ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] == 6);
-                        DebugStatement += "(Shielded) TileType Player1 To Suceess"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 4;
+                        DebugStatement += "(Shielded) TileType Player1 To Suceess"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 3;
                         return;
                     }
                     DebugStatement += "TileType Player1 To Suceess"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 4;
@@ -302,7 +302,7 @@ public class ServerActions : NetworkBehaviour
                             targetedTile.y += UnityEngine.Random.Range(-1, 1);
                         }
                         while (ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] == 7);
-                        DebugStatement += "(Shielded) TileType Player2 To Suceess"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 4;
+                        DebugStatement += "(Shielded) TileType Player2 To Suceess"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 3;
                         return;
                     }
                     DebugStatement += "TileType Player2 To Suceess"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 4;
@@ -329,7 +329,7 @@ public class ServerActions : NetworkBehaviour
                             targetedTile.y += UnityEngine.Random.Range(-1, 1);
                         }
                         while (ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] == 8);
-                        DebugStatement += "(Shielded) TileType Player3 To Suceess"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 4;
+                        DebugStatement += "(Shielded) TileType Player3 To Suceess"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 3;
                         return;
                     }
                     DebugStatement += "TileType Player3 To Suceess"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 4;
@@ -356,7 +356,7 @@ public class ServerActions : NetworkBehaviour
                             targetedTile.y += UnityEngine.Random.Range(-1, 1);
                         }
                         while (ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] == 9);
-                        DebugStatement += "(Shielded) TileType Player4 To Suceess"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 4;
+                        DebugStatement += "(Shielded) TileType Player4 To Suceess"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 3;
                         return;
                     }
                     DebugStatement += "TileType Player4 To Suceess"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 4;
@@ -475,8 +475,13 @@ public class ServerActions : NetworkBehaviour
                                 targetedTiles[x].y += UnityEngine.Random.Range(-1, 1);
                             }
                             while (ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] == 5);
-                            DebugStatement += "(Shielded) TileType Player0 To Suceess"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 4;
+
+                            DebugStatement += "(Shielded) TileType Player0 To Suceess"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 3;
                             continue;
+                        }
+                        if (shieldbreak[0])
+                        {
+                            break;
                         }
                         hitPlayer = true;
                         DebugStatement += "TileType Player0 To Suceess"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 4;
@@ -505,8 +510,12 @@ public class ServerActions : NetworkBehaviour
                                 targetedTiles[x].y += UnityEngine.Random.Range(-1, 1);
                             }
                             while (ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] == 6);
-                            DebugStatement += "(Shielded) TileType Player0 To Suceess"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 4;
+                            DebugStatement += "(Shielded) TileType Player0 To Suceess"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 3;
                             continue;
+                        }
+                        if (shieldbreak[1])
+                        {
+                            break;
                         }
                         hitPlayer = true;
                         DebugStatement += "TileType Player1 To Suceess"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 4;
@@ -533,8 +542,12 @@ public class ServerActions : NetworkBehaviour
                                 targetedTiles[x].y += UnityEngine.Random.Range(-1, 1);
                             }
                             while (ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] == 7);
-                            DebugStatement += "(Shielded) TileType Player0 To Suceess"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 4;
+                            DebugStatement += "(Shielded) TileType Player0 To Suceess"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 3;
                             continue;
+                        }
+                        if (shieldbreak[2])
+                        {
+                            break;
                         }
                         hitPlayer = true;
                         DebugStatement += "TileType Player2 To Suceess"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 4;
@@ -561,8 +574,12 @@ public class ServerActions : NetworkBehaviour
                                 targetedTiles[x].y += UnityEngine.Random.Range(-1, 1);
                             }
                             while (ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] == 8);
-                            DebugStatement += "(Shielded) TileType Player0 To Suceess"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 4;
+                            DebugStatement += "(Shielded) TileType Player0 To Suceess"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 3;
                             continue;
+                        }
+                        if (shieldbreak[3])
+                        {
+                            break;
                         }
                         hitPlayer = true;
                         DebugStatement += "TileType Player3 To Suceess"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 4;
@@ -589,8 +606,12 @@ public class ServerActions : NetworkBehaviour
                                 targetedTiles[x].y += UnityEngine.Random.Range(-1, 1);
                             }
                             while (ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] == 9);
-                            DebugStatement += "(Shielded) TileType Player0 To Suceess"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 4;
+                            DebugStatement += "(Shielded) TileType Player0 To Suceess"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 3;
                             continue;
+                        }
+                        if(shieldbreak[4])
+                        {
+                            break;
                         }
                         hitPlayer = true;
                         DebugStatement += "TileType Player4 To Suceess"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 4;

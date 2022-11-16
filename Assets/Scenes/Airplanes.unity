@@ -3575,14 +3575,9 @@ MonoBehaviour:
   BasePowerupsList:
   - {fileID: 11400000, guid: 4085b11af0a47a14e9a3dae1a6e3b469, type: 2}
   - {fileID: 11400000, guid: 83ab4178484f2034aa418b8c6efc392b, type: 2}
-  - {fileID: 11400000, guid: 9332b5ff391bfc2409fc5913519d0d4d, type: 2}
-  - {fileID: 11400000, guid: aa3c84994882f8248b7574503dea0b8c, type: 2}
-  - {fileID: 11400000, guid: a976a74a50d07a646bfbe90711575b40, type: 2}
   - {fileID: 11400000, guid: 926a5ac91a3931a46a21d3ad84654c68, type: 2}
-  - {fileID: 11400000, guid: 97c42dc40f3c8e44e9251c6e38d79bfe, type: 2}
   - {fileID: 11400000, guid: cbf56f7f7aa26344dad3e0872288516f, type: 2}
   - {fileID: 11400000, guid: 0abd3a4e727af094ea46429ca4a1d948, type: 2}
-  - {fileID: 11400000, guid: c8594dc69dec7be45964122e8a1630d8, type: 2}
   ActivePowerupsList: []
   Tiles:
   - {fileID: 11400000, guid: 21f89cf8adbebae41bd30f7b005299bb, type: 2}
