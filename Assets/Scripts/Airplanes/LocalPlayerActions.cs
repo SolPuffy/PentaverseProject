@@ -124,7 +124,7 @@ public class LocalPlayerActions : MonoBehaviour
         }
         if(Int16.Parse(PlayingField.GetTile(TargetedTileLocation).name) == PlanesPlayer.localPlayer.playerIndex + 5)
         {
-            Debug.Log("You can't target yourself. Dumbass.");
+            Debug.Log($"You can't target yourself. Dumbass (trying to compare {Int16.Parse(PlayingField.GetTile(TargetedTileLocation).name)} with {PlanesPlayer.localPlayer.playerIndex + 5}");
             return;
         }
         SendTileInformationToServer();
