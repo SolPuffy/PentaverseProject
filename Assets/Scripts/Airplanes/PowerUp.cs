@@ -21,7 +21,7 @@ public class PowerUp : ScriptableObject
     [TextArea(10,10)]
     public string PatternStrike_Pattern;
    
-    public async Task OnUse(object Parameter,int powerupSlot, int indexOfPlayer, PlanesPlayer entity)
+    public async Task OnUse(object Parameter,int powerupSlot, int indexOfPlayer)
     {
         switch((int)PowerUpType)
         {
@@ -31,7 +31,7 @@ public class PowerUp : ScriptableObject
             case 3: { Misfire((int)Parameter);break; }
             default:break;
         }
-        entity.takePlayerPowerup(powerupSlot);
+        ServerActions.Instance.PlanesPlayers[indexOfPlayer].takePlayerPowerup(powerupSlot);
         
         await Task.Yield();
     }
