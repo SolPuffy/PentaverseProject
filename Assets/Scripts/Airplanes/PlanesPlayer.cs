@@ -207,7 +207,7 @@ public class PlanesPlayer : NetworkBehaviour
         }
     }
     [ClientRpc]
-    public void updateplayers(SyncList<PlanesPlayer> list)
+    public void updateplayers(List<PlanesPlayer> list)
     {
         ServerActions.Instance.PlanesPlayers = list;
     }

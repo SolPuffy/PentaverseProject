@@ -34,7 +34,7 @@ public class ServerActions : NetworkBehaviour
     [SyncVar] public int activeShipsCount;
     public static ServerActions Instance;
 
-    public SyncList<PlanesPlayer> PlanesPlayers = new SyncList<PlanesPlayer>();
+    public List<PlanesPlayer> PlanesPlayers = new List<PlanesPlayer>();
     public List<PlayerShipStructure> PlayersList = new List<PlayerShipStructure>();
 
 
