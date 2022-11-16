@@ -20,7 +20,6 @@ public class HitSlapRazboi : NetworkBehaviour
 {
     public static HitSlapRazboi instance;
 
-    public int InitialSlapConter = 3;
     public float DelayBeforeResetBoard = 1;
     public int SwitchCaseDeckRules = 0;
     public static UnityEvent<int>  CheckUI;
@@ -92,6 +91,10 @@ public class HitSlapRazboi : NetworkBehaviour
         Debug.Log("dispersing cards");
         IndexOfActivePlayer = 0;
         DisperseCardsBetweenPlayers();
+        for(int i = 0; i < PlayerDecks.Count; i++)
+        {
+            SlapsLeft[i] = PlayerDecks[i].Count;
+        }
         PlayersLeft = Players.Count;
         SlapCard = null;
     }
@@ -139,6 +142,7 @@ public class HitSlapRazboi : NetworkBehaviour
         CardsOnGround.Add(PlayerDecks[indexLocalPlayer][0]);
         PlayerDecks[indexLocalPlayer].RemoveAt(0);
 
+        SlapsLeft[indexLocalPlayer] = PlayerDecks[indexLocalPlayer].Count;
         //CONSOLE OUT
         HitSlapRazboi.instance.firstPlayer.DisplayConsoleOut($"Player {indexLocalPlayer} hit card {CardsOnGround[CardsOnGround.Count - 1].CardValue}_{CardsOnGround[CardsOnGround.Count - 1].CardType}");
 
@@ -280,37 +284,38 @@ public class HitSlapRazboi : NetworkBehaviour
         ReactionTime = 0;
         if (!InititalSetupDone) return;
         if (StopInputAtRoundWin) return;
-        if (SlapsLeft[IndexOfSlappingPlayer] <= 0) return;
+        //if (SlapsLeft[IndexOfSlappingPlayer] <= 0) return;
         if (PlayerDecks[IndexOfSlappingPlayer].Count <= 0) return;
         if (CardsOnGround.Count < 2) return;
 
         firstPlayer.SlapMojo();
 
-        SlapsLeft[IndexOfSlappingPlayer]--;
-
         SlapTime = Time.realtimeSinceStartup;
         //Debug.Log(SlapTime);
         ReactionTime = Mathf.RoundToInt((SlapTime - LastHitTime) * 1000);
         if (CheckSlapRules())
-            {
+        {
             Success = true;
             WinRound(IndexOfSlappingPlayer);
             Debug.Log($"Slap result : {Success.ToString()}  {ReactionTime.ToString()}");
-            }
-            else
+        }
+        else
+        {
+            //lose 1 card, continue game
+            Success = false;
+
+            SlapCard = PlayerDecks[IndexOfSlappingPlayer][0];
+            CardsLostToSlap.Add(PlayerDecks[IndexOfSlappingPlayer][0]);
+            PlayerDecks[IndexOfSlappingPlayer].RemoveAt(0);
+
+            if (PlayerDecks[IndexOfSlappingPlayer].Count <= 0)
             {
-                //lose 1 card, continue game
-                Success = false;   
-            
-                SlapCard = PlayerDecks[IndexOfSlappingPlayer][0];
-                CardsLostToSlap.Add(PlayerDecks[IndexOfSlappingPlayer][0]);
-                PlayerDecks[IndexOfSlappingPlayer].RemoveAt(0);
-                if (PlayerDecks[IndexOfSlappingPlayer].Count <= 0)
-                {
-                    PlayerLoses(IndexOfSlappingPlayer);
-                }
-            Debug.Log($"Slap result : {Success.ToString()}  {ReactionTime.ToString()}");
+                PlayerLoses(IndexOfSlappingPlayer);
             }
+            Debug.Log($"Slap result : {Success.ToString()}  {ReactionTime.ToString()}");
+        }
+
+        SlapsLeft[IndexOfSlappingPlayer] = PlayerDecks[IndexOfSlappingPlayer].Count;
 
         //CONSOLE OUTPUT
         HitSlapRazboi.instance.firstPlayer.DisplayConsoleOut($"Player at Index: {IndexOfSlappingPlayer}, slapped in {ReactionTime}ms, Success={Success}\n");
@@ -389,7 +394,7 @@ public class HitSlapRazboi : NetworkBehaviour
         CardsLostToSlap.Clear();
         for(int i = 0; i < SlapsLeft.Count; i++)
         {
-            SlapsLeft[i] = InitialSlapConter;
+            SlapsLeft[i] = PlayerDecks[indexLocalPlayer].Count;
         }
         
         StopInputAtRoundWin = false;

@@ -156,7 +156,7 @@ public class CardPlayer : NetworkBehaviour
     public void AddDeck()
     {
         HitSlapRazboi.instance.PlayerDecks.Add(new List<CardValueType>());
-        HitSlapRazboi.instance.SlapsLeft.Add(HitSlapRazboi.instance.InitialSlapConter);
+        HitSlapRazboi.instance.SlapsLeft.Add(0);
         HitSlapRazboi.instance.CardCount.Add(0);
         HitSlapRazboi.instance.Players.Add(this);
         playerIndex = HitSlapRazboi.instance.Players.IndexOf(this);        
