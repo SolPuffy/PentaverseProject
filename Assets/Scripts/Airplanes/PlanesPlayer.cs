@@ -199,10 +199,17 @@ public class PlanesPlayer : NetworkBehaviour
             HasEntered = true;
             //AddDeck();
             ServerActions.Instance.PlanesPlayers.Add(this);
+            
             playerIndex = ServerActions.Instance.PlanesPlayers.IndexOf(this);
             SetName();
             Debug.Log($"Setting {name} index to : " + playerIndex);
+            updateplayers(ServerActions.Instance.PlanesPlayers);
         }
+    }
+    [ClientRpc]
+    public void updateplayers(SyncList<PlanesPlayer> list)
+    {
+        ServerActions.Instance.PlanesPlayers = list;
     }
 
     void SetName()
