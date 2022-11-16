@@ -226,12 +226,12 @@ public class PlanesPlayer : NetworkBehaviour
 
 
     [Command]
-    public async void GiveEveryonePowerups(PowerUp powerup)
+    public async void GiveEveryonePowerups(int PowerUpIndex)
     {
-        Debug.Log($"Give Everyone Powerups : {powerup.name}");
+        Debug.Log($"Give Everyone Powerups : {ServerActions.Instance.BasePowerupsList[PowerUpIndex].name}");
         for(int i =0;i<5;i++)
         {
-            ServerActions.Instance.PlayersList[i].CurrentHeldPowerup = powerup;
+            ServerActions.Instance.PlayersList[i].CurrentHeldPowerup = ServerActions.Instance.BasePowerupsList[PowerUpIndex];
 
             if (ServerActions.Instance.PlayersList[i].CurrentHeldPowerup.IsRetroactive)
             {
