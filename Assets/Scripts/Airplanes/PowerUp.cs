@@ -61,9 +61,9 @@ public class PowerUp : ScriptableObject
         List<Vector3Int> PatternCoordsToTiles = new List<Vector3Int>();
         await PatternDecoder(PatternPointsToStrike);
         await BuildDecodedArray(PatternPointsToStrike,PatternCoordsToTiles,UseAtLocation);
-        debugCoords(PatternCoordsToTiles.ToArray());
+        //debugCoords(PatternCoordsToTiles.ToArray());
         await ServerActions.Instance.VerifyAndUpdatePattern(PatternCoordsToTiles.ToArray());
-        debugCoords(PatternCoordsToTiles.ToArray());
+        //debugCoords(PatternCoordsToTiles.ToArray());
         await ServerActions.Instance.PatternCalledOnTileLocation(PatternCoordsToTiles.ToArray());
     }
     private void debugCoords(Vector3Int[] newCoords)

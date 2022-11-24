@@ -18,14 +18,14 @@ public class LocalPlayerActions : MonoBehaviour
     //public GridBaseStructure PlayerVisibleGrid;
     //public int CurrentPowerup;
     public int LocalPlayerIndex;
-    [SerializeField] GameObject HostMenu;
-    [SerializeField] TextMeshProUGUI NameField;
-    [SerializeField] GameObject EndGame;
-    [SerializeField] Image BGPlayer;
-    [SerializeField] TextMeshProUGUI SmallConsole;
-    [SerializeField] TMP_Dropdown choice;
-
-
+    public GameObject HostMenu;
+    public TextMeshProUGUI NameField;
+    public GameObject EndGame;
+    public Image BGPlayer;
+    public TextMeshProUGUI SmallConsole;
+    public TMP_Dropdown choice;
+    public PlaneStateImages PlaneStates;
+    public GameObject[] PlayerCharacterPortrait;
 
     [SerializeField]
     public PowerUpSlot[] PowerupsInventory = new PowerUpSlot[4];
@@ -50,7 +50,7 @@ public class LocalPlayerActions : MonoBehaviour
         {
             Debug.Log("I am planes server");
         }
-
+        ChoosePortraitAtRandom();
     }
     private void Update()
     {
@@ -58,7 +58,11 @@ public class LocalPlayerActions : MonoBehaviour
         if (PlanesPlayer.localPlayer == null) return;
 
         UpdateName();
-        UpdatePortraits();
+        if (!ServerActions.Instance.SetupInProgress)
+        {
+            UpdatePortraits();
+            UpdatePlaneState();
+        }
 
         if (PlanesPlayer.localPlayer.playerIndex != 0 || !ServerActions.Instance.SetupInProgress)
             HostMenu.SetActive(false);
@@ -71,36 +75,10 @@ public class LocalPlayerActions : MonoBehaviour
         {
             RaycastToTile();
         }
-        if (Input.GetKey(KeyCode.Keypad0))
-        {
-            SendDebugCommandToServer();
-        }
     }
-    //[Command]
-    private void SendDebugCommandToServer()
+    private void ChoosePortraitAtRandom()
     {
-        if (Input.GetKey(KeyCode.Keypad0) && Input.GetKeyDown(KeyCode.Keypad1))
-        {
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-            PlanesPlayer.localPlayer.GiveEveryonePowerups(PowerupSlotForCommand);
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-        }
-        if(Input.GetKey(KeyCode.Keypad0) && Input.GetKeyDown(KeyCode.Keypad2))
-        {
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-            ServerActions.Instance.RevealToAllPlayersCurrentBoardState();
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-        }
-        if (Input.GetKey(KeyCode.Keypad0) && Input.GetKeyDown(KeyCode.Keypad3))
-        {
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-            ServerActions.Instance.ResetBoard();
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-        }
-        if(Input.GetKey(KeyCode.Keypad0) && Input.GetKeyDown(KeyCode.KeypadPeriod))
-        {
-            ServerActions.Instance.DebugPlayerIndexSwitcher();
-        }
+        PlayerCharacterPortrait[UnityEngine.Random.Range(0, 4)].SetActive(true);
     }
     //raycastToATile
     //ReturnInformation
@@ -258,4 +236,24 @@ public class LocalPlayerActions : MonoBehaviour
         }
         */
     }
+
+    public void UpdatePlaneState()
+    {
+        if (ServerActions.Instance.PlayersList[PlanesPlayer.localPlayer.playerIndex].isShielded)
+        {
+            PlaneStates.ShieldedState.enabled = true;
+        }   
+        else
+        {
+            PlaneStates.ShieldedState.enabled = false;
+        }   
+        if(ServerActions.Instance.PlayersList[PlanesPlayer.localPlayer.playerIndex].Misfire)
+        {
+            PlaneStates.MisfireState.enabled = true;
+        }
+        else
+        {
+            PlaneStates.MisfireState.enabled = false;
+        }    
+    }    
 }

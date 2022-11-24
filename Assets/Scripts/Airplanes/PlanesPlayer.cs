@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 using UnityEngine.UI;
+using UnityEngine.Tilemaps;
+
 public class PlanesPlayer : NetworkBehaviour
 {
     public static PlanesPlayer localPlayer;
@@ -32,7 +34,7 @@ public class PlanesPlayer : NetworkBehaviour
         ServerActions.Instance.PlayersList = shipsBruh;
     }
     [TargetRpc]
-    public async void givePlayerPowerup(PowerUp power,int playerIndex)
+    public void givePlayerPowerup(PowerUp power,int playerIndex)
     {
         ReturnDebugToServer($"Give player {playerIndex}, powerup {power}!");
         for (int i=0;i<4;i++)
@@ -48,7 +50,7 @@ public class PlanesPlayer : NetworkBehaviour
                 //Instantly trigger if gained powerup is misfire
                 if ((int)power.PowerUpType == 3)
                 {
-                    await LocalPlayerActions.Instance.PowerupsInventory[i].CurrentlyHeldPowerup.OnUse(playerIndex, i, playerIndex);
+                    LocalPlayerActions.Instance.PowerupsInventory[i].SlotButtonInstance.onClick.Invoke();
                     ReturnDebugToServer($"Player at index {i} has Misfired!");
                 }
 
@@ -78,6 +80,7 @@ public class PlanesPlayer : NetworkBehaviour
     public void StartGame()
     {
         ServerActions.Instance.SetupBoard();
+
     }
 
     [Command]
@@ -160,8 +163,35 @@ public class PlanesPlayer : NetworkBehaviour
     {
         LocalPlayerActions.Instance.PlayingField.SetTile(pos, ServerActions.Instance.Tiles[TileIndex]);
         LocalPlayerActions.Instance.ShowText(pos.ToString());
-    }  
-
+    }
+    [TargetRpc]
+    public void RelocateShipSprite(string orientation, Vector3Int coords)
+    {
+        LocalPlayerActions.Instance.PlaneStates.gameObject.SetActive(true);
+        LocalPlayerActions.Instance.PlaneStates.transform.position = LocalPlayerActions.Instance.PlayingField.GetCellCenterWorld(coords);
+        switch (orientation)
+        {
+            case "North":
+                {
+                    break;
+                }
+            case "South":
+                {
+                    LocalPlayerActions.Instance.PlaneStates.transform.eulerAngles = new Vector3(0, 0, 180);
+                    break;
+                }
+            case "West":
+                {
+                    LocalPlayerActions.Instance.PlaneStates.transform.eulerAngles = new Vector3(0, 0, 90);
+                    break;
+                }
+            case "East":
+                {
+                    LocalPlayerActions.Instance.PlaneStates.transform.eulerAngles = new Vector3(0, 0, 270);
+                    break;
+                }
+        }
+    }    
     [ClientRpc]
     public void SetHitCalled(bool bul)
     {
@@ -230,22 +260,6 @@ public class PlanesPlayer : NetworkBehaviour
     {
         LocalPlayerActions.Instance.SetBackPanelToGridSize(size);
     }
-    [Command]
-    public async void GiveEveryonePowerups(PowerUp powerup)
-    {
-        Debug.Log($"Give Everyone Powerups : {powerup.name}");
-        for(int i =0;i<5;i++)
-        {
-            ServerActions.Instance.PlayersList[i].CurrentHeldPowerup = powerup;
-
-            if (ServerActions.Instance.PlayersList[i].CurrentHeldPowerup.IsRetroactive)
-            {
-                await ServerActions.Instance.PlayersList[i].CurrentHeldPowerup.OnUse(i,0, i);
-                ServerActions.Instance.PlayersList[i].CurrentHeldPowerup = null;
-            }
-        }
-    }
-
     //Visually update card images
     [Command]
     public void SendRequestToUpdateCards(int[] numbers)

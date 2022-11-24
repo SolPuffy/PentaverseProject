@@ -6,6 +6,7 @@ using Mirror;
 using System;
 using System.Threading.Tasks;
 using Unity.VisualScripting;
+using UnityEngine.UI;
 
 [System.Serializable]
 public class PlayerShipStructure
@@ -155,10 +156,11 @@ public class ServerActions : NetworkBehaviour
         await Task.Yield();
     }
 
-    private void GivePowerupSequence(List<ToPlayersPowerUp> WeightedPowerUpChoice,int RollWeight)
+    private void GivePowerupSequence(List<ToPlayersPowerUp> WeightedPowerUpChoice, int RollWeight)
     {
         PlanesPlayers[playerIndexBeforeUpdate].givePlayerPowerup(WeightedPowerUpChoice[RollWeight].PowerUp, playerIndexBeforeUpdate);
 
+        
         //PlayersList[playerIndexBeforeUpdate].CurrentHeldPowerup = WeightedPowerUpChoice[RollWeight].PowerUp;
 
         PlayersList[playerIndexBeforeUpdate].PowerupPity = 0;
@@ -775,7 +777,7 @@ public class ServerActions : NetworkBehaviour
         SetupInProgress = false;
         PlanesPlayers[0].SetUpProgress(false);
         
-        activeShipsCount = 5;
+        activeShipsCount = PlanesPlayers.Count;
     }
     private async Task FillMapWithWater()
     {
@@ -848,11 +850,12 @@ public class ServerActions : NetworkBehaviour
     public async Task AttemptToArrangePlayers(bool fake, int indexFake)
     {
         int localRandomIndex;
+        int staticIndex;
         int orientation;
         int CenterX;
         int CenterY;
 
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < PlanesPlayers.Count; i++)
         {
             if (fake)
             {
@@ -863,542 +866,162 @@ public class ServerActions : NetworkBehaviour
                 PlayersList.Add(new PlayerShipStructure());
             }
             localRandomIndex = UnityEngine.Random.Range(0, AvailableBuildSpaces.Count - 1);
+            staticIndex = i + 5;
             orientation = UnityEngine.Random.Range(0, 39) / 10;
 
             CenterX = short.Parse(AvailableBuildSpaces[localRandomIndex].Substring(0, 2));
             CenterY = short.Parse(AvailableBuildSpaces[localRandomIndex].Substring(2, 2));
             //For your own sake, do not open this switch region
-            #region SwitchSwitchSwitchSwitchSwitchSwitch
-            switch (i + 5)
+            //CenterOfShip
+            if (i + 5 != 10)
             {
-                case 5:
-                    {
-                        //CenterOfShip
-                        PlayersList[i].PlayerShipCenter.X = CenterX;
-                        PlayersList[i].PlayerShipCenter.Y = CenterY;
-                        ServerVisibleGrid.Row[CenterX].Column[CenterY] = 5;
-
-                        //BodyOfShip
-                        switch (orientation)
-                        {
-                            //North
-                            case 0:
-                                {
-                                    PlayersList[i].Orientation = "North";
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY + 1] = 5;
-                                    //HEAD
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY + 2] = 5;
-                                    PlayersList[i].PlayerShipHead.X = CenterX;
-                                    PlayersList[i].PlayerShipHead.Y = CenterY + 2;
-                                    //
-                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY + 1] = 5;
-                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY + 1] = 5;
-                                    ServerVisibleGrid.Row[CenterX - 2].Column[CenterY] = 5;
-                                    ServerVisibleGrid.Row[CenterX + 2].Column[CenterY] = 5;
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY - 1] = 5;
-                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY - 2] = 5;
-                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY - 2] = 5;
-                                    break;
-                                }
-                            //South
-                            case 1:
-                                {
-                                    PlayersList[i].Orientation = "South";
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY - 1] = 5;
-                                    //HEAD
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY - 2] = 5;
-                                    PlayersList[i].PlayerShipHead.X = CenterX;
-                                    PlayersList[i].PlayerShipHead.Y = CenterY - 2;
-                                    //
-                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY - 1] = 5;
-                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY - 1] = 5;
-                                    ServerVisibleGrid.Row[CenterX + 2].Column[CenterY] = 5;
-                                    ServerVisibleGrid.Row[CenterX - 2].Column[CenterY] = 5;
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY + 1] = 5;
-                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY + 2] = 5;
-                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY + 2] = 5;
-                                    break;
-                                }
-                            //West
-                            case 2:
-                                {
-                                    PlayersList[i].Orientation = "West";
-                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY] = 5;
-                                    //HEAD
-                                    ServerVisibleGrid.Row[CenterX - 2].Column[CenterY] = 5;
-                                    PlayersList[i].PlayerShipHead.X = CenterX - 2;
-                                    PlayersList[i].PlayerShipHead.Y = CenterY;
-                                    //
-                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY - 1] = 5;
-                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY + 1] = 5;
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY - 2] = 5;
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY + 2] = 5;
-                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY] = 5;
-                                    ServerVisibleGrid.Row[CenterX + 2].Column[CenterY - 1] = 5;
-                                    ServerVisibleGrid.Row[CenterX + 2].Column[CenterY + 1] = 5;
-                                    break;
-                                }
-                            //East
-                            case 3:
-                                {
-                                    PlayersList[i].Orientation = "East";
-                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY] = 5;
-                                    //HEAD
-                                    ServerVisibleGrid.Row[CenterX + 2].Column[CenterY] = 5;
-                                    PlayersList[i].PlayerShipHead.X = CenterX + 2;
-                                    PlayersList[i].PlayerShipHead.Y = CenterY;
-                                    //
-                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY + 1] = 5;
-                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY - 1] = 5;
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY + 2] = 5;
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY - 2] = 5;
-                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY] = 5;
-                                    ServerVisibleGrid.Row[CenterX - 2].Column[CenterY + 1] = 5;
-                                    ServerVisibleGrid.Row[CenterX - 2].Column[CenterY - 1] = 5;
-                                    break;
-                                }
-                        }
-                        break; }
-                case 6:
-                    {
-                        //CenterOfShip
-                        PlayersList[i].PlayerShipCenter.X = CenterX;
-                        PlayersList[i].PlayerShipCenter.Y = CenterY;
-                        ServerVisibleGrid.Row[CenterX].Column[CenterY] = 6;
-
-                        //BodyOfShip
-                        switch (orientation)
-                        {
-                            //North
-                            case 0:
-                                {
-                                    PlayersList[i].Orientation = "North";
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY + 1] = 6;
-                                    //HEAD
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY + 2] = 6;
-                                    PlayersList[i].PlayerShipHead.X = CenterX;
-                                    PlayersList[i].PlayerShipHead.Y = CenterY + 2;
-                                    //
-                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY + 1] = 6;
-                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY + 1] = 6;
-                                    ServerVisibleGrid.Row[CenterX - 2].Column[CenterY] = 6;
-                                    ServerVisibleGrid.Row[CenterX + 2].Column[CenterY] = 6;
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY - 1] = 6;
-                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY - 2] = 6;
-                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY - 2] = 6;
-                                    break;
-                                }
-                            //South
-                            case 1:
-                                {
-                                    PlayersList[i].Orientation = "South";
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY - 1] = 6;
-                                    //HEAD
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY - 2] = 6;
-                                    PlayersList[i].PlayerShipHead.X = CenterX;
-                                    PlayersList[i].PlayerShipHead.Y = CenterY - 2;
-                                    //
-                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY - 1] = 6;
-                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY - 1] = 6;
-                                    ServerVisibleGrid.Row[CenterX + 2].Column[CenterY] = 6;
-                                    ServerVisibleGrid.Row[CenterX - 2].Column[CenterY] = 6;
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY + 1] = 6;
-                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY + 2] = 6;
-                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY + 2] = 6;
-                                    break;
-                                }
-                            //West
-                            case 2:
-                                {
-                                    PlayersList[i].Orientation = "West";
-                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY] = 6;
-                                    //HEAD
-                                    ServerVisibleGrid.Row[CenterX - 2].Column[CenterY] = 6;
-                                    PlayersList[i].PlayerShipHead.X = CenterX - 2;
-                                    PlayersList[i].PlayerShipHead.Y = CenterY;
-                                    //
-                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY - 1] = 6;
-                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY + 1] = 6;
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY - 2] = 6;
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY + 2] = 6;
-                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY] = 6;
-                                    ServerVisibleGrid.Row[CenterX + 2].Column[CenterY - 1] = 6;
-                                    ServerVisibleGrid.Row[CenterX + 2].Column[CenterY + 1] = 6;
-                                    break;
-                                }
-                            //East
-                            case 3:
-                                {
-                                    PlayersList[i].Orientation = "East";
-                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY] = 6;
-                                    //HEAD
-                                    ServerVisibleGrid.Row[CenterX + 2].Column[CenterY] = 6;
-                                    PlayersList[i].PlayerShipHead.X = CenterX + 2;
-                                    PlayersList[i].PlayerShipHead.Y = CenterY;
-                                    //
-                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY + 1] = 6;
-                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY - 1] = 6;
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY + 2] = 6;
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY - 2] = 6;
-                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY] = 6;
-                                    ServerVisibleGrid.Row[CenterX - 2].Column[CenterY + 1] = 6;
-                                    ServerVisibleGrid.Row[CenterX - 2].Column[CenterY - 1] = 6;
-                                    break;
-                                }
-                        }
-                        break;
-                    }
-                case 7:
-                    {
-                        //CenterOfShip
-                        PlayersList[i].PlayerShipCenter.X = CenterX;
-                        PlayersList[i].PlayerShipCenter.Y = CenterY;
-                        ServerVisibleGrid.Row[CenterX].Column[CenterY] = 7;
-
-                        //BodyOfShip
-                        switch (orientation)
-                        {
-                            //North
-                            case 0:
-                                {
-                                    PlayersList[i].Orientation = "North";
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY + 1] = 7;
-                                    //HEAD
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY + 2] = 7;
-                                    PlayersList[i].PlayerShipHead.X = CenterX;
-                                    PlayersList[i].PlayerShipHead.Y = CenterY + 2;
-                                    //
-                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY + 1] = 7;
-                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY + 1] = 7;
-                                    ServerVisibleGrid.Row[CenterX - 2].Column[CenterY] = 7;
-                                    ServerVisibleGrid.Row[CenterX + 2].Column[CenterY] = 7;
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY - 1] = 7;
-                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY - 2] = 7;
-                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY - 2] = 7;
-                                    break;
-                                }
-                            //South
-                            case 1:
-                                {
-                                    PlayersList[i].Orientation = "South";
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY - 1] = 7;
-                                    //HEAD
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY - 2] = 7;
-                                    PlayersList[i].PlayerShipHead.X = CenterX;
-                                    PlayersList[i].PlayerShipHead.Y = CenterY - 2;
-                                    //
-                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY - 1] = 7;
-                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY - 1] = 7;
-                                    ServerVisibleGrid.Row[CenterX + 2].Column[CenterY] = 7;
-                                    ServerVisibleGrid.Row[CenterX - 2].Column[CenterY] = 7;
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY + 1] = 7;
-                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY + 2] = 7;
-                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY + 2] = 7;
-                                    break;
-                                }
-                            //West
-                            case 2:
-                                {
-                                    PlayersList[i].Orientation = "West";
-                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY] = 7;
-                                    //HEAD
-                                    ServerVisibleGrid.Row[CenterX - 2].Column[CenterY] = 7;
-                                    PlayersList[i].PlayerShipHead.X = CenterX - 2;
-                                    PlayersList[i].PlayerShipHead.Y = CenterY;
-                                    //
-                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY - 1] = 7;
-                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY + 1] = 7;
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY - 2] = 7;
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY + 2] = 7;
-                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY] = 7;
-                                    ServerVisibleGrid.Row[CenterX + 2].Column[CenterY - 1] = 7;
-                                    ServerVisibleGrid.Row[CenterX + 2].Column[CenterY + 1] = 7;
-                                    break;
-                                }
-                            //East
-                            case 3:
-                                {
-                                    PlayersList[i].Orientation = "East";
-                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY] = 7;
-                                    //HEAD
-                                    ServerVisibleGrid.Row[CenterX + 2].Column[CenterY] = 7;
-                                    PlayersList[i].PlayerShipHead.X = CenterX + 2;
-                                    PlayersList[i].PlayerShipHead.Y = CenterY;
-                                    //
-                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY + 1] = 7;
-                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY - 1] = 7;
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY + 2] = 7;
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY - 2] = 7;
-                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY] = 7;
-                                    ServerVisibleGrid.Row[CenterX - 2].Column[CenterY + 1] = 7;
-                                    ServerVisibleGrid.Row[CenterX - 2].Column[CenterY - 1] = 7;
-                                    break;
-                                }
-                        }
-                        break;
-                    }
-                case 8:
-                    {
-                        //CenterOfShip
-                        PlayersList[i].PlayerShipCenter.X = CenterX;
-                        PlayersList[i].PlayerShipCenter.Y = CenterY;
-                        ServerVisibleGrid.Row[CenterX].Column[CenterY] = 8;
-
-                        //BodyOfShip
-                        switch (orientation)
-                        {
-                            //North
-                            case 0:
-                                {
-                                    PlayersList[i].Orientation = "North";
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY + 1] = 8;
-                                    //HEAD
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY + 2] = 8;
-                                    PlayersList[i].PlayerShipHead.X = CenterX;
-                                    PlayersList[i].PlayerShipHead.Y = CenterY + 2;
-                                    //
-                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY + 1] = 8;
-                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY + 1] = 8;
-                                    ServerVisibleGrid.Row[CenterX - 2].Column[CenterY] = 8;
-                                    ServerVisibleGrid.Row[CenterX + 2].Column[CenterY] = 8;
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY - 1] = 8;
-                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY - 2] = 8;
-                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY - 2] = 8;
-                                    break;
-                                }
-                            //South
-                            case 1:
-                                {
-                                    PlayersList[i].Orientation = "South";
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY - 1] = 8;
-                                    //HEAD
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY - 2] = 8;
-                                    PlayersList[i].PlayerShipHead.X = CenterX;
-                                    PlayersList[i].PlayerShipHead.Y = CenterY - 2;
-                                    //
-                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY - 1] = 8;
-                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY - 1] = 8;
-                                    ServerVisibleGrid.Row[CenterX + 2].Column[CenterY] = 8;
-                                    ServerVisibleGrid.Row[CenterX - 2].Column[CenterY] = 8;
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY + 1] = 8;
-                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY + 2] = 8;
-                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY + 2] = 8;
-                                    break;
-                                }
-                            //West
-                            case 2:
-                                {
-                                    PlayersList[i].Orientation = "West";
-                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY] = 8;
-                                    //HEAD
-                                    ServerVisibleGrid.Row[CenterX - 2].Column[CenterY] = 8;
-                                    PlayersList[i].PlayerShipHead.X = CenterX - 2;
-                                    PlayersList[i].PlayerShipHead.Y = CenterY;
-                                    //
-                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY - 1] = 8;
-                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY + 1] = 8;
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY - 2] = 8;
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY + 2] = 8;
-                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY] = 8;
-                                    ServerVisibleGrid.Row[CenterX + 2].Column[CenterY - 1] = 8;
-                                    ServerVisibleGrid.Row[CenterX + 2].Column[CenterY + 1] = 8;
-                                    break;
-                                }
-                            //East
-                            case 3:
-                                {
-                                    PlayersList[i].Orientation = "East";
-                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY] = 8;
-                                    //HEAD
-                                    ServerVisibleGrid.Row[CenterX + 2].Column[CenterY] = 8;
-                                    PlayersList[i].PlayerShipHead.X = CenterX + 2;
-                                    PlayersList[i].PlayerShipHead.Y = CenterY;
-                                    //
-                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY + 1] = 8;
-                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY - 1] = 8;
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY + 2] = 8;
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY - 2] = 8;
-                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY] = 8;
-                                    ServerVisibleGrid.Row[CenterX - 2].Column[CenterY + 1] = 8;
-                                    ServerVisibleGrid.Row[CenterX - 2].Column[CenterY - 1] = 8;
-                                    break;
-                                }
-                        }
-                        break;
-                    }
-                case 9:
-                    {
-                        //CenterOfShip
-                        PlayersList[i].PlayerShipCenter.X = CenterX;
-                        PlayersList[i].PlayerShipCenter.Y = CenterY;
-                        ServerVisibleGrid.Row[CenterX].Column[CenterY] = 9;
-
-                        //BodyOfShip
-                        switch (orientation)
-                        {
-                            //North
-                            case 0:
-                                {
-                                    PlayersList[i].Orientation = "North";
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY + 1] = 9;
-                                    //HEAD
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY + 2] = 9;
-                                    PlayersList[i].PlayerShipHead.X = CenterX;
-                                    PlayersList[i].PlayerShipHead.Y = CenterY + 2;
-                                    //
-                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY + 1] = 9;
-                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY + 1] = 9;
-                                    ServerVisibleGrid.Row[CenterX - 2].Column[CenterY] = 9;
-                                    ServerVisibleGrid.Row[CenterX + 2].Column[CenterY] = 9;
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY - 1] = 9;
-                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY - 2] = 9;
-                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY - 2] = 9;
-                                    break;
-                                }
-                            //South
-                            case 1:
-                                {
-                                    PlayersList[i].Orientation = "South";
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY - 1] = 9;
-                                    //HEAD
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY - 2] = 9;
-                                    PlayersList[i].PlayerShipHead.X = CenterX;
-                                    PlayersList[i].PlayerShipHead.Y = CenterY - 2;
-                                    //
-                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY - 1] = 9;
-                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY - 1] = 9;
-                                    ServerVisibleGrid.Row[CenterX + 2].Column[CenterY] = 9;
-                                    ServerVisibleGrid.Row[CenterX - 2].Column[CenterY] = 9;
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY + 1] = 9;
-                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY + 2] = 9;
-                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY + 2] = 9;
-                                    break;
-                                }
-                            //West
-                            case 2:
-                                {
-                                    PlayersList[i].Orientation = "West";
-                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY] = 9;
-                                    //HEAD
-                                    ServerVisibleGrid.Row[CenterX - 2].Column[CenterY] = 9;
-                                    PlayersList[i].PlayerShipHead.X = CenterX - 2;
-                                    PlayersList[i].PlayerShipHead.Y = CenterY;
-                                    //
-                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY - 1] = 9;
-                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY + 1] = 9;
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY - 2] = 9;
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY + 2] = 9;
-                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY] = 9;
-                                    ServerVisibleGrid.Row[CenterX + 2].Column[CenterY - 1] = 9;
-                                    ServerVisibleGrid.Row[CenterX + 2].Column[CenterY + 1] = 9;
-                                    break;
-                                }
-                            //East
-                            case 3:
-                                {
-                                    PlayersList[i].Orientation = "East";
-                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY] = 9;
-                                    //HEAD
-                                    ServerVisibleGrid.Row[CenterX + 2].Column[CenterY] = 9;
-                                    PlayersList[i].PlayerShipHead.X = CenterX + 2;
-                                    PlayersList[i].PlayerShipHead.Y = CenterY;
-                                    //
-                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY + 1] = 9;
-                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY - 1] = 9;
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY + 2] = 9;
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY - 2] = 9;
-                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY] = 9;
-                                    ServerVisibleGrid.Row[CenterX - 2].Column[CenterY + 1] = 9;
-                                    ServerVisibleGrid.Row[CenterX - 2].Column[CenterY - 1] = 9;
-                                    break;
-                                }
-                        }
-                        break;
-                    }
-                case 10:
-                    {
-                        //CenterOfShip
-                        ServerVisibleGrid.Row[CenterX].Column[CenterY] = 10;
-                        Debug.Log($"Trying to spawn fake news at {CenterX} and {CenterY}");
-
-                        //BodyOfShip
-                        switch (orientation)
-                        {
-                            //North
-                            case 0:
-                                {
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY + 1] = 10;
-                                    //HEAD
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY + 2] = 10;
-                                    //
-                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY + 1] = 10;
-                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY + 1] = 10;
-                                    ServerVisibleGrid.Row[CenterX - 2].Column[CenterY] = 10;
-                                    ServerVisibleGrid.Row[CenterX + 2].Column[CenterY] = 10;
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY - 1] = 10;
-                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY - 2] = 10;
-                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY - 2] = 10;
-                                    break;
-                                }
-                            //South
-                            case 1:
-                                {
-                                   // PlayersList[i].Orientation = "South";
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY - 1] = 10;
-                                    //HEAD
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY - 2] = 10;
-                                    //
-                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY - 1] = 10;
-                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY - 1] = 10;
-                                    ServerVisibleGrid.Row[CenterX + 2].Column[CenterY] = 10;
-                                    ServerVisibleGrid.Row[CenterX - 2].Column[CenterY] = 10;
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY + 1] = 10;
-                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY + 2] = 10;
-                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY + 2] = 10;
-                                    break;
-                                }
-                            //West
-                            case 2:
-                                {
-                                    //PlayersList[i].Orientation = "West";
-                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY] = 10;
-                                    //HEAD
-                                    ServerVisibleGrid.Row[CenterX - 2].Column[CenterY] = 10;
-                                    //
-                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY - 1] = 10;
-                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY + 1] = 10;
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY - 2] = 10;
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY + 2] = 10;
-                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY] = 10;
-                                    ServerVisibleGrid.Row[CenterX + 2].Column[CenterY - 1] = 10;
-                                    ServerVisibleGrid.Row[CenterX + 2].Column[CenterY + 1] = 10;
-                                    break;
-                                }
-                            //East
-                            case 3:
-                                {
-                                    //PlayersList[i].Orientation = "East";
-                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY] = 10;
-                                    //HEAD
-                                    ServerVisibleGrid.Row[CenterX + 2].Column[CenterY] = 10;
-                                    //
-                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY + 1] = 10;
-                                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY - 1] = 10;
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY + 2] = 10;
-                                    ServerVisibleGrid.Row[CenterX].Column[CenterY - 2] = 10;
-                                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY] = 10;
-                                    ServerVisibleGrid.Row[CenterX - 2].Column[CenterY + 1] = 10;
-                                    ServerVisibleGrid.Row[CenterX - 2].Column[CenterY - 1] = 10;
-                                    break;
-                                }
-
-                        }
-                        ShowFakeShip(indexFake);
-                        break;
-                    }
-                default: { Debug.Log("Out of bounds lmao"); break; }
+                PlayersList[i].PlayerShipCenter.X = CenterX;
+                PlayersList[i].PlayerShipCenter.Y = CenterY;
             }
-            //UpdateTreasuresSlotsList
+            ServerVisibleGrid.Row[CenterX].Column[CenterY] = staticIndex;
+
+            //BodyOfShip
+            switch (orientation)
+            {
+                //North
+                case 0:
+                    {
+                        if(i + 5 != 10)
+                        {
+                            PlayersList[i].Orientation = "North";
+                            PlayersList[i].PlayerShipHead.X = CenterX;
+                            PlayersList[i].PlayerShipHead.Y = CenterY + 2;
+                        }
+                        
+                        //HEAD Row 0
+                        ServerVisibleGrid.Row[CenterX].Column[CenterY + 2] = staticIndex;
+                        
+                        //Row 1
+                        ServerVisibleGrid.Row[CenterX - 1].Column[CenterY + 1] = staticIndex;
+                        ServerVisibleGrid.Row[CenterX].Column[CenterY + 1] = staticIndex;
+                        ServerVisibleGrid.Row[CenterX + 1].Column[CenterY + 1] = staticIndex;
+                        //Row 2
+                        ServerVisibleGrid.Row[CenterX - 2].Column[CenterY] = staticIndex;
+                        ServerVisibleGrid.Row[CenterX - 1].Column[CenterY] = staticIndex;
+                        //center Made Up ^
+                        ServerVisibleGrid.Row[CenterX + 1].Column[CenterY] = staticIndex;
+                        ServerVisibleGrid.Row[CenterX + 2].Column[CenterY] = staticIndex;
+                        //Row 3
+                        ServerVisibleGrid.Row[CenterX].Column[CenterY - 1] = staticIndex;
+                        //Row 4
+                        ServerVisibleGrid.Row[CenterX - 1].Column[CenterY - 2] = staticIndex;
+                        ServerVisibleGrid.Row[CenterX].Column[CenterY - 2] = staticIndex;
+                        ServerVisibleGrid.Row[CenterX + 1].Column[CenterY - 2] = staticIndex;
+                        if (i + 5 == 10)
+                        {
+                            ShowFakeShip(indexFake);
+                        }
+                        break;
+                    }
+                //South
+                case 1:
+                    {
+                        if (i + 5 != 10)
+                        {
+                            PlayersList[i].Orientation = "South";
+                            PlayersList[i].PlayerShipHead.X = CenterX;
+                            PlayersList[i].PlayerShipHead.Y = CenterY - 2;
+                        }
+                        //Row 0
+                        ServerVisibleGrid.Row[CenterX - 1].Column[CenterY + 2] = staticIndex;
+                        ServerVisibleGrid.Row[CenterX].Column[CenterY + 2] = staticIndex;
+                        ServerVisibleGrid.Row[CenterX + 1].Column[CenterY + 2] = staticIndex;
+                        //Row 1
+                        ServerVisibleGrid.Row[CenterX].Column[CenterY + 1] = staticIndex;
+                        //Row 2
+                        ServerVisibleGrid.Row[CenterX - 2].Column[CenterY] = staticIndex;
+                        ServerVisibleGrid.Row[CenterX - 1].Column[CenterY] = staticIndex;
+                        //center Made Up ^
+                        ServerVisibleGrid.Row[CenterX + 1].Column[CenterY] = staticIndex;
+                        ServerVisibleGrid.Row[CenterX + 2].Column[CenterY] = staticIndex;
+                        //Row 3
+                        ServerVisibleGrid.Row[CenterX - 1].Column[CenterY - 1] = staticIndex;
+                        ServerVisibleGrid.Row[CenterX].Column[CenterY - 1] = staticIndex;
+                        ServerVisibleGrid.Row[CenterX + 1].Column[CenterY - 1] = staticIndex;
+                        //HEAD Row 4
+                        ServerVisibleGrid.Row[CenterX].Column[CenterY - 2] = staticIndex;
+                        
+                        if (i + 5 == 10)
+                        {
+                            ShowFakeShip(indexFake);
+                        }
+                        break;
+                    }
+                //West
+                case 2:
+                    {
+                        if (i + 5 != 10)
+                        {
+                            PlayersList[i].Orientation = "West";
+                            PlayersList[i].PlayerShipHead.X = CenterX - 2;
+                            PlayersList[i].PlayerShipHead.Y = CenterY;
+                        }
+                        
+                        //Row 0
+                        ServerVisibleGrid.Row[CenterX].Column[CenterY + 2] = staticIndex;
+                        //Row 1
+                        ServerVisibleGrid.Row[CenterX - 1].Column[CenterY + 1] = staticIndex;
+                        ServerVisibleGrid.Row[CenterX].Column[CenterY + 1] = staticIndex;
+                        ServerVisibleGrid.Row[CenterX + 2].Column[CenterY + 1] = staticIndex;
+                        //HEAD Row 2
+                        ServerVisibleGrid.Row[CenterX - 2].Column[CenterY] = staticIndex;
+                        
+                        ServerVisibleGrid.Row[CenterX - 1].Column[CenterY] = staticIndex;
+                        //center Made Up ^
+                        ServerVisibleGrid.Row[CenterX + 1].Column[CenterY] = staticIndex;
+                        ServerVisibleGrid.Row[CenterX + 2].Column[CenterY] = staticIndex;
+                        //Row 3
+                        ServerVisibleGrid.Row[CenterX - 1].Column[CenterY - 1] = staticIndex;
+                        ServerVisibleGrid.Row[CenterX].Column[CenterY - 1] = staticIndex;
+                        ServerVisibleGrid.Row[CenterX + 2].Column[CenterY - 1] = staticIndex;
+                        //Row 4
+                        ServerVisibleGrid.Row[CenterX].Column[CenterY - 2] = staticIndex;
+                        if (i + 5 == 10)
+                        {
+                            ShowFakeShip(indexFake);
+                        }
+                        break;
+                    }
+                //East
+                case 3:
+                    {
+                        if (i + 5 != 10)
+                        {
+                            PlayersList[i].Orientation = "East";
+                            PlayersList[i].PlayerShipHead.X = CenterX + 2;
+                            PlayersList[i].PlayerShipHead.Y = CenterY;
+                        }
+                        //Row 0
+                        ServerVisibleGrid.Row[CenterX].Column[CenterY + 2] = staticIndex;
+                        //Row 1
+                        ServerVisibleGrid.Row[CenterX - 2].Column[CenterY + 1] = staticIndex;
+                        ServerVisibleGrid.Row[CenterX].Column[CenterY + 1] = staticIndex;
+                        ServerVisibleGrid.Row[CenterX + 1].Column[CenterY + 1] = staticIndex;
+                        //HEAD Row 2
+                        ServerVisibleGrid.Row[CenterX - 2].Column[CenterY] = staticIndex;
+                        ServerVisibleGrid.Row[CenterX - 1].Column[CenterY] = staticIndex;
+                        //center Made Up ^
+                        ServerVisibleGrid.Row[CenterX + 1].Column[CenterY] = staticIndex;
+                        ServerVisibleGrid.Row[CenterX + 2].Column[CenterY] = staticIndex;
+                        //Row 3
+                        ServerVisibleGrid.Row[CenterX - 2].Column[CenterY - 1] = staticIndex;
+                        ServerVisibleGrid.Row[CenterX].Column[CenterY - 1] = staticIndex;
+                        ServerVisibleGrid.Row[CenterX + 1].Column[CenterY - 1] = staticIndex;
+                        //Row 4
+                        ServerVisibleGrid.Row[CenterX].Column[CenterY - 2] = staticIndex;
+                        if(i+5 == 10)
+                        {
+                            ShowFakeShip(indexFake);
+                        }
+                        break;
+                    }
+            }
+            //UpdatePowerupsSlotsList
             await WorstThingOfMyLife(CenterX,CenterY,orientation);
             
             
@@ -1480,7 +1103,6 @@ public class ServerActions : NetworkBehaviour
                     }
                 }
             }
-            #endregion
         }
         await Task.Yield();
     }
@@ -1640,8 +1262,11 @@ public class ServerActions : NetworkBehaviour
                     //LocalPlayerActions.Instance.PlayingField.SetTile(new Vector3Int(i, j), Tiles[ServerVisibleGrid.Row[i].Column[j]]);
                     PlanesPlayers[ServerVisibleGrid.Row[i].Column[j] - 5].UpdateTile(new Vector3Int(i, j), ServerVisibleGrid.Row[i].Column[j]);
                 }
-                
             }
+        }
+        for(int i = 0; i < PlanesPlayers.Count;i++)
+        {
+            PlanesPlayers[i].RelocateShipSprite(PlayersList[i].Orientation, new Vector3Int(PlayersList[i].PlayerShipCenter.X, PlayersList[i].PlayerShipCenter.Y,0));
         }
         await Task.Yield();
     }

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Pattern_vertical
   m_EditorClassIdentifier: 
   PowerUpType: 0
-  PowerUpIconIndex: 5
+  PowerUpIconIndex: 3
   PowerUpRequiredWeight: 25
   AvailableQuanity: 5
   IsRetroactive: 0

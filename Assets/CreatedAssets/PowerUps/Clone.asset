@@ -15,6 +15,6 @@ MonoBehaviour:
   PowerUpType: 2
   PowerUpIconIndex: 0
   PowerUpRequiredWeight: 50
-  AvailableQuanity: 5
+  AvailableQuanity: 3
   IsRetroactive: 1
   PatternStrike_Pattern: 
