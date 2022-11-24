@@ -1342,17 +1342,18 @@ public class ServerActions : NetworkBehaviour
     private async Task IncreaseTurn()
     {
         int whileCounter = 0;
+        CurrentPlayerTurn++;
+        CurrentPlayerTurn = CurrentPlayerTurn % PlanesPlayers.Count;
         do
-        {
-            CurrentPlayerTurn++;
-            CurrentPlayerTurn = CurrentPlayerTurn % PlanesPlayers.Count;
-
+        {            
             if (PlayersList[CurrentPlayerTurn].Misfire)
             {
                 PlayersList[CurrentPlayerTurn].Misfire = false;
+                CurrentPlayerTurn++;
+                CurrentPlayerTurn = CurrentPlayerTurn % PlanesPlayers.Count;
+                whileCounter++;
                 continue;
             }
-
             whileCounter++;
         }
         while (PlayersList[CurrentPlayerTurn].Misfire || (PlayersList[CurrentPlayerTurn].isDestroyed  && whileCounter < 20));
