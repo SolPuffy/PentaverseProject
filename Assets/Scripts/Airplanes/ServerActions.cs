@@ -158,7 +158,7 @@ public class ServerActions : NetworkBehaviour
 
     private void GivePowerupSequence(List<ToPlayersPowerUp> WeightedPowerUpChoice, int RollWeight)
     {
-        PlanesPlayers[playerIndexBeforeUpdate].givePlayerPowerup(WeightedPowerUpChoice[RollWeight].PowerUp, playerIndexBeforeUpdate);
+        PlanesPlayers[playerIndexBeforeUpdate].givePlayerPowerup(WeightedPowerUpChoice[RollWeight].PowerUp);
 
         
         //PlayersList[playerIndexBeforeUpdate].CurrentHeldPowerup = WeightedPowerUpChoice[RollWeight].PowerUp;
@@ -373,6 +373,26 @@ public class ServerActions : NetworkBehaviour
                     break;
                 }
             case 10:
+                {
+                    DebugStatement += "TileType FakePlayer To Suceess"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 4;
+                    break;
+                }
+            case 11:
+                {
+                    DebugStatement += "TileType FakePlayer To Suceess"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 4;
+                    break;
+                }
+            case 12:
+                {
+                    DebugStatement += "TileType FakePlayer To Suceess"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 4;
+                    break;
+                }
+            case 13:
+                {
+                    DebugStatement += "TileType FakePlayer To Suceess"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 4;
+                    break;
+                }
+            case 14:
                 {
                     DebugStatement += "TileType FakePlayer To Suceess"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 4;
                     break;
@@ -632,6 +652,26 @@ public class ServerActions : NetworkBehaviour
                         DebugStatement += "TileType FakePlayer To Suceess"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 4;
                         break;
                     }
+                case 11:
+                    {
+                        DebugStatement += "TileType FakePlayer To Suceess"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 4;
+                        break;
+                    }
+                case 12:
+                    {
+                        DebugStatement += "TileType FakePlayer To Suceess"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 4;
+                        break;
+                    }
+                case 13:
+                    {
+                        DebugStatement += "TileType FakePlayer To Suceess"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 4;
+                        break;
+                    }
+                case 14:
+                    {
+                        DebugStatement += "TileType FakePlayer To Suceess"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 4;
+                        break;
+                    }
                 //Destroy To Destroy
                 //case 10: { DebugStatement += "TileType Destroyed To Destroyed"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 10; break; }
                 default: break;
@@ -669,65 +709,95 @@ public class ServerActions : NetworkBehaviour
             //North
             case "North":
                 {
-                    ServerVisibleGrid.Row[CenterX].Column[CenterY + 1] = 2;
-                    //HEAD
+                    //HEAD Row 0
                     ServerVisibleGrid.Row[CenterX].Column[CenterY + 2] = 2;
-                    //
+
+                    //Row 1
                     ServerVisibleGrid.Row[CenterX - 1].Column[CenterY + 1] = 2;
+                    ServerVisibleGrid.Row[CenterX].Column[CenterY + 1] = 2;
                     ServerVisibleGrid.Row[CenterX + 1].Column[CenterY + 1] = 2;
+                    //Row 2
                     ServerVisibleGrid.Row[CenterX - 2].Column[CenterY] = 2;
+                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY] = 2;
+                    //center Made Up ^
+                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY] = 2;
                     ServerVisibleGrid.Row[CenterX + 2].Column[CenterY] = 2;
+                    //Row 3
                     ServerVisibleGrid.Row[CenterX].Column[CenterY - 1] = 2;
+                    //Row 4
                     ServerVisibleGrid.Row[CenterX - 1].Column[CenterY - 2] = 2;
+                    ServerVisibleGrid.Row[CenterX].Column[CenterY - 2] = 2;
                     ServerVisibleGrid.Row[CenterX + 1].Column[CenterY - 2] = 2;
                     break;
                 }
             //South
             case "South":
                 {
-                    ServerVisibleGrid.Row[CenterX].Column[CenterY - 1] = 2;
-                    //HEAD
-                    ServerVisibleGrid.Row[CenterX].Column[CenterY - 2] = 2;
-                    //
-                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY - 1] = 2;
-                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY - 1] = 2;
-                    ServerVisibleGrid.Row[CenterX + 2].Column[CenterY] = 2;
-                    ServerVisibleGrid.Row[CenterX - 2].Column[CenterY] = 2;
-                    ServerVisibleGrid.Row[CenterX].Column[CenterY + 1] = 2;
+                    //Row 0
                     ServerVisibleGrid.Row[CenterX - 1].Column[CenterY + 2] = 2;
+                    ServerVisibleGrid.Row[CenterX].Column[CenterY + 2] = 2;
                     ServerVisibleGrid.Row[CenterX + 1].Column[CenterY + 2] = 2;
+                    //Row 1
+                    ServerVisibleGrid.Row[CenterX].Column[CenterY + 1] = 2;
+                    //Row 2
+                    ServerVisibleGrid.Row[CenterX - 2].Column[CenterY] = 2;
+                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY] = 2;
+                    //center Made Up ^
+                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY] = 2;
+                    ServerVisibleGrid.Row[CenterX + 2].Column[CenterY] = 2;
+                    //Row 3
+                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY - 1] = 2;
+                    ServerVisibleGrid.Row[CenterX].Column[CenterY - 1] = 2;
+                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY - 1] = 2;
+                    //HEAD Row 4
+                    ServerVisibleGrid.Row[CenterX].Column[CenterY - 2] = 2;
                     break;
                 }
             //West
             case "West":
                 {
-                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY] = 2;
-                    //HEAD
-                    ServerVisibleGrid.Row[CenterX - 2].Column[CenterY] = 2;
-                    //
-                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY - 1] = 2;
-                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY + 1] = 2;
-                    ServerVisibleGrid.Row[CenterX].Column[CenterY - 2] = 2;
+                    //Row 0
                     ServerVisibleGrid.Row[CenterX].Column[CenterY + 2] = 2;
-                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY] = 2;
-                    ServerVisibleGrid.Row[CenterX + 2].Column[CenterY - 1] = 2;
+                    //Row 1
+                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY + 1] = 2;
+                    ServerVisibleGrid.Row[CenterX].Column[CenterY + 1] = 2;
                     ServerVisibleGrid.Row[CenterX + 2].Column[CenterY + 1] = 2;
+                    //HEAD Row 2
+                    ServerVisibleGrid.Row[CenterX - 2].Column[CenterY] = 2;
+
+                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY] = 2;
+                    //center Made Up ^
+                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY] = 2;
+                    ServerVisibleGrid.Row[CenterX + 2].Column[CenterY] = 2;
+                    //Row 3
+                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY - 1] = 2;
+                    ServerVisibleGrid.Row[CenterX].Column[CenterY - 1] = 2;
+                    ServerVisibleGrid.Row[CenterX + 2].Column[CenterY - 1] = 2;
+                    //Row 4
+                    ServerVisibleGrid.Row[CenterX].Column[CenterY - 2] = 2;
                     break;
                 }
             //East
             case "East":
                 {
-                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY] = 2;
-                    //HEAD
-                    ServerVisibleGrid.Row[CenterX + 2].Column[CenterY] = 2;
-                    //
-                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY + 1] = 2;
-                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY - 1] = 2;
+                    //Row 0
                     ServerVisibleGrid.Row[CenterX].Column[CenterY + 2] = 2;
-                    ServerVisibleGrid.Row[CenterX].Column[CenterY - 2] = 2;
-                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY] = 2;
+                    //Row 1
                     ServerVisibleGrid.Row[CenterX - 2].Column[CenterY + 1] = 2;
+                    ServerVisibleGrid.Row[CenterX].Column[CenterY + 1] = 2;
+                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY + 1] = 2;
+                    //HEAD Row 2
+                    ServerVisibleGrid.Row[CenterX - 2].Column[CenterY] = 2;
+                    ServerVisibleGrid.Row[CenterX - 1].Column[CenterY] = 2;
+                    //center Made Up ^
+                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY] = 2;
+                    ServerVisibleGrid.Row[CenterX + 2].Column[CenterY] = 2;
+                    //Row 3
                     ServerVisibleGrid.Row[CenterX - 2].Column[CenterY - 1] = 2;
+                    ServerVisibleGrid.Row[CenterX].Column[CenterY - 1] = 2;
+                    ServerVisibleGrid.Row[CenterX + 1].Column[CenterY - 1] = 2;
+                    //Row 4
+                    ServerVisibleGrid.Row[CenterX].Column[CenterY - 2] = 2;
                     break;
                 }
         }
@@ -859,7 +929,7 @@ public class ServerActions : NetworkBehaviour
         {
             if (fake)
             {
-                i = 5;
+                i = 5 + indexFake;
             }
             else
             {
@@ -871,9 +941,8 @@ public class ServerActions : NetworkBehaviour
 
             CenterX = short.Parse(AvailableBuildSpaces[localRandomIndex].Substring(0, 2));
             CenterY = short.Parse(AvailableBuildSpaces[localRandomIndex].Substring(2, 2));
-            //For your own sake, do not open this switch region
             //CenterOfShip
-            if (i + 5 != 10)
+            if (staticIndex < 10)
             {
                 PlayersList[i].PlayerShipCenter.X = CenterX;
                 PlayersList[i].PlayerShipCenter.Y = CenterY;
@@ -886,7 +955,7 @@ public class ServerActions : NetworkBehaviour
                 //North
                 case 0:
                     {
-                        if(i + 5 != 10)
+                        if(staticIndex < 10)
                         {
                             PlayersList[i].Orientation = "North";
                             PlayersList[i].PlayerShipHead.X = CenterX;
@@ -912,8 +981,9 @@ public class ServerActions : NetworkBehaviour
                         ServerVisibleGrid.Row[CenterX - 1].Column[CenterY - 2] = staticIndex;
                         ServerVisibleGrid.Row[CenterX].Column[CenterY - 2] = staticIndex;
                         ServerVisibleGrid.Row[CenterX + 1].Column[CenterY - 2] = staticIndex;
-                        if (i + 5 == 10)
+                        if (staticIndex >= 10)
                         {
+                            Debug.Log("ShowFake()");
                             ShowFakeShip(indexFake);
                         }
                         break;
@@ -921,7 +991,7 @@ public class ServerActions : NetworkBehaviour
                 //South
                 case 1:
                     {
-                        if (i + 5 != 10)
+                        if (staticIndex < 10)
                         {
                             PlayersList[i].Orientation = "South";
                             PlayersList[i].PlayerShipHead.X = CenterX;
@@ -946,8 +1016,9 @@ public class ServerActions : NetworkBehaviour
                         //HEAD Row 4
                         ServerVisibleGrid.Row[CenterX].Column[CenterY - 2] = staticIndex;
                         
-                        if (i + 5 == 10)
+                        if (staticIndex >= 10)
                         {
+                            Debug.Log("ShowFake()");
                             ShowFakeShip(indexFake);
                         }
                         break;
@@ -955,7 +1026,7 @@ public class ServerActions : NetworkBehaviour
                 //West
                 case 2:
                     {
-                        if (i + 5 != 10)
+                        if (staticIndex < 10)
                         {
                             PlayersList[i].Orientation = "West";
                             PlayersList[i].PlayerShipHead.X = CenterX - 2;
@@ -981,8 +1052,9 @@ public class ServerActions : NetworkBehaviour
                         ServerVisibleGrid.Row[CenterX + 2].Column[CenterY - 1] = staticIndex;
                         //Row 4
                         ServerVisibleGrid.Row[CenterX].Column[CenterY - 2] = staticIndex;
-                        if (i + 5 == 10)
+                        if (staticIndex >= 10)
                         {
+                            Debug.Log("ShowFake()");
                             ShowFakeShip(indexFake);
                         }
                         break;
@@ -990,7 +1062,7 @@ public class ServerActions : NetworkBehaviour
                 //East
                 case 3:
                     {
-                        if (i + 5 != 10)
+                        if (staticIndex < 10)
                         {
                             PlayersList[i].Orientation = "East";
                             PlayersList[i].PlayerShipHead.X = CenterX + 2;
@@ -1014,8 +1086,9 @@ public class ServerActions : NetworkBehaviour
                         ServerVisibleGrid.Row[CenterX + 1].Column[CenterY - 1] = staticIndex;
                         //Row 4
                         ServerVisibleGrid.Row[CenterX].Column[CenterY - 2] = staticIndex;
-                        if(i+5 == 10)
+                        if(staticIndex >= 10)
                         {
+                            Debug.Log("ShowFake()");
                             ShowFakeShip(indexFake);
                         }
                         break;
@@ -1409,8 +1482,9 @@ public class ServerActions : NetworkBehaviour
         {
             for (int j = 0; j < BoardSize; j++)
             {
-                if (ServerVisibleGrid.Row[i].Column[j] == 10)
-                {                    
+                if (ServerVisibleGrid.Row[i].Column[j] == 10 + indexPlayer)
+                {
+                    Debug.Log("Attempt to reveal tile");
                     PlanesPlayers[indexPlayer].UpdateTile(new Vector3Int(i, j), ServerVisibleGrid.Row[i].Column[j]);
                 }
             }

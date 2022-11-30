@@ -7,7 +7,6 @@ public class PowerUpSlot : MonoBehaviour
 {
     public Button SlotButtonInstance;
     public PowerUp CurrentlyHeldPowerup;
-    public int IndexOfPlayerHoldingPowerup;
     public int powerupSlot;
     public bool isOccupied = false;
 
@@ -15,7 +14,7 @@ public class PowerUpSlot : MonoBehaviour
     {
         if(isOccupied)
         {
-            PlanesPlayer.localPlayer.LoadPowerup(CurrentlyHeldPowerup,IndexOfPlayerHoldingPowerup,powerupSlot);
+            PlanesPlayer.localPlayer.LoadPowerup(CurrentlyHeldPowerup,PlanesPlayer.localPlayer.playerIndex,powerupSlot);
         }        
     }    
 }

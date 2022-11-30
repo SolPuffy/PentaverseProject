@@ -34,7 +34,7 @@ public class PlanesPlayer : NetworkBehaviour
         ServerActions.Instance.PlayersList = shipsBruh;
     }
     [TargetRpc]
-    public void givePlayerPowerup(PowerUp power,int playerIndex)
+    public void givePlayerPowerup(PowerUp power)
     {
         ReturnDebugToServer($"Give player {playerIndex}, powerup {power}!");
         for (int i=0;i<4;i++)
@@ -43,7 +43,6 @@ public class PlanesPlayer : NetworkBehaviour
             {
                 LocalPlayerActions.Instance.PowerupsInventory[i].CurrentlyHeldPowerup = power;
                 LocalPlayerActions.Instance.PowerupsInventory[i].isOccupied = true;
-                LocalPlayerActions.Instance.PowerupsInventory[i].IndexOfPlayerHoldingPowerup = playerIndex;
                 LocalPlayerActions.Instance.PowerupsInventory[i].SlotButtonInstance.image.sprite = LocalPlayerActions.Instance.SpriteBun[power.PowerUpIconIndex];
                 LocalPlayerActions.Instance.PowerupsInventory[i].powerupSlot = i;
 
