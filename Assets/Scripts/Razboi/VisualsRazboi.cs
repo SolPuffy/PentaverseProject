@@ -59,7 +59,7 @@ public class VisualsRazboi : MonoBehaviour
         WIN.SetActive(false);
         LOSE.SetActive(false);
         StartGame.SetActive(false);
-        SlapPanel.SetActive(false);
+        SlapPanel.SetActive(true);
         if (HitSlapRazboi.CheckUI == null) { HitSlapRazboi.CheckUI = new UnityEvent<int>(); }
         if (HitSlapRazboi.EndGame == null) { HitSlapRazboi.EndGame = new UnityEvent<List<string>>(); }
         if (HitSlapRazboi.SlapSuccess == null) { HitSlapRazboi.SlapSuccess = new UnityEvent<string, int>(); }
@@ -369,6 +369,8 @@ public class VisualsRazboi : MonoBehaviour
     public void ToggleConsole()
     {
         SlapPanel.SetActive(!SlapPanel.activeSelf);
+        hitCounter.transform.parent.gameObject.SetActive(!hitCounter.transform.parent.gameObject.activeSelf);
+        slapCounter.transform.parent.gameObject.SetActive(!slapCounter.transform.parent.gameObject.activeSelf);
         EventSystem.current.SetSelectedGameObject(null, null);
     }
 }

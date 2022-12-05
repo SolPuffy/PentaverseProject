@@ -814,7 +814,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1767326453}
-  m_RootOrder: 8
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -11438,8 +11438,8 @@ RectTransform:
   - {fileID: 1198337287}
   - {fileID: 956303004}
   - {fileID: 677211637}
-  - {fileID: 1657512544}
   - {fileID: 90987983}
+  - {fileID: 1657512544}
   - {fileID: 1607000624}
   - {fileID: 716705871}
   m_Father: {fileID: 0}
@@ -13475,7 +13475,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0
-  InitialSlapConter: 3
   DelayBeforeResetBoard: 1
   SwitchCaseDeckRules: 0
   RefToController: {fileID: 2131420260}
