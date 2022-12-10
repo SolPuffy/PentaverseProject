@@ -170,7 +170,14 @@ public class ServerActions : NetworkBehaviour
         {
             PlayersList[playerIndexBeforeUpdate].ReceivedCloneBefore = true;
         }
-
+        playerActionsAirplanes givePowerup = new playerActionsAirplanes();
+        givePowerup.playerInGameIndex = playerIndexBeforeUpdate;
+        givePowerup.playerUniqueID = "nil";
+        givePowerup.actionType = "Power";
+        //givePowerup.coordsOfAction = null;
+        givePowerup.actionContent.Add($"{WeightedPowerUpChoice[RollWeight].PowerUp.name}");
+        givePowerup.timeOfAction = DateTime.Now.ToString("T");
+        ServerLogging.AddActionFromPlayerToList(givePowerup);
         Debug.Log($"Player Index {playerIndexBeforeUpdate} got power-up {WeightedPowerUpChoice[RollWeight].PowerUp.ToString()}");
     }
     /*public bool RequestPowerupInformation()
@@ -191,9 +198,18 @@ public class ServerActions : NetworkBehaviour
             Debug.Log("PreventHittingOwnShip");
             return;
         }
+
         string DebugStatement = $"Tile@Location:{targetedTile.x},{targetedTile.y}|";
         tileTypeBeforeUpdate = ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y];
         playerIndexBeforeUpdate = CurrentPlayerTurn;
+
+        playerActionsAirplanes hitAction = new playerActionsAirplanes();
+        hitAction.playerInGameIndex = playerIndexBeforeUpdate;
+        hitAction.playerUniqueID = "nil";
+        hitAction.actionType = "Hit";
+        hitAction.coordsOfAction.Add(targetedTile);
+        
+
         switch (tileTypeBeforeUpdate)
         {
 
@@ -201,6 +217,7 @@ public class ServerActions : NetworkBehaviour
             case 0:
                 {
                     DebugStatement += "TileType Water To Miss"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 3;
+                    hitAction.actionContent.Add("0");
                     await IncreaseTurn();
                     break;
                 }
@@ -217,6 +234,7 @@ public class ServerActions : NetworkBehaviour
             case 2:
                 {
                     DebugStatement += "TileType Destroyed To Destroyed"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 2;
+                    hitAction.actionContent.Add("2");
                     await IncreaseTurn();
                     break;
                 }
@@ -225,6 +243,7 @@ public class ServerActions : NetworkBehaviour
             case 3:
                 {
                     DebugStatement += "TileType Miss To Miss"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 3;
+                    hitAction.actionContent.Add("3");
                     await IncreaseTurn();
                     break;
                 }
@@ -233,6 +252,7 @@ public class ServerActions : NetworkBehaviour
             case 4:
                 {
                     DebugStatement += "TileType Success To Success"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 4;
+                    hitAction.actionContent.Add("4");
                     await IncreaseTurn();
                     break;
                 }
@@ -240,6 +260,7 @@ public class ServerActions : NetworkBehaviour
             //Player 0 To Success Hit //DamagePlayer0 //InstakillPlayer0 If targetedTile = head position
             case 5:
                 {
+                    hitAction.actionContent.Add("5");
                     if (PlayersList[0].isShielded)
                     {
                         PlayersList[0].isShielded = false;
@@ -261,13 +282,13 @@ public class ServerActions : NetworkBehaviour
                         PlayersList[0].isDestroyed = true;
                         playerShipDestroy(0);
                     }
-                    
                     break;
                 }
 
             //Player 1 To Success Hit //DamagePlayer1 //InstakillPlayer1 If targetedTile = head position
             case 6:
                 {
+                    hitAction.actionContent.Add("6");
                     if (PlayersList[1].isShielded)
                     {
                         PlayersList[1].isShielded = false;
@@ -295,6 +316,7 @@ public class ServerActions : NetworkBehaviour
             //Player 2 To Success Hit //DamagePlayer2 //InstakillPlayer2 If targetedTile = head position
             case 7:
                 {
+                    hitAction.actionContent.Add("7");
                     if (PlayersList[2].isShielded)
                     {
                         PlayersList[2].isShielded = false;
@@ -322,6 +344,7 @@ public class ServerActions : NetworkBehaviour
             //Player 3 To Success Hit //DamagePlayer3 //InstakillPlayer3 If targetedTile = head position
             case 8:
                 {
+                    hitAction.actionContent.Add("8");
                     if (PlayersList[3].isShielded)
                     {
                         PlayersList[3].isShielded = false;
@@ -349,6 +372,7 @@ public class ServerActions : NetworkBehaviour
             //Player 4 To Success Hit //DamagePlayer4 //InstakillPlayer4 If targetedTile = head position
             case 9:
                 {
+                    hitAction.actionContent.Add("9");
                     if (PlayersList[4].isShielded)
                     {
                         PlayersList[4].isShielded = false;
@@ -375,26 +399,31 @@ public class ServerActions : NetworkBehaviour
             case 10:
                 {
                     DebugStatement += "TileType FakePlayer To Suceess"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 4;
+                    hitAction.actionContent.Add("10");
                     break;
                 }
             case 11:
                 {
                     DebugStatement += "TileType FakePlayer To Suceess"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 4;
+                    hitAction.actionContent.Add("11");
                     break;
                 }
             case 12:
                 {
                     DebugStatement += "TileType FakePlayer To Suceess"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 4;
+                    hitAction.actionContent.Add("12");
                     break;
                 }
             case 13:
                 {
                     DebugStatement += "TileType FakePlayer To Suceess"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 4;
+                    hitAction.actionContent.Add("13");
                     break;
                 }
             case 14:
                 {
                     DebugStatement += "TileType FakePlayer To Suceess"; ServerVisibleGrid.Row[targetedTile.x].Column[targetedTile.y] = 4;
+                    hitAction.actionContent.Add("14");
                     break;
                 }
             //Destroy To Destroy
@@ -402,6 +431,8 @@ public class ServerActions : NetworkBehaviour
             default: break;
         }
 
+        hitAction.timeOfAction = DateTime.Now.ToString("T");
+        ServerLogging.AddActionFromPlayerToList(hitAction);
         if(DebugPlayerIndex)
         {
             LocalPlayerActions.Instance.LocalPlayerIndex = CurrentPlayerTurn;
@@ -431,6 +462,11 @@ public class ServerActions : NetworkBehaviour
         Debug.Log("attempt pattern");
         bool hitPlayer = false;
         bool[] shieldbreak = { false, false, false, false, false };
+
+        playerActionsAirplanes hitAction = new playerActionsAirplanes();
+        hitAction.playerUniqueID = "nil";
+        hitAction.actionType = "Pattern";
+
         for (int x = 0; x < targetedTiles.Length; x++)
         {
             if (map.GetTile(targetedTiles[x]) == null)
@@ -443,9 +479,14 @@ public class ServerActions : NetworkBehaviour
                 Debug.Log("PreventHittingOwnShip");
                 continue;
             }
+
             string DebugStatement = $"Tile@Location:{targetedTiles[x].x},{targetedTiles[x].y}|";
             tileTypeBeforeUpdate = ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y];
             playerIndexBeforeUpdate = CurrentPlayerTurn;
+
+            hitAction.playerInGameIndex = playerIndexBeforeUpdate;
+            hitAction.coordsOfAction.Add(new Vector3Int(targetedTiles[x].x, targetedTiles[x].y));
+
             switch (tileTypeBeforeUpdate)
             {
 
@@ -453,6 +494,7 @@ public class ServerActions : NetworkBehaviour
                 case 0:
                     {
                         DebugStatement += "TileType Water To Miss"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 3;
+                        hitAction.actionContent.Add("0");
                         break;
                     }
 
@@ -468,6 +510,7 @@ public class ServerActions : NetworkBehaviour
                 case 2:
                     {
                         DebugStatement += "TileType Destroyed To Destroyed"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 2;
+                        hitAction.actionContent.Add("2");
                         break;
                     }
 
@@ -475,6 +518,7 @@ public class ServerActions : NetworkBehaviour
                 case 3:
                     {
                         DebugStatement += "TileType Miss To Miss"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 3;
+                        hitAction.actionContent.Add("3");
                         break;
                     }
 
@@ -482,12 +526,14 @@ public class ServerActions : NetworkBehaviour
                 case 4:
                     {
                         DebugStatement += "TileType Success To Success"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 4;
+                        hitAction.actionContent.Add("4");
                         break;
                     }
 
                 //Player 0 To Success Hit //DamagePlayer0 //InstakillPlayer0 If targetedTile = head position
                 case 5:
                     {
+                        hitAction.actionContent.Add("5");
                         if (PlayersList[0].isShielded)
                         {
                             shieldbreak[0] = true;
@@ -523,6 +569,7 @@ public class ServerActions : NetworkBehaviour
                 //Player 1 To Success Hit //DamagePlayer1 //InstakillPlayer1 If targetedTile = head position
                 case 6:
                     {
+                        hitAction.actionContent.Add("6");
                         if (PlayersList[1].isShielded)
                         {
                             shieldbreak[1] = true;
@@ -555,6 +602,7 @@ public class ServerActions : NetworkBehaviour
                 //Player 2 To Success Hit //DamagePlayer2 //InstakillPlayer2 If targetedTile = head position
                 case 7:
                     {
+                        hitAction.actionContent.Add("7");
                         if (PlayersList[2].isShielded)
                         {
                             shieldbreak[2] = true;
@@ -587,6 +635,7 @@ public class ServerActions : NetworkBehaviour
                 //Player 3 To Success Hit //DamagePlayer3 //InstakillPlayer3 If targetedTile = head position
                 case 8:
                     {
+                        hitAction.actionContent.Add("8");
                         if (PlayersList[3].isShielded)
                         {
                             shieldbreak[3] = true;
@@ -619,6 +668,7 @@ public class ServerActions : NetworkBehaviour
                 //Player 4 To Success Hit //DamagePlayer4 //InstakillPlayer4 If targetedTile = head position
                 case 9:
                     {
+                        hitAction.actionContent.Add("9");
                         if (PlayersList[4].isShielded)
                         {
                             shieldbreak[4] = true;
@@ -650,26 +700,31 @@ public class ServerActions : NetworkBehaviour
                 case 10:
                     {
                         DebugStatement += "TileType FakePlayer To Suceess"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 4;
+                        hitAction.actionContent.Add("10");
                         break;
                     }
                 case 11:
                     {
                         DebugStatement += "TileType FakePlayer To Suceess"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 4;
+                        hitAction.actionContent.Add("11");
                         break;
                     }
                 case 12:
                     {
                         DebugStatement += "TileType FakePlayer To Suceess"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 4;
+                        hitAction.actionContent.Add("12");
                         break;
                     }
                 case 13:
                     {
                         DebugStatement += "TileType FakePlayer To Suceess"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 4;
+                        hitAction.actionContent.Add("13");
                         break;
                     }
                 case 14:
                     {
                         DebugStatement += "TileType FakePlayer To Suceess"; ServerVisibleGrid.Row[targetedTiles[x].x].Column[targetedTiles[x].y] = 4;
+                        hitAction.actionContent.Add("14");
                         break;
                     }
                 //Destroy To Destroy
@@ -677,6 +732,10 @@ public class ServerActions : NetworkBehaviour
                 default: break;
             }
         }
+
+        hitAction.timeOfAction = DateTime.Now.ToString("T");
+        ServerLogging.AddActionFromPlayerToList(hitAction);
+
         PlayersList[CurrentPlayerTurn].CurrentHeldPowerup = null;
         for (int i = 0; i < 5; i++)
         {
@@ -845,9 +904,13 @@ public class ServerActions : NetworkBehaviour
         await DisplayIndividualShips();
         //await ShowTotalMap();
         SetupInProgress = false;
+
         PlanesPlayers[0].SetUpProgress(false);
         
         activeShipsCount = PlanesPlayers.Count;
+
+        ServerLogging.RegisterPlayerCountAtStart(PlayersList.Count);
+        ServerLogging.RegisterStartTime();
     }
     private async Task FillMapWithWater()
     {
@@ -1469,6 +1532,9 @@ public class ServerActions : NetworkBehaviour
     {
         //SetupInProgress = true;
         //PlanesPlayers[0].FinishGame();
+
+        ServerLogging.RequestLogBackup();
+
         foreach(PlayerShipStructure ship in PlayersList)
         {
             if(!ship.isDestroyed)

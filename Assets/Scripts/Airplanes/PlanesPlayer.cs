@@ -270,6 +270,11 @@ public class PlanesPlayer : NetworkBehaviour
     {
 
     }
-
+    //BACKUP
+    [Command]
+    public void RequestManualBackup()
+    {
+        ServerLogging.RequestLogBackup();
+    }
 
 }

@@ -75,6 +75,12 @@ public class LocalPlayerActions : MonoBehaviour
         {
             RaycastToTile();
         }
+
+        if (Input.GetKeyDown(KeyCode.Keypad4))
+        {
+            PlanesPlayer.localPlayer.RequestManualBackup();
+        }
+        
     }
     private void ChoosePortraitAtRandom()
     {
