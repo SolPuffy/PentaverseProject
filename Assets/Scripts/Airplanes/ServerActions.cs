@@ -756,6 +756,8 @@ public class ServerActions : NetworkBehaviour
     }
     public void playerShipDestroy(int switchTarget)
     {
+        if (PlayersList[switchTarget].isDestroyed) return;
+
         PlayersList[switchTarget].isDestroyed = true;
         //CenterOfShip
         int CenterX = PlayersList[switchTarget].PlayerShipCenter.X;
@@ -1479,20 +1481,19 @@ public class ServerActions : NetworkBehaviour
     {
         int whileCounter = 0;
         CurrentPlayerTurn++;
-        CurrentPlayerTurn = CurrentPlayerTurn % PlanesPlayers.Count;
-        do
-        {            
+        CurrentPlayerTurn = CurrentPlayerTurn % PlayersList.Count;
+        while (PlayersList[CurrentPlayerTurn].Misfire || PlayersList[CurrentPlayerTurn].isDestroyed || whileCounter > 20)           
+        {           
+            Debug.Log($"while counted :{whileCounter}; CurrentPlayerTurn :{CurrentPlayerTurn}");
             if (PlayersList[CurrentPlayerTurn].Misfire)
             {
-                PlayersList[CurrentPlayerTurn].Misfire = false;
-                CurrentPlayerTurn++;
-                CurrentPlayerTurn = CurrentPlayerTurn % PlanesPlayers.Count;
-                whileCounter++;
-                continue;
+                PlayersList[CurrentPlayerTurn].Misfire = false;                
             }
+            CurrentPlayerTurn++;
+            CurrentPlayerTurn = CurrentPlayerTurn % PlanesPlayers.Count;
             whileCounter++;
         }
-        while (PlayersList[CurrentPlayerTurn].Misfire || (PlayersList[CurrentPlayerTurn].isDestroyed  && whileCounter < 20));
+       
 
         if (whileCounter >= 20)
             Debug.LogWarning("out of whiles [Increase Turn]");
@@ -1500,32 +1501,32 @@ public class ServerActions : NetworkBehaviour
         await Task.Yield();
     }
 
-    public void CheckTurn(int PlayerIndex)
+    public void RemovePlayer(int PlayerIndex)
     {
-        playerShipDestroy(PlayerIndex);
-
-        Debug.Log("Current player turn " + CurrentPlayerTurn);
-        int whileCounter = 0;
-
-
-        //CurrentPlayerTurn = CurrentPlayerTurn % PlanesPlayers.Count;
-        do
+        
+        if (!SetupInProgress)
         {
-            CurrentPlayerTurn++;
-            CurrentPlayerTurn = CurrentPlayerTurn % PlanesPlayers.Count;
+            playerShipDestroy(PlayerIndex);
 
-            if (PlayersList[CurrentPlayerTurn].Misfire)
-            {
-                PlayersList[CurrentPlayerTurn].Misfire = false;
-                continue;
-            }
-
-            whileCounter++;
+            if (CurrentPlayerTurn == PlayerIndex)
+                IncreaseTurn();
         }
-        while (PlayersList[CurrentPlayerTurn].Misfire || (PlayersList[CurrentPlayerTurn].isDestroyed && whileCounter < 20));
-        Debug.Log("new player turn " + CurrentPlayerTurn);
-        if (whileCounter >= 20)
-            Debug.LogWarning("out of whiles [Check Turn]");
+        else
+        {
+            int indexToremove = 0;
+            foreach (PlanesPlayer p in PlanesPlayers)
+            {
+                if (p.playerIndex == PlayerIndex)
+                    indexToremove = PlanesPlayers.IndexOf(p);
+            }
+            PlanesPlayers.RemoveAt(indexToremove);
+            PlanesPlayers[0].updateplayers(PlanesPlayers);
+
+            foreach(PlanesPlayer p in PlanesPlayers)
+            {
+                p.playerIndex = PlanesPlayers.IndexOf(p);
+            }
+        }
     }
 
     private void FinishGame()

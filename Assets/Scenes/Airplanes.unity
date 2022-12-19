@@ -4084,6 +4084,7 @@ GameObject:
   - component: {fileID: 1296793591}
   - component: {fileID: 1296793590}
   - component: {fileID: 1296793593}
+  - component: {fileID: 1296793594}
   m_Layer: 0
   m_Name: GameScriptsManager
   m_TagString: Untagged
@@ -4281,6 +4282,7 @@ MonoBehaviour:
   - {fileID: 349411078}
   - {fileID: 1923301178}
   - {fileID: 567175508}
+  TilemapCollider: {fileID: 1178629614}
   PowerupsInventory:
   - {fileID: 1925100531}
   - {fileID: 577194997}
@@ -4324,6 +4326,28 @@ MonoBehaviour:
   visible: 0
   m_AssetId: 
   hasSpawned: 0
+--- !u!114 &1296793594
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1296793589}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9cbf786d2765ead4a9e32b40b8258f96, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  InstanceData:
+    TimeOfGameStart: 
+    TimeOfLoggingBackup: 
+    PlayerCountDuringLogging: 0
+    PlayerCountOnStart: 0
+    AverageActionsPerformed: 0
+    ActionsPerformed: []
+    WordLists:
+      UsedWords: []
+      AvailableWordsThisGame: []
 --- !u!1 &1297521087
 GameObject:
   m_ObjectHideFlags: 0

@@ -122,7 +122,7 @@ public class PlanesPlayer : NetworkBehaviour
         {
             //HitSlapRazboi.instance.RemovePlayer(playerIndex);
             //ServerActions.Instance.PlanesPlayers.Remove(this);
-            ServerActions.Instance.CheckTurn(playerIndex);
+            ServerActions.Instance.RemovePlayer(playerIndex);
         }
     }
 

@@ -27,6 +27,8 @@ public class LocalPlayerActions : MonoBehaviour
     public PlaneStateImages PlaneStates;
     public GameObject[] PlayerCharacterPortrait;
 
+    public Collider TilemapCollider;
+
     [SerializeField]
     public PowerUpSlot[] PowerupsInventory = new PowerUpSlot[4];
     public GameObject BackPanel;
@@ -41,6 +43,7 @@ public class LocalPlayerActions : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+        if (GameObject.Find("NetworkManager") == null) SceneManager.LoadScene(0);
     }
     private void Start()
     {
@@ -50,6 +53,8 @@ public class LocalPlayerActions : MonoBehaviour
         {
             Debug.Log("I am planes server");
         }
+
+       
         ChoosePortraitAtRandom();
     }
     private void Update()
@@ -159,6 +164,7 @@ public class LocalPlayerActions : MonoBehaviour
     public void FinishGame()
     {
         EndGame.SetActive(true);
+        TilemapCollider.enabled = false;
     }
 
     public void DC()
