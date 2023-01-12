@@ -128,7 +128,7 @@ public class VisualsRazboi : MonoBehaviour
 
         for (int i = 0; i < 2; i++)
         {
-            Debug.Log(playerCardImages[Index].cardIndexes[0] + " " + playerCardImages[Index].cardIndexes[1]);
+            //Debug.Log(playerCardImages[Index].cardIndexes[0] + " " + playerCardImages[Index].cardIndexes[1]);
 
             playerCardImages[Index].ImageConstruction[i].sprite =
                 playerCardImages[Index].CardsCollection[playerCardImages[Index].cardIndexes[i]];
@@ -182,9 +182,9 @@ public class VisualsRazboi : MonoBehaviour
     {
         //try
         {
-            for (int i = 0; i < correctOrder.Count; i++)
+            for (int i = 0; i < HitSlapRazboi.instance.CardCount.Count; i++)
             {
-                PlayerCardCount[correctOrder.IndexOf(i)].text = HitSlapRazboi.instance.CardCount[i].ToString();
+                PlayerCardCount[i].text = HitSlapRazboi.instance.CardCount[i].ToString();
                 UpdateVisualsForIndex(i);
             }
             hitCounter.text = HitSlapRazboi.instance.CardsToHit.ToString();
@@ -248,7 +248,7 @@ public class VisualsRazboi : MonoBehaviour
         {
             if (HitSlapRazboi.instance.InititalSetupDone)
             {
-                Table.sprite = PlayerPortrait[correctOrder.IndexOf(HitSlapRazboi.instance.IndexOfActivePlayer)];
+                Table.sprite = PlayerPortrait[HitSlapRazboi.instance.IndexOfActivePlayer];
             }
         }
 
@@ -260,10 +260,10 @@ public class VisualsRazboi : MonoBehaviour
     }
     void SetNames()
     {
-        for(int i = 0; i < correctOrder.Count; i++)
+        for(int i = 0; i < HitSlapRazboi.instance.PlayerNames.Count; i++)
         {
             //PlayerName[i].text = "P" + (correctOrder[i] + 1).ToString();
-            PlayerName[correctOrder.IndexOf(i)].text = HitSlapRazboi.instance.PlayerNames[i];
+            PlayerName[i].text = HitSlapRazboi.instance.PlayerNames[i];
         }
     }    
     public void DeactivateVisualDecks()
@@ -360,10 +360,11 @@ public class VisualsRazboi : MonoBehaviour
     void StartEvent()
     {
         SoundManager.instance.Sounds[UnityEngine.Random.Range(1, 3)].source.Play();
+        /*
         try
         { CalculateCorrectOrder(correctOrder); }
         catch { Debug.LogWarning("temp Error"); }
-
+        */
     }
 
     public void ToggleConsole()
