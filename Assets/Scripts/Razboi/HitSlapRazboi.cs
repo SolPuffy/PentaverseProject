@@ -522,8 +522,16 @@ public class HitSlapRazboi : NetworkBehaviour
 
     public void RemovePlayerInGame(int index)
     {
-        Debug.Log($"Removing player in Game with index {index}");        
-        Players.RemoveAt(index);
+        int i; ;
+        Debug.Log($"Removing player in Game with index {index}");   
+        for(i =0; i< Players.Count; i++)
+        {
+            if (Players[i].playerIndex == index)
+            {
+                Players.RemoveAt(i);
+                break;
+            }
+        }        
         PlayerLoses(index);       
 
         //split cards
@@ -533,7 +541,7 @@ public class HitSlapRazboi : NetworkBehaviour
             tempList.AddRange(PlayerDecks[index]);
             PlayerDecks[index].Clear();
             int offset = 0;
-            for (int i = 0; i < tempList.Count; i++)
+            for (i = 0; i < tempList.Count; i++)
             {
                 while(PlayerDecks[(i + offset) % PlayerDecks.Count].Count <= 0)
                 {
