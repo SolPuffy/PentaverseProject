@@ -280,6 +280,16 @@ public class VisualsRazboi : MonoBehaviour
         PlayerVisualDecks[index].SetActive(true);
         //PlayerPortrait[index].gameObject.SetActive(true);
         PlayerCardCount[index].gameObject.SetActive(true);
+
+        SpriteRenderer target = PlayerVisualDecks[index].GetComponent<SpriteRenderer>();
+        if (index == CardPlayer.localPlayer.playerIndex)
+        {
+            target.color = Color.green;
+        }
+        else
+        {
+            target.color = Color.white;
+        }
     }
 
     void CheckUIButtons(int indexACtivePlayer)
