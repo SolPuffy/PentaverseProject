@@ -5,7 +5,6 @@ using Mirror;
 using UnityEngine.Events;
 using System.Threading.Tasks;
 using System;
-using UnityEngine.UI;
 
 [System.Serializable]
 public class SyncListObjects : SyncList<GameObject> { }
@@ -49,6 +48,7 @@ public class HitSlapRazboi : NetworkBehaviour
 
     public List<string> WinOrder = new List<string>();
     private int PlayersLeft = 0;
+    private bool ended = false;
 
     public CardPlayer firstPlayer { get 
         {
@@ -102,7 +102,9 @@ public class HitSlapRazboi : NetworkBehaviour
     public void ResetScene()
     {
         ServerBackup.CleanDataHold();
+        ended = false;
         InititalSetupDone = false;
+        RoundEndTriggered = false;
         DeckControllerRazboi.instance.done = false;
         IndexOfActivePlayer = 0;
         CardsOnGround.Clear();
@@ -392,10 +394,9 @@ public class HitSlapRazboi : NetworkBehaviour
         //
         CardsOnGround.Clear();
         CardsLostToSlap.Clear();
-        for(int i = 0; i < SlapsLeft.Count; i++)
-        {
-            SlapsLeft[i] = PlayerDecks[indexLocalPlayer].Count;
-        }
+
+        SlapsLeft[indexLocalPlayer] = PlayerDecks[indexLocalPlayer].Count;
+      
         
         StopInputAtRoundWin = false;
         RoundEndTriggered = false;
@@ -566,7 +567,8 @@ public class HitSlapRazboi : NetworkBehaviour
 
     private void PlayerLoses(int index)
     {
-       
+        if (ended) return;
+
         if(!WinOrder.Contains(PlayerNames[index]))
         {
            
@@ -582,6 +584,7 @@ public class HitSlapRazboi : NetworkBehaviour
         
         if(PlayersLeft < 2)
         {
+            ended = true;
             foreach(string name in PlayerNames)
             {
                 if(!WinOrder.Contains(name))
