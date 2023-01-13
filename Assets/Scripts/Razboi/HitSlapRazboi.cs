@@ -5,7 +5,6 @@ using Mirror;
 using UnityEngine.Events;
 using System.Threading.Tasks;
 using System;
-using UnityEngine.PlayerLoop;
 
 [System.Serializable]
 public class SyncListObjects : SyncList<GameObject> { }
@@ -105,11 +104,36 @@ public class HitSlapRazboi : NetworkBehaviour
 
     private void FlagCurrentPlayerForAfk()
     {
-        Players[IndexOfActivePlayer].FlaggedForAfk();
-        Debug.Log($"Player with index {IndexOfActivePlayer} has been flagged for afk");
-        afkTimer = 150;
+        foreach(CardPlayer p in Players)
+        {
+            if (p.playerIndex == IndexOfActivePlayer)
+            {
+                p.AfkFlagTriggers++;
+                if(p.AfkFlagTriggers > 1)
+                {
+                    RemovePlayerInGame(p.playerIndex);
+                }
+                else
+                {
+                    StartCoroutine(StartAutoPlay(p));
+                }
+
+                break;
+            }
+        }
+        
+        //Players[IndexOfActivePlayer].FlaggedForAfk();
+        Debug.Log($"Player with index {IndexOfActivePlayer} has been flagged for afk");       
     }
 
+    IEnumerator StartAutoPlay(CardPlayer p)
+    {
+        while (IndexOfActivePlayer == p.playerIndex)
+        {
+            HitCards(p.playerIndex, p.Nome);
+            yield return new WaitForSeconds(0.1f);
+        }
+    }
     IEnumerator Setup()
     {
         // Server is waiting until a player calls CardPlayer.localPlayer.BuildDeck();
@@ -318,11 +342,12 @@ public class HitSlapRazboi : NetworkBehaviour
         ReactionTime = 0;
         if (!InititalSetupDone) return;
         if (StopInputAtRoundWin) return;
-        //if (SlapsLeft[IndexOfSlappingPlayer] <= 0) return;
+        
         if (PlayerDecks[IndexOfSlappingPlayer].Count <= 0) return;
         if (CardsOnGround.Count < 2) return;
 
-        RefreshTimerOnAction();
+        if(IndexOfSlappingPlayer == IndexOfActivePlayer)
+            RefreshTimerOnAction();
 
         firstPlayer.SlapMojo();
 
@@ -455,6 +480,8 @@ public class HitSlapRazboi : NetworkBehaviour
     {
         Debug.Log("Next Player");
         IncrementActivePlayer();
+
+        RefreshTimerOnAction();
 
         int whilecounter = 0;
         while (PlayerDecks[IndexOfActivePlayer].Count == 0)

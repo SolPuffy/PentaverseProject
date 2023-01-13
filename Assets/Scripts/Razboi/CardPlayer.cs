@@ -9,7 +9,7 @@ public class CardPlayer : NetworkBehaviour
     [SyncVar] public int playerIndex = 20;    
     [SyncVar] public string Nome = "P";
     [SyncVar] public bool HasEntered = false;
-    [SyncVar] private int AfkFlagTriggers = 0;
+    [SyncVar] public int AfkFlagTriggers = 0;
     //List<CardPlayer> cardPlayers = new List<CardPlayer>();
     private void Start()
     {
@@ -67,12 +67,7 @@ public class CardPlayer : NetworkBehaviour
     public override void OnStartServer()
     {
         Debug.Log($"Client {name} connected on Server");
-    }
-    [TargetRpc]
-    public void FlaggedForAfk()
-    {
-        AfkFlagTriggers++;
-    }
+    }    
 
     [ClientRpc]
     public void SetupDone()
@@ -85,6 +80,7 @@ public class CardPlayer : NetworkBehaviour
     {
         HitSlapRazboi.SlapAnimation.Invoke();
     }
+
     [Command]
     public void SendRulesUpdateToServer(int sliderInput)
     {
