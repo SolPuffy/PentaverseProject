@@ -5,6 +5,7 @@ using Mirror;
 using UnityEngine.Events;
 using System.Threading.Tasks;
 using System;
+using UnityEngine.PlayerLoop;
 
 [System.Serializable]
 public class SyncListObjects : SyncList<GameObject> { }
@@ -49,7 +50,7 @@ public class HitSlapRazboi : NetworkBehaviour
     public List<string> WinOrder = new List<string>();
     private int PlayersLeft = 0;
     private bool ended = false;
-
+    private int afkTimer = 9999;
     public CardPlayer firstPlayer { get 
         {
             return Players[0];
@@ -78,6 +79,35 @@ public class HitSlapRazboi : NetworkBehaviour
         {
             UpdateValuesForVisuals();
         }
+    }
+    private void FixedUpdate()
+    {
+        if (!Application.isBatchMode) return;
+        if (InititalSetupDone && !ended)
+        {
+            afkTimer--;
+
+            if (afkTimer % 30 == 0)
+            {
+                //update Every second
+            }
+            if (afkTimer < 1)
+            {
+                FlagCurrentPlayerForAfk();
+            }
+        }
+    }
+
+    private void RefreshTimerOnAction()
+    {
+        afkTimer = 300;
+    }
+
+    private void FlagCurrentPlayerForAfk()
+    {
+        Players[IndexOfActivePlayer].FlaggedForAfk();
+        Debug.Log($"Player with index {IndexOfActivePlayer} has been flagged for afk");
+        afkTimer = 150;
     }
 
     IEnumerator Setup()
@@ -132,6 +162,8 @@ public class HitSlapRazboi : NetworkBehaviour
         if (!InititalSetupDone) return;
         if (StopInputAtRoundWin) return;
         if (indexLocalPlayer != IndexOfActivePlayer) return;
+
+        RefreshTimerOnAction();
 
         //start measure Time
         LastHitTime = Time.realtimeSinceStartup;
@@ -290,6 +322,8 @@ public class HitSlapRazboi : NetworkBehaviour
         if (PlayerDecks[IndexOfSlappingPlayer].Count <= 0) return;
         if (CardsOnGround.Count < 2) return;
 
+        RefreshTimerOnAction();
+
         firstPlayer.SlapMojo();
 
         SlapTime = Time.realtimeSinceStartup;
@@ -371,6 +405,8 @@ public class HitSlapRazboi : NetworkBehaviour
         //SCUUUFED Update Decks
         Debug.Log("Finished Setying up decks for players.  Starting Game");
         InititalSetupDone = true;
+        //set initial timer to 10 seconds
+        afkTimer = 300;
         firstPlayer.SetupDone();
         //firstPlayer.ChangeDecks(PlayerDecks, Players);
         firstPlayer.CheckTurn(IndexOfActivePlayer);       
