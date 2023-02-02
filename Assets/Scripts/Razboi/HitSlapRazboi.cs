@@ -50,6 +50,12 @@ public class HitSlapRazboi : NetworkBehaviour
     private int PlayersLeft = 0;
     private bool ended = false;
     private int afkTimer = 9999;
+    [SerializeField] private int maxAFkTime = 300000;
+
+    private int PossibleLoser = -1;
+    private List<CardValueType> CardsToBeDisperesed = new List<CardValueType>();
+
+
     public CardPlayer firstPlayer { get 
         {
             return Players[0];
@@ -99,7 +105,7 @@ public class HitSlapRazboi : NetworkBehaviour
 
     private void RefreshTimerOnAction()
     {
-        afkTimer = 300;
+        afkTimer = maxAFkTime;
     }
 
     private void FlagCurrentPlayerForAfk()
@@ -175,6 +181,9 @@ public class HitSlapRazboi : NetworkBehaviour
         StopAllCoroutines();
         StartCoroutine(Setup());
         PlayersLeft = 0;
+        CardsToBeDisperesed.Clear();
+        PossibleLoser = -1;
+
     }
 
    
@@ -211,6 +220,12 @@ public class HitSlapRazboi : NetworkBehaviour
             RoundEndTriggered = true;
             IndexOfPlayerWhoTriggeredRoundEnd = indexLocalPlayer;
 
+            //Possible Loser loses
+            if (PossibleLoser != indexLocalPlayer && PossibleLoser > -1)
+            {
+                PlayerLoses(PossibleLoser, false);                
+            }
+            
             SwitchInSwitchlol(CardsOnGround[CardsOnGround.Count - 1].CardValue);
             NextPlayer();
         }
@@ -235,7 +250,7 @@ public class HitSlapRazboi : NetworkBehaviour
         }
         if(PlayerDecks[indexLocalPlayer].Count <=0 )
         {
-            PlayerLoses(indexLocalPlayer);
+            PlayerLoses(indexLocalPlayer, false);
         }
         //
     }
@@ -370,8 +385,8 @@ public class HitSlapRazboi : NetworkBehaviour
             PlayerDecks[IndexOfSlappingPlayer].RemoveAt(0);
 
             if (PlayerDecks[IndexOfSlappingPlayer].Count <= 0)
-            {
-                PlayerLoses(IndexOfSlappingPlayer);
+            {                
+                PlayerLoses(IndexOfSlappingPlayer, false);
             }
             Debug.Log($"Slap result : {Success.ToString()}  {ReactionTime.ToString()}");
         }
@@ -431,7 +446,7 @@ public class HitSlapRazboi : NetworkBehaviour
         Debug.Log("Finished Setying up decks for players.  Starting Game");
         InititalSetupDone = true;
         //set initial timer to 10 seconds
-        afkTimer = 300;
+        afkTimer = maxAFkTime;
         firstPlayer.SetupDone();
         //firstPlayer.ChangeDecks(PlayerDecks, Players);
         firstPlayer.CheckTurn(IndexOfActivePlayer);       
@@ -441,6 +456,16 @@ public class HitSlapRazboi : NetworkBehaviour
     public async void WinRound(int indexLocalPlayer)
     {
         StopInputAtRoundWin = true;
+
+        //Resolve PossibleLoser
+        if (PossibleLoser == indexLocalPlayer)
+            PossibleLoser = -1;
+        else        
+            PlayerLoses(PossibleLoser, false);         
+
+        //Split CardsToBeDispersed
+        SplitCards(CardsToBeDisperesed);
+
         await Task.Delay(System.Convert.ToInt32(DelayBeforeResetBoard * 1000));
         CardsToHit = 1;
         //Didn't hit a +10 and someone before did
@@ -594,23 +619,20 @@ public class HitSlapRazboi : NetworkBehaviour
                 Players.RemoveAt(i);
                 break;
             }
-        }        
-        PlayerLoses(index);       
+        }   
+        
+        PlayerLoses(index, true);       
 
-        //split cards
+        //prepare split cards
         if (PlayerDecks[index].Count > 0)        
         {
-            List<CardValueType> tempList = new List<CardValueType>();
-            tempList.AddRange(PlayerDecks[index]);
+            CardsToBeDisperesed.AddRange(PlayerDecks[index]);
             PlayerDecks[index].Clear();
-            int offset = 0;
-            for (i = 0; i < tempList.Count; i++)
+
+            if (!RoundEndTriggered)           
             {
-                while(PlayerDecks[(i + offset) % PlayerDecks.Count].Count <= 0)
-                {
-                    offset++;
-                }
-                PlayerDecks[(i + offset) % PlayerDecks.Count].Add(tempList[i]);
+                Debug.Log("round end not triggered");
+                SplitCards(CardsToBeDisperesed);
             }
         }
         
@@ -618,6 +640,29 @@ public class HitSlapRazboi : NetworkBehaviour
         if(index == IndexOfActivePlayer) { NextPlayer(); }        
     }
 
+    private void SplitCards(List<CardValueType> cards)
+    {
+       
+        if (cards.Count <= 0) return;
+
+        Debug.Log("Splitting " + cards.Count + " cards");
+
+        int offset = 0;
+        for (int i = 0; i < cards.Count; i++)
+        {
+            while (PlayerDecks[(i + offset) % PlayerDecks.Count].Count <= 0)
+            {
+                offset++;
+            }
+            PlayerDecks[(i + offset) % PlayerDecks.Count].Add(cards[i]);
+        }
+        cards.Clear();
+
+        for(int i = 0; i< PlayerDecks.Count; i++)
+        {
+            if (PlayerDecks[i].Count > 0) ShuffleDeck(i);
+        }
+    }
     public void RemovePlayerBeforeGame(int index)
     {
         Debug.Log($"Removing player pre Game with index {index}");
@@ -636,13 +681,26 @@ public class HitSlapRazboi : NetworkBehaviour
         }        
     }
 
-    private void PlayerLoses(int index)
+    private void PlayerLoses(int index, bool exit)
     {
         if (ended) return;
+        if (index < 0) return;
+
+        //Create Possible Loser
+        if (RoundEndTriggered && IndexOfPlayerWhoTriggeredRoundEnd == index && !exit)
+        {
+            Debug.Log("Possible Loser Created");
+            PossibleLoser = index;
+            return;
+        }
+        //
+
+        //Reset Possible Loser
+        if (PossibleLoser == index)
+            PossibleLoser = -1;
 
         if(!WinOrder.Contains(PlayerNames[index]))
-        {
-           
+        {           
             PlayersLeft--;
             Debug.Log($"Player with index {index} and name {PlayerNames[index]} left. {PlayersLeft} players left in game");
             WinOrder.Insert(0, PlayerNames[index]);
@@ -672,6 +730,9 @@ public class HitSlapRazboi : NetworkBehaviour
                 ServerBackup.PerformServerBackup();
             }
         }
+
+        if (index == IndexOfActivePlayer)
+            NextPlayer();
     }
    
     #endregion
