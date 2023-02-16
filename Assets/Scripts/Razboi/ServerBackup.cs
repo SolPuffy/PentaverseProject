@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 
 [System.Serializable]
 public class BackupData
@@ -11,18 +12,29 @@ public class BackupData
     public string TimeOFGameStart;
     public string TimeOfGameEnd;
     public int ActionsPerformed;
-    public List<playerActions> Actions = new List<playerActions>();
-    public List<CardValueType> GameDeck = new List<CardValueType>();
-    
+    public List<Action> Actions = new List<Action>();
+    public List<CardValueType> GameDeck = new List<CardValueType>();    
 }
 [System.Serializable]
-public class playerActions
+public class Action
 {
     public int playerIndex;
     public string playerName;
     public string actionType;
+    public bool WonRound;
+    public int CardValue;
+    public string CardType;
     public bool SlapSuccessful;
-    public float SlapResponseTime;
+    public int SlapResponseTime;
+    public GameState CurrentGameState;
+}
+
+[System.Serializable]
+public class GameState
+{
+    public int[] CardCount;
+    public int[] CardsonGroundIndexes;
+    public int TurnIndex;
 }
 public class ServerBackup : MonoBehaviour
 {
@@ -65,6 +77,7 @@ public class ServerBackup : MonoBehaviour
         if (inputToFile.Length == 9)
         {
             inputToFile = ReadFileDataPath(inputToFile);
+            Debug.Log("Searching location for file :" + inputToFile);
             if (File.Exists(inputToFile))
             {
                 string JsonInput = await System.IO.File.ReadAllTextAsync(inputToFile);
@@ -86,27 +99,139 @@ public class ServerBackup : MonoBehaviour
     {
         ServerInstance.DataHold.GameDeck = DeckList;
     }
-    public static void AddHitToList(int playerIndex, string playerName)
+    public static void AddHitToList(int playerIndex, string playerName, int CardValue, string CardType, Mirror.SyncList<int> _cardCount, SyncListCards _cardsOnGround, CardValueType SlapCard, int _currentIndexTurn, bool won)
     {
-        playerActions act = new playerActions();
+        //Create Action
+        Action act = new Action();
         act.actionType = "Hit";
         act.playerIndex = playerIndex;
         act.playerName = playerName;
+        act.CardValue = CardValue;
+        act.CardType = CardType;
+        act.WonRound = won;
         act.SlapSuccessful = false;
         act.SlapResponseTime = 0;
+        ///
+
+        //Create GameState
+        GameState gameState = new GameState();        
+
+        gameState.CardCount = new int[_cardCount.Count];
+        for(int i = 0; i < _cardCount.Count; i++)
+        {
+            gameState.CardCount[i] = _cardCount[i];
+        }
+
+        gameState.CardsonGroundIndexes = new int[4];
+        if (SlapCard == null) { gameState.CardsonGroundIndexes[0] = -1; } else { gameState.CardsonGroundIndexes[0] = SlapCard.CardSpriteIndex; }
+
+        switch (_cardsOnGround.Count)
+        {
+            case 0:
+                {
+                    gameState.CardsonGroundIndexes[1] = -1;
+                    gameState.CardsonGroundIndexes[2] = -1;
+                    gameState.CardsonGroundIndexes[3] = -1;
+                    break;
+                }
+            case 1:
+                {
+                    gameState.CardsonGroundIndexes[1] = -1;
+                    gameState.CardsonGroundIndexes[2] = -1;
+                    gameState.CardsonGroundIndexes[3] = _cardsOnGround[_cardsOnGround.Count - 1].CardSpriteIndex;
+                    break;
+                }
+            case 2:
+                {
+                    gameState.CardsonGroundIndexes[1] = -1;
+                    gameState.CardsonGroundIndexes[2] = _cardsOnGround[_cardsOnGround.Count - 2].CardSpriteIndex;
+                    gameState.CardsonGroundIndexes[3] = _cardsOnGround[_cardsOnGround.Count - 1].CardSpriteIndex;
+                    break;
+                }
+            //over 3
+            default:
+                {
+                    gameState.CardsonGroundIndexes[1] = _cardsOnGround[_cardsOnGround.Count - 3].CardSpriteIndex;
+                    gameState.CardsonGroundIndexes[2] = _cardsOnGround[_cardsOnGround.Count - 2].CardSpriteIndex;
+                    gameState.CardsonGroundIndexes[3] = _cardsOnGround[_cardsOnGround.Count - 1].CardSpriteIndex;
+                    break;
+                }
+        }
+
+        gameState.TurnIndex = _currentIndexTurn;
+        ////
+        
+        act.CurrentGameState = gameState;
+
         ServerInstance.DataHold.Actions.Add(act);
-        ServerInstance.calloutToConsole($"Player {playerName} has Hit at {DateTime.Now.ToString("T")}");
+       
     }
-    public static void AddSlapToList(int playerIndex, string playerName, bool Success, float ResponseTime)
+   
+    public static void AddSlapToList(int playerIndex, string playerName,bool Success, int ResponseTime,  int CardValue, string CardType, Mirror.SyncList<int> _cardCount, SyncListCards _cardsOnGround, CardValueType SlapCard, int _currentIndexTurn, bool won)
     {
-        playerActions act = new playerActions();
+        //Create Action
+        Action act = new Action();
         act.actionType = "Slap";
         act.playerIndex = playerIndex;
         act.playerName = playerName;
         act.SlapSuccessful = Success;
         act.SlapResponseTime = ResponseTime;
+        act.CardValue = CardValue;
+        act.CardType = CardType;
+        act.WonRound = won;
+        ////       
+
+        //Create GameState
+        GameState gameState = new GameState();
+
+        gameState.CardCount = new int[_cardCount.Count];
+        for (int i = 0; i < _cardCount.Count; i++)
+        {
+            gameState.CardCount[i] = _cardCount[i];
+        }
+
+        gameState.CardsonGroundIndexes = new int[4];
+        if (SlapCard == null) { gameState.CardsonGroundIndexes[0] = -1; } else { gameState.CardsonGroundIndexes[0] = SlapCard.CardSpriteIndex; }
+
+        switch (_cardsOnGround.Count)
+        {
+            case 0:
+                {
+                    gameState.CardsonGroundIndexes[1] = -1;
+                    gameState.CardsonGroundIndexes[2] = -1;
+                    gameState.CardsonGroundIndexes[3] = -1;
+                    break;
+                }
+            case 1:
+                {
+                    gameState.CardsonGroundIndexes[1] = -1;
+                    gameState.CardsonGroundIndexes[2] = -1;
+                    gameState.CardsonGroundIndexes[3] = _cardsOnGround[_cardsOnGround.Count-1].CardSpriteIndex;                    
+                    break;
+                }
+            case 2:
+                {
+                    gameState.CardsonGroundIndexes[1] = -1;
+                    gameState.CardsonGroundIndexes[2] = _cardsOnGround[_cardsOnGround.Count - 2].CardSpriteIndex; 
+                    gameState.CardsonGroundIndexes[3] = _cardsOnGround[_cardsOnGround.Count - 1].CardSpriteIndex;                    
+                    break;
+                }
+            //over 3
+            default:
+                {
+                    gameState.CardsonGroundIndexes[1] = _cardsOnGround[_cardsOnGround.Count - 3].CardSpriteIndex;
+                    gameState.CardsonGroundIndexes[2] = _cardsOnGround[_cardsOnGround.Count - 2].CardSpriteIndex;
+                    gameState.CardsonGroundIndexes[3] = _cardsOnGround[_cardsOnGround.Count - 1].CardSpriteIndex;
+                    break;                    
+                }
+        }        
+
+        gameState.TurnIndex = _currentIndexTurn;
+        ////
+
+        act.CurrentGameState = gameState;
         ServerInstance.DataHold.Actions.Add(act);
-        ServerInstance.calloutToConsole($"Player {playerName} has Slapped at {DateTime.Now.ToString("T")} with {ResponseTime} Delay, Success = {Success}");
+        
     }
     public static void CleanDataHold()
     {

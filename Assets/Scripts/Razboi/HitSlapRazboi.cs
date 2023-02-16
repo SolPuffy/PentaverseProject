@@ -196,13 +196,13 @@ public class HitSlapRazboi : NetworkBehaviour
         if (StopInputAtRoundWin) return;
         if (indexLocalPlayer != IndexOfActivePlayer) return;
 
+        bool won = false;
         RefreshTimerOnAction();
 
         //start measure Time
         LastHitTime = Time.realtimeSinceStartup;
-       
+        CardValueType cardHit = PlayerDecks[indexLocalPlayer][0];
 
-        ServerBackup.AddHitToList(indexLocalPlayer,playerName);         
         CardsToHit--;
 
         //card pile on ground, primeste top card-ul playerului care apasa butonul
@@ -236,6 +236,10 @@ public class HitSlapRazboi : NetworkBehaviour
                 if (RoundEndTriggered)
                 {
                     WinRound(IndexOfPlayerWhoTriggeredRoundEnd);
+                    won = true;
+                    UpdateValuesForVisuals();
+                    ServerBackup.AddHitToList(indexLocalPlayer, playerName, cardHit.CardValue, cardHit.CardType, CardCount, CardsOnGround, SlapCard, IndexOfActivePlayer, won);
+
                 }
                 else
                 {
@@ -252,6 +256,9 @@ public class HitSlapRazboi : NetworkBehaviour
         {
             PlayerLoses(indexLocalPlayer, false);
         }
+        UpdateValuesForVisuals();
+        if(!won) ServerBackup.AddHitToList(indexLocalPlayer, playerName, cardHit.CardValue, cardHit.CardType,CardCount, CardsOnGround, SlapCard, IndexOfActivePlayer, won);
+
         //
     }
     #region SwitchInSwitchlol
@@ -355,6 +362,7 @@ public class HitSlapRazboi : NetworkBehaviour
     {
         Success = false;
         ReactionTime = 0;
+        CardValueType fakeSlap = PlayerDecks[IndexOfSlappingPlayer][0];
         if (!InititalSetupDone) return;
         if (StopInputAtRoundWin) return;
         
@@ -373,6 +381,8 @@ public class HitSlapRazboi : NetworkBehaviour
         {
             Success = true;
             WinRound(IndexOfSlappingPlayer);
+            UpdateValuesForVisuals();
+            ServerBackup.AddSlapToList(IndexOfSlappingPlayer, PlayerName, Success, ReactionTime, fakeSlap.CardValue, fakeSlap.CardType, CardCount, CardsOnGround, fakeSlap, IndexOfActivePlayer, Success);
             Debug.Log($"Slap result : {Success.ToString()}  {ReactionTime.ToString()}");
         }
         else
@@ -388,6 +398,10 @@ public class HitSlapRazboi : NetworkBehaviour
             {                
                 PlayerLoses(IndexOfSlappingPlayer, false);
             }
+
+            UpdateValuesForVisuals();
+            ServerBackup.AddSlapToList(IndexOfSlappingPlayer, PlayerName, Success, ReactionTime, fakeSlap.CardValue, fakeSlap.CardType, CardCount, CardsOnGround, fakeSlap, IndexOfActivePlayer, Success);
+
             Debug.Log($"Slap result : {Success.ToString()}  {ReactionTime.ToString()}");
         }
 
@@ -401,9 +415,7 @@ public class HitSlapRazboi : NetworkBehaviour
             consoleOut += $"CardIndex: {CardsOnGround[CardsOnGround.Count - i - 1].CardSpriteIndex}, CardValue: {CardsOnGround[CardsOnGround.Count - i - 1].CardValue}, CardType: {CardsOnGround[CardsOnGround.Count - i - 1].CardType}\n";
         }
         HitSlapRazboi.instance.firstPlayer.DisplayConsoleOut(consoleOut);
-        //
-
-        ServerBackup.AddSlapToList(IndexOfSlappingPlayer, PlayerName, Success, ReactionTime);
+        //        
     }
     #endregion
     #region Visuals
