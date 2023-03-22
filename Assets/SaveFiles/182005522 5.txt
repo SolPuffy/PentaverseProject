@@ -1,0 +1,1087 @@
+{
+    "TimeOFGameStart": "2/16/2023 5:16:21 PM",
+    "TimeOfGameEnd": "2/16/2023 5:16:55 PM",
+    "ActionsPerformed": 36,
+    "Actions": [
+        {
+            "playerIndex": 0,
+            "playerName": "P 1",
+            "actionType": "Hit",
+            "WonRound": false,
+            "CardValue": 15,
+            "CardType": "Club",
+            "SlapSuccessful": false,
+            "SlapResponseTime": 0,
+            "CurrentGameState": {
+                "CardCount": [
+                    24,
+                    25
+                ],
+                "CardsonGroundIndexes": [
+                    -1,
+                    -1,
+                    -1,
+                    13
+                ],
+                "TurnIndex": 1
+            }
+        },
+        {
+            "playerIndex": 1,
+            "playerName": "P 2",
+            "actionType": "Hit",
+            "WonRound": false,
+            "CardValue": 14,
+            "CardType": "Spade",
+            "SlapSuccessful": false,
+            "SlapResponseTime": 0,
+            "CurrentGameState": {
+                "CardCount": [
+                    24,
+                    24
+                ],
+                "CardsonGroundIndexes": [
+                    -1,
+                    -1,
+                    13,
+                    38
+                ],
+                "TurnIndex": 0
+            }
+        },
+        {
+            "playerIndex": 0,
+            "playerName": "P 1",
+            "actionType": "Hit",
+            "WonRound": false,
+            "CardValue": 9,
+            "CardType": "Heart",
+            "SlapSuccessful": false,
+            "SlapResponseTime": 0,
+            "CurrentGameState": {
+                "CardCount": [
+                    23,
+                    24
+                ],
+                "CardsonGroundIndexes": [
+                    -1,
+                    13,
+                    38,
+                    8
+                ],
+                "TurnIndex": 0
+            }
+        },
+        {
+            "playerIndex": 0,
+            "playerName": "P 1",
+            "actionType": "Hit",
+            "WonRound": false,
+            "CardValue": 7,
+            "CardType": "Club",
+            "SlapSuccessful": false,
+            "SlapResponseTime": 0,
+            "CurrentGameState": {
+                "CardCount": [
+                    22,
+                    24
+                ],
+                "CardsonGroundIndexes": [
+                    -1,
+                    38,
+                    8,
+                    19
+                ],
+                "TurnIndex": 0
+            }
+        },
+        {
+            "playerIndex": 0,
+            "playerName": "P 1",
+            "actionType": "Hit",
+            "WonRound": false,
+            "CardValue": 13,
+            "CardType": "Spade",
+            "SlapSuccessful": false,
+            "SlapResponseTime": 0,
+            "CurrentGameState": {
+                "CardCount": [
+                    21,
+                    24
+                ],
+                "CardsonGroundIndexes": [
+                    -1,
+                    8,
+                    19,
+                    37
+                ],
+                "TurnIndex": 1
+            }
+        },
+        {
+            "playerIndex": 1,
+            "playerName": "P 2",
+            "actionType": "Hit",
+            "WonRound": false,
+            "CardValue": 15,
+            "CardType": "Spade",
+            "SlapSuccessful": false,
+            "SlapResponseTime": 0,
+            "CurrentGameState": {
+                "CardCount": [
+                    21,
+                    23
+                ],
+                "CardsonGroundIndexes": [
+                    -1,
+                    19,
+                    37,
+                    26
+                ],
+                "TurnIndex": 0
+            }
+        },
+        {
+            "playerIndex": 0,
+            "playerName": "P 1",
+            "actionType": "Hit",
+            "WonRound": false,
+            "CardValue": 10,
+            "CardType": "Diamond",
+            "SlapSuccessful": false,
+            "SlapResponseTime": 0,
+            "CurrentGameState": {
+                "CardCount": [
+                    20,
+                    23
+                ],
+                "CardsonGroundIndexes": [
+                    -1,
+                    37,
+                    26,
+                    48
+                ],
+                "TurnIndex": 0
+            }
+        },
+        {
+            "playerIndex": 0,
+            "playerName": "P 1",
+            "actionType": "Hit",
+            "WonRound": false,
+            "CardValue": 4,
+            "CardType": "Diamond",
+            "SlapSuccessful": false,
+            "SlapResponseTime": 0,
+            "CurrentGameState": {
+                "CardCount": [
+                    19,
+                    23
+                ],
+                "CardsonGroundIndexes": [
+                    -1,
+                    26,
+                    48,
+                    42
+                ],
+                "TurnIndex": 0
+            }
+        },
+        {
+            "playerIndex": 0,
+            "playerName": "P 1",
+            "actionType": "Hit",
+            "WonRound": false,
+            "CardValue": 4,
+            "CardType": "Club",
+            "SlapSuccessful": false,
+            "SlapResponseTime": 0,
+            "CurrentGameState": {
+                "CardCount": [
+                    18,
+                    23
+                ],
+                "CardsonGroundIndexes": [
+                    -1,
+                    48,
+                    42,
+                    16
+                ],
+                "TurnIndex": 0
+            }
+        },
+        {
+            "playerIndex": 0,
+            "playerName": "P 1",
+            "actionType": "Hit",
+            "WonRound": true,
+            "CardValue": 9,
+            "CardType": "Club",
+            "SlapSuccessful": false,
+            "SlapResponseTime": 0,
+            "CurrentGameState": {
+                "CardCount": [
+                    17,
+                    23
+                ],
+                "CardsonGroundIndexes": [
+                    -1,
+                    42,
+                    16,
+                    21
+                ],
+                "TurnIndex": 0
+            }
+        },
+        {
+            "playerIndex": 1,
+            "playerName": "P 2",
+            "actionType": "Hit",
+            "WonRound": false,
+            "CardValue": 3,
+            "CardType": "Diamond",
+            "SlapSuccessful": false,
+            "SlapResponseTime": 0,
+            "CurrentGameState": {
+                "CardCount": [
+                    17,
+                    32
+                ],
+                "CardsonGroundIndexes": [
+                    -1,
+                    -1,
+                    -1,
+                    41
+                ],
+                "TurnIndex": 0
+            }
+        },
+        {
+            "playerIndex": 0,
+            "playerName": "P 1",
+            "actionType": "Hit",
+            "WonRound": false,
+            "CardValue": 2,
+            "CardType": "Club",
+            "SlapSuccessful": false,
+            "SlapResponseTime": 0,
+            "CurrentGameState": {
+                "CardCount": [
+                    16,
+                    32
+                ],
+                "CardsonGroundIndexes": [
+                    -1,
+                    -1,
+                    41,
+                    14
+                ],
+                "TurnIndex": 1
+            }
+        },
+        {
+            "playerIndex": 1,
+            "playerName": "P 2",
+            "actionType": "Hit",
+            "WonRound": false,
+            "CardValue": 7,
+            "CardType": "Club",
+            "SlapSuccessful": false,
+            "SlapResponseTime": 0,
+            "CurrentGameState": {
+                "CardCount": [
+                    16,
+                    31
+                ],
+                "CardsonGroundIndexes": [
+                    -1,
+                    41,
+                    14,
+                    19
+                ],
+                "TurnIndex": 0
+            }
+        },
+        {
+            "playerIndex": 0,
+            "playerName": "P 1",
+            "actionType": "Hit",
+            "WonRound": false,
+            "CardValue": 5,
+            "CardType": "Spade",
+            "SlapSuccessful": false,
+            "SlapResponseTime": 0,
+            "CurrentGameState": {
+                "CardCount": [
+                    15,
+                    31
+                ],
+                "CardsonGroundIndexes": [
+                    -1,
+                    14,
+                    19,
+                    30
+                ],
+                "TurnIndex": 1
+            }
+        },
+        {
+            "playerIndex": 1,
+            "playerName": "P 2",
+            "actionType": "Hit",
+            "WonRound": false,
+            "CardValue": 2,
+            "CardType": "Diamond",
+            "SlapSuccessful": false,
+            "SlapResponseTime": 0,
+            "CurrentGameState": {
+                "CardCount": [
+                    15,
+                    30
+                ],
+                "CardsonGroundIndexes": [
+                    -1,
+                    19,
+                    30,
+                    40
+                ],
+                "TurnIndex": 0
+            }
+        },
+        {
+            "playerIndex": 0,
+            "playerName": "P 1",
+            "actionType": "Hit",
+            "WonRound": false,
+            "CardValue": 6,
+            "CardType": "Diamond",
+            "SlapSuccessful": false,
+            "SlapResponseTime": 0,
+            "CurrentGameState": {
+                "CardCount": [
+                    14,
+                    30
+                ],
+                "CardsonGroundIndexes": [
+                    -1,
+                    30,
+                    40,
+                    44
+                ],
+                "TurnIndex": 1
+            }
+        },
+        {
+            "playerIndex": 1,
+            "playerName": "P 2",
+            "actionType": "Hit",
+            "WonRound": false,
+            "CardValue": 10,
+            "CardType": "Heart",
+            "SlapSuccessful": false,
+            "SlapResponseTime": 0,
+            "CurrentGameState": {
+                "CardCount": [
+                    14,
+                    29
+                ],
+                "CardsonGroundIndexes": [
+                    -1,
+                    40,
+                    44,
+                    9
+                ],
+                "TurnIndex": 0
+            }
+        },
+        {
+            "playerIndex": 0,
+            "playerName": "P 1",
+            "actionType": "Hit",
+            "WonRound": false,
+            "CardValue": 13,
+            "CardType": "Club",
+            "SlapSuccessful": false,
+            "SlapResponseTime": 0,
+            "CurrentGameState": {
+                "CardCount": [
+                    13,
+                    29
+                ],
+                "CardsonGroundIndexes": [
+                    -1,
+                    44,
+                    9,
+                    24
+                ],
+                "TurnIndex": 1
+            }
+        },
+        {
+            "playerIndex": 1,
+            "playerName": "P 2",
+            "actionType": "Hit",
+            "WonRound": false,
+            "CardValue": 13,
+            "CardType": "Diamond",
+            "SlapSuccessful": false,
+            "SlapResponseTime": 0,
+            "CurrentGameState": {
+                "CardCount": [
+                    13,
+                    28
+                ],
+                "CardsonGroundIndexes": [
+                    -1,
+                    9,
+                    24,
+                    50
+                ],
+                "TurnIndex": 0
+            }
+        },
+        {
+            "playerIndex": 1,
+            "playerName": "P 2",
+            "actionType": "Slap",
+            "WonRound": true,
+            "CardValue": 6,
+            "CardType": "Heart",
+            "SlapSuccessful": true,
+            "SlapResponseTime": 1171,
+            "CurrentGameState": {
+                "CardCount": [
+                    13,
+                    28
+                ],
+                "CardsonGroundIndexes": [
+                    5,
+                    9,
+                    24,
+                    50
+                ],
+                "TurnIndex": 0
+            }
+        },
+        {
+            "playerIndex": 1,
+            "playerName": "P 2",
+            "actionType": "Hit",
+            "WonRound": false,
+            "CardValue": 9,
+            "CardType": "Club",
+            "SlapSuccessful": false,
+            "SlapResponseTime": 0,
+            "CurrentGameState": {
+                "CardCount": [
+                    13,
+                    36
+                ],
+                "CardsonGroundIndexes": [
+                    -1,
+                    -1,
+                    -1,
+                    21
+                ],
+                "TurnIndex": 0
+            }
+        },
+        {
+            "playerIndex": 0,
+            "playerName": "P 1",
+            "actionType": "Hit",
+            "WonRound": false,
+            "CardValue": 15,
+            "CardType": "Heart",
+            "SlapSuccessful": false,
+            "SlapResponseTime": 0,
+            "CurrentGameState": {
+                "CardCount": [
+                    12,
+                    36
+                ],
+                "CardsonGroundIndexes": [
+                    -1,
+                    -1,
+                    21,
+                    0
+                ],
+                "TurnIndex": 1
+            }
+        },
+        {
+            "playerIndex": 1,
+            "playerName": "P 2",
+            "actionType": "Hit",
+            "WonRound": false,
+            "CardValue": 13,
+            "CardType": "Heart",
+            "SlapSuccessful": false,
+            "SlapResponseTime": 0,
+            "CurrentGameState": {
+                "CardCount": [
+                    12,
+                    35
+                ],
+                "CardsonGroundIndexes": [
+                    -1,
+                    21,
+                    0,
+                    11
+                ],
+                "TurnIndex": 0
+            }
+        },
+        {
+            "playerIndex": 0,
+            "playerName": "P 1",
+            "actionType": "Hit",
+            "WonRound": false,
+            "CardValue": 12,
+            "CardType": "Club",
+            "SlapSuccessful": false,
+            "SlapResponseTime": 0,
+            "CurrentGameState": {
+                "CardCount": [
+                    11,
+                    35
+                ],
+                "CardsonGroundIndexes": [
+                    -1,
+                    0,
+                    11,
+                    23
+                ],
+                "TurnIndex": 1
+            }
+        },
+        {
+            "playerIndex": 1,
+            "playerName": "P 2",
+            "actionType": "Hit",
+            "WonRound": false,
+            "CardValue": 15,
+            "CardType": "Spade",
+            "SlapSuccessful": false,
+            "SlapResponseTime": 0,
+            "CurrentGameState": {
+                "CardCount": [
+                    11,
+                    34
+                ],
+                "CardsonGroundIndexes": [
+                    -1,
+                    11,
+                    23,
+                    26
+                ],
+                "TurnIndex": 0
+            }
+        },
+        {
+            "playerIndex": 0,
+            "playerName": "P 1",
+            "actionType": "Hit",
+            "WonRound": false,
+            "CardValue": 7,
+            "CardType": "Diamond",
+            "SlapSuccessful": false,
+            "SlapResponseTime": 0,
+            "CurrentGameState": {
+                "CardCount": [
+                    10,
+                    34
+                ],
+                "CardsonGroundIndexes": [
+                    -1,
+                    23,
+                    26,
+                    45
+                ],
+                "TurnIndex": 0
+            }
+        },
+        {
+            "playerIndex": 0,
+            "playerName": "P 1",
+            "actionType": "Hit",
+            "WonRound": false,
+            "CardValue": 7,
+            "CardType": "Heart",
+            "SlapSuccessful": false,
+            "SlapResponseTime": 0,
+            "CurrentGameState": {
+                "CardCount": [
+                    9,
+                    34
+                ],
+                "CardsonGroundIndexes": [
+                    -1,
+                    26,
+                    45,
+                    6
+                ],
+                "TurnIndex": 0
+            }
+        },
+        {
+            "playerIndex": 0,
+            "playerName": "P 1",
+            "actionType": "Hit",
+            "WonRound": false,
+            "CardValue": 6,
+            "CardType": "Spade",
+            "SlapSuccessful": false,
+            "SlapResponseTime": 0,
+            "CurrentGameState": {
+                "CardCount": [
+                    8,
+                    34
+                ],
+                "CardsonGroundIndexes": [
+                    -1,
+                    45,
+                    6,
+                    31
+                ],
+                "TurnIndex": 0
+            }
+        },
+        {
+            "playerIndex": 0,
+            "playerName": "P 1",
+            "actionType": "Slap",
+            "WonRound": false,
+            "CardValue": 5,
+            "CardType": "Club",
+            "SlapSuccessful": false,
+            "SlapResponseTime": 501,
+            "CurrentGameState": {
+                "CardCount": [
+                    7,
+                    34
+                ],
+                "CardsonGroundIndexes": [
+                    17,
+                    45,
+                    6,
+                    31
+                ],
+                "TurnIndex": 0
+            }
+        },
+        {
+            "playerIndex": 0,
+            "playerName": "P 1",
+            "actionType": "Slap",
+            "WonRound": false,
+            "CardValue": 4,
+            "CardType": "Heart",
+            "SlapSuccessful": false,
+            "SlapResponseTime": 768,
+            "CurrentGameState": {
+                "CardCount": [
+                    6,
+                    34
+                ],
+                "CardsonGroundIndexes": [
+                    3,
+                    45,
+                    6,
+                    31
+                ],
+                "TurnIndex": 0
+            }
+        },
+        {
+            "playerIndex": 0,
+            "playerName": "P 1",
+            "actionType": "Slap",
+            "WonRound": false,
+            "CardValue": 8,
+            "CardType": "Club",
+            "SlapSuccessful": false,
+            "SlapResponseTime": 1037,
+            "CurrentGameState": {
+                "CardCount": [
+                    5,
+                    34
+                ],
+                "CardsonGroundIndexes": [
+                    20,
+                    45,
+                    6,
+                    31
+                ],
+                "TurnIndex": 0
+            }
+        },
+        {
+            "playerIndex": 0,
+            "playerName": "P 1",
+            "actionType": "Slap",
+            "WonRound": false,
+            "CardValue": 10,
+            "CardType": "Spade",
+            "SlapSuccessful": false,
+            "SlapResponseTime": 1471,
+            "CurrentGameState": {
+                "CardCount": [
+                    4,
+                    34
+                ],
+                "CardsonGroundIndexes": [
+                    35,
+                    45,
+                    6,
+                    31
+                ],
+                "TurnIndex": 0
+            }
+        },
+        {
+            "playerIndex": 0,
+            "playerName": "P 1",
+            "actionType": "Slap",
+            "WonRound": false,
+            "CardValue": 2,
+            "CardType": "Spade",
+            "SlapSuccessful": false,
+            "SlapResponseTime": 1638,
+            "CurrentGameState": {
+                "CardCount": [
+                    3,
+                    34
+                ],
+                "CardsonGroundIndexes": [
+                    27,
+                    45,
+                    6,
+                    31
+                ],
+                "TurnIndex": 0
+            }
+        },
+        {
+            "playerIndex": 0,
+            "playerName": "P 1",
+            "actionType": "Slap",
+            "WonRound": false,
+            "CardValue": 3,
+            "CardType": "Heart",
+            "SlapSuccessful": false,
+            "SlapResponseTime": 1805,
+            "CurrentGameState": {
+                "CardCount": [
+                    2,
+                    34
+                ],
+                "CardsonGroundIndexes": [
+                    2,
+                    45,
+                    6,
+                    31
+                ],
+                "TurnIndex": 0
+            }
+        },
+        {
+            "playerIndex": 0,
+            "playerName": "P 1",
+            "actionType": "Slap",
+            "WonRound": false,
+            "CardValue": 8,
+            "CardType": "Diamond",
+            "SlapSuccessful": false,
+            "SlapResponseTime": 1939,
+            "CurrentGameState": {
+                "CardCount": [
+                    1,
+                    34
+                ],
+                "CardsonGroundIndexes": [
+                    46,
+                    45,
+                    6,
+                    31
+                ],
+                "TurnIndex": 0
+            }
+        },
+        {
+            "playerIndex": 0,
+            "playerName": "P 1",
+            "actionType": "Hit",
+            "WonRound": true,
+            "CardValue": 3,
+            "CardType": "Spade",
+            "SlapSuccessful": false,
+            "SlapResponseTime": 0,
+            "CurrentGameState": {
+                "CardCount": [
+                    0,
+                    34
+                ],
+                "CardsonGroundIndexes": [
+                    46,
+                    6,
+                    31,
+                    28
+                ],
+                "TurnIndex": 0
+            }
+        }
+    ],
+    "GameDeck": [
+        {
+            "CardSpriteIndex": 13,
+            "CardValue": 15,
+            "CardType": "Club"
+        },
+        {
+            "CardSpriteIndex": 38,
+            "CardValue": 14,
+            "CardType": "Spade"
+        },
+        {
+            "CardSpriteIndex": 8,
+            "CardValue": 9,
+            "CardType": "Heart"
+        },
+        {
+            "CardSpriteIndex": 26,
+            "CardValue": 15,
+            "CardType": "Spade"
+        },
+        {
+            "CardSpriteIndex": 19,
+            "CardValue": 7,
+            "CardType": "Club"
+        },
+        {
+            "CardSpriteIndex": 39,
+            "CardValue": 15,
+            "CardType": "Diamond"
+        },
+        {
+            "CardSpriteIndex": 37,
+            "CardValue": 13,
+            "CardType": "Spade"
+        },
+        {
+            "CardSpriteIndex": 11,
+            "CardValue": 13,
+            "CardType": "Heart"
+        },
+        {
+            "CardSpriteIndex": 48,
+            "CardValue": 10,
+            "CardType": "Diamond"
+        },
+        {
+            "CardSpriteIndex": 51,
+            "CardValue": 14,
+            "CardType": "Diamond"
+        },
+        {
+            "CardSpriteIndex": 42,
+            "CardValue": 4,
+            "CardType": "Diamond"
+        },
+        {
+            "CardSpriteIndex": 29,
+            "CardValue": 4,
+            "CardType": "Spade"
+        },
+        {
+            "CardSpriteIndex": 16,
+            "CardValue": 4,
+            "CardType": "Club"
+        },
+        {
+            "CardSpriteIndex": 1,
+            "CardValue": 2,
+            "CardType": "Heart"
+        },
+        {
+            "CardSpriteIndex": 21,
+            "CardValue": 9,
+            "CardType": "Club"
+        },
+        {
+            "CardSpriteIndex": 50,
+            "CardValue": 13,
+            "CardType": "Diamond"
+        },
+        {
+            "CardSpriteIndex": 14,
+            "CardValue": 2,
+            "CardType": "Club"
+        },
+        {
+            "CardSpriteIndex": 9,
+            "CardValue": 10,
+            "CardType": "Heart"
+        },
+        {
+            "CardSpriteIndex": 30,
+            "CardValue": 5,
+            "CardType": "Spade"
+        },
+        {
+            "CardSpriteIndex": 41,
+            "CardValue": 3,
+            "CardType": "Diamond"
+        },
+        {
+            "CardSpriteIndex": 44,
+            "CardValue": 6,
+            "CardType": "Diamond"
+        },
+        {
+            "CardSpriteIndex": 34,
+            "CardValue": 9,
+            "CardType": "Spade"
+        },
+        {
+            "CardSpriteIndex": 24,
+            "CardValue": 13,
+            "CardType": "Club"
+        },
+        {
+            "CardSpriteIndex": 4,
+            "CardValue": 5,
+            "CardType": "Heart"
+        },
+        {
+            "CardSpriteIndex": 0,
+            "CardValue": 15,
+            "CardType": "Heart"
+        },
+        {
+            "CardSpriteIndex": 10,
+            "CardValue": 12,
+            "CardType": "Heart"
+        },
+        {
+            "CardSpriteIndex": 23,
+            "CardValue": 12,
+            "CardType": "Club"
+        },
+        {
+            "CardSpriteIndex": 12,
+            "CardValue": 14,
+            "CardType": "Heart"
+        },
+        {
+            "CardSpriteIndex": 45,
+            "CardValue": 7,
+            "CardType": "Diamond"
+        },
+        {
+            "CardSpriteIndex": 5,
+            "CardValue": 6,
+            "CardType": "Heart"
+        },
+        {
+            "CardSpriteIndex": 6,
+            "CardValue": 7,
+            "CardType": "Heart"
+        },
+        {
+            "CardSpriteIndex": 33,
+            "CardValue": 8,
+            "CardType": "Spade"
+        },
+        {
+            "CardSpriteIndex": 31,
+            "CardValue": 6,
+            "CardType": "Spade"
+        },
+        {
+            "CardSpriteIndex": 36,
+            "CardValue": 12,
+            "CardType": "Spade"
+        },
+        {
+            "CardSpriteIndex": 17,
+            "CardValue": 5,
+            "CardType": "Club"
+        },
+        {
+            "CardSpriteIndex": 47,
+            "CardValue": 9,
+            "CardType": "Diamond"
+        },
+        {
+            "CardSpriteIndex": 3,
+            "CardValue": 4,
+            "CardType": "Heart"
+        },
+        {
+            "CardSpriteIndex": 40,
+            "CardValue": 2,
+            "CardType": "Diamond"
+        },
+        {
+            "CardSpriteIndex": 20,
+            "CardValue": 8,
+            "CardType": "Club"
+        },
+        {
+            "CardSpriteIndex": 15,
+            "CardValue": 3,
+            "CardType": "Club"
+        },
+        {
+            "CardSpriteIndex": 35,
+            "CardValue": 10,
+            "CardType": "Spade"
+        },
+        {
+            "CardSpriteIndex": 43,
+            "CardValue": 5,
+            "CardType": "Diamond"
+        },
+        {
+            "CardSpriteIndex": 27,
+            "CardValue": 2,
+            "CardType": "Spade"
+        },
+        {
+            "CardSpriteIndex": 7,
+            "CardValue": 8,
+            "CardType": "Heart"
+        },
+        {
+            "CardSpriteIndex": 2,
+            "CardValue": 3,
+            "CardType": "Heart"
+        },
+        {
+            "CardSpriteIndex": 49,
+            "CardValue": 12,
+            "CardType": "Diamond"
+        },
+        {
+            "CardSpriteIndex": 46,
+            "CardValue": 8,
+            "CardType": "Diamond"
+        },
+        {
+            "CardSpriteIndex": 22,
+            "CardValue": 10,
+            "CardType": "Club"
+        },
+        {
+            "CardSpriteIndex": 28,
+            "CardValue": 3,
+            "CardType": "Spade"
+        },
+        {
+            "CardSpriteIndex": 25,
+            "CardValue": 14,
+            "CardType": "Club"
+        }
+    ]
+}

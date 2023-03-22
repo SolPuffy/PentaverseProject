@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -35,12 +36,13 @@ public class PlayReplay : MonoBehaviour
     [SerializeField] List<Sprite> CardImages = new List<Sprite>();
 
     BackupData ReplayData;
-    
 
+    public static PlayReplay instance;
     private void Awake()
     {
-        SlapPanel.SetActive(false);
-
+        instance = this;
+        
+        SlapPanel.SetActive(false);       
 
         SlapName = SlapPanel.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
         ReactionTxt = SlapPanel.transform.GetChild(2).GetComponent<TextMeshProUGUI>();
@@ -53,6 +55,11 @@ public class PlayReplay : MonoBehaviour
         CardSlot2.sprite = BlankSprite;
 
         DeactivateVisualDecks();
+    }
+
+    public static void StartRep()
+    {
+        instance.StartReplay();
     }
     public void StartReplay()
     {
