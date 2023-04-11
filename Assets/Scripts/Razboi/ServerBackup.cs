@@ -5,6 +5,8 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
+using UnityEngine.Networking;
+using System.Text.RegularExpressions;
 
 [System.Serializable]
 public class BackupData
@@ -28,6 +30,11 @@ public class Action
     public int SlapResponseTime;
     public GameState CurrentGameState;
 }
+[System.Serializable]
+public class FileNamesResponse
+{
+    public List<string> fileNames;
+}
 
 [System.Serializable]
 public class GameState
@@ -46,8 +53,9 @@ public class ServerBackup : MonoBehaviour
     private void Awake()
     {
         ServerInstance = this;
+        Debug.Log("server instance");
         //makesSureSavefilesFolderAlwaysExists
-        CheckFolderDataPath();
+        //CheckFolderDataPath();
     }
     private void Start()
     {
@@ -62,35 +70,129 @@ public class ServerBackup : MonoBehaviour
     #region BackupFunctions
     private async Task PerformBackup()
     {
-        GetFileDataPath();
+        //GetFileDataPath();
 
         DataHold.ActionsPerformed = DataHold.Actions.Count;
         DataHold.TimeOfGameEnd = DateTime.Now.ToString("G");
 
-        string JsonOutput = JsonUtility.ToJson(DataHold, true);
-        await System.IO.File.WriteAllTextAsync(fileDataPath, JsonOutput);
+        string JsonOutput = JsonUtility.ToJson(DataHold);
+        //await System.IO.File.WriteAllTextAsync(PathToFile, JsonOutput);
 
-        Debug.Log($"Backup location: {fileDataPath}, Backup date: {DataHold.TimeOfGameEnd}");
-    }
-    public async Task ReadBackup(string inputToFile)
-    {
-        if (inputToFile.Length == 9)
+        string key = "d34efaf7-ab1b-4d91-897a-63ed3efc2abf-48326fdb-a038-4ca2-ad29-2b11a170ad0b";
+        string generatedID = generateDateSaveId();
+        //subDir pentacards = cards | pentaplanes = planes | pentawords = words !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        string subDir = "cards";
+        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        byte[] payload = System.Text.Encoding.UTF8.GetBytes(JsonOutput);
+        //Debug.Log($"Trying to send element at adress: http://localhost:3000/api/postfile?subDir={subDir}&fileName={generatedID}");
+        //188.166.90.161
+        using (UnityWebRequest request = UnityWebRequest.Post($"http://188.166.90.161:3000/api/postfile?subDir={subDir}&fileName={generatedID}", "POST"))
         {
-            inputToFile = ReadFileDataPath(inputToFile);
-            Debug.Log("Searching location for file :" + inputToFile);
-            if (File.Exists(inputToFile))
+            request.SetRequestHeader("x-api-key", key);
+            request.uploadHandler = new UploadHandlerRaw(payload);
+            //request.downloadHandler = new DownloadHandlerBuffer();
+
+            await Task.FromResult(request.SendWebRequest());
+            while (request.result == UnityWebRequest.Result.InProgress)
             {
-                string JsonInput = await System.IO.File.ReadAllTextAsync(inputToFile);
-                JsonUtility.FromJsonOverwrite(JsonInput, DataHold);
+                Debug.LogError($"Save attempt in progress! Code:{request.uploadProgress}");
+                await Task.Yield();
+            }
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError($"Save failed! Error:{request.error}");
+                return;
             }
             else
             {
-                Debug.LogError("ReadBackup >> File does not exist");
+                string text = request.downloadHandler.text;
+                try
+                {
+                    Debug.Log(text);
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError($"Failed to parse JSON response. Error: {ex.Message}");
+                }
+                Debug.Log("Save Successful");
+            }
+
+            UnityEngine.Debug.Log($"Backup location: {generatedID}, Backup date: {DataHold.TimeOfGameEnd}");
+        }
+    }
+    public async Task ReadBackup(string inputToFile)
+    {
+        string key = "d34efaf7-ab1b-4d91-897a-63ed3efc2abf-48326fdb-a038-4ca2-ad29-2b11a170ad0b";
+        string subDir = "cards";
+        //Debug.Log($"Trying to find element at adress: http://localhost:3000/api/getfile?subDir={subDir}&fileName={fileIndex}");
+        //188.166.90.161
+        using (UnityWebRequest request = UnityWebRequest.Get($"http://188.166.90.161:3000/api/getfile?subDir={subDir}&fileName={inputToFile}"))
+        {
+            request.SetRequestHeader("x-api-key", key);
+
+            await Task.FromResult(request.SendWebRequest());
+            while (request.result == UnityWebRequest.Result.InProgress)
+            {
+                await Task.Yield();
+            }
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError($"Load failed! Error:{request.error}");
+                return;
+            }
+            else
+            {
+                string text = request.downloadHandler.text;
+                try
+                {
+                    string ClearedText = Regex.Replace(text, @"\\", "");
+                    string RetrievedData = ClearedText.Substring(1, ClearedText.Length - 2);
+
+                    JsonUtility.FromJsonOverwrite(RetrievedData, DataHold);
+                    Debug.Log("Load Successful");
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError($"Failed to parse JSON response. Error: {ex.Message}");
+                }
             }
         }
-        else
+    }
+    private async Task<string[]> ReadDir()
+    {
+        string key = "d34efaf7-ab1b-4d91-897a-63ed3efc2abf-48326fdb-a038-4ca2-ad29-2b11a170ad0b";
+        string subDir = "cards";
+        //Debug.Log($"Trying to find element at adress: http://localhost:3000/api/getdir?subDir={subDir}&fileName={fileIndex}");
+        //188.166.90.161
+        using (UnityWebRequest request = UnityWebRequest.Get($"http://188.166.90.161:3000/api/getdir?subDir={subDir}"))
         {
-            Debug.LogError("ReadBackup >> Invalid Input");
+            request.SetRequestHeader("x-api-key", key);
+
+            await Task.FromResult(request.SendWebRequest());
+            while (request.result == UnityWebRequest.Result.InProgress)
+            {
+                await Task.Yield();
+            }
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError($"Load failed! Error:{request.error}");
+                return null;
+            }
+            else
+            {
+                string jsonResponse = request.downloadHandler.text;
+                try
+                {
+                    FileNamesResponse response = JsonUtility.FromJson<FileNamesResponse>(jsonResponse);
+                    List<string> fileNames = response.fileNames;
+                    return await Task.FromResult(fileNames.ToArray());
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError($"Failed to parse JSON response. Error: {ex.Message}");
+                    return null;
+                }
+            }
         }
     }
     #endregion
@@ -247,6 +349,12 @@ public class ServerBackup : MonoBehaviour
         await ServerInstance.PerformBackup();
         Debug.Log("Backup Complete");
     }
+
+    public async static Task<string[]> RequestDirData()
+    {
+        return await Task.FromResult(await ServerInstance.ReadDir());
+    }
+
     public async static Task<BackupData> RetrieveDataHoldFromServer(string fileIndex)
     {
         await ServerInstance.ReadBackup(fileIndex);
@@ -262,6 +370,10 @@ public class ServerBackup : MonoBehaviour
             RandomToReturn += UnityEngine.Random.Range(0, 9).ToString();
         }
         return RandomToReturn;
+    }
+    private string generateDateSaveId()
+    {
+        return $"{DateTime.Now.ToString("dd")}-{DateTime.Now.ToString("MM")}-{DateTime.Now.ToString("yy")}_{DateTime.Now.ToString("HH")},{DateTime.Now.ToString("mm")},{DateTime.Now.ToString("ss")}";
     }
     private void CheckFolderDataPath()
     {

@@ -9,12 +9,18 @@ public class CheckReplayList : MonoBehaviour
 {    
     [SerializeField] private GameObject ScrollContentPrefab;
     [SerializeField] ScrollRect scrollView;
-    [SerializeField] GameObject StartButton;
+    [SerializeField] Image StartButton;
+    private string replayname;
+    public static CheckReplayList instance;
 
- 
-    private void OnEnable()
-    {       
+    private void Awake()
+    {
+        instance = this;
+    }
 
+    private void Start()
+    {
+        replayname = null;
         for (int i = 0; i < scrollView.content.childCount; i++)
         {
             //Debug.Log("Destroying child " + i);
@@ -23,24 +29,28 @@ public class CheckReplayList : MonoBehaviour
         GetAllSaveFiles();
     }
 
-    private void GetAllSaveFiles()
+    private async void GetAllSaveFiles()
     {
-        string[] files = System.IO.Directory.GetFiles(getFolderDataPath());
+        Debug.Log("TGrying to get save files");
+        string[] files = await ServerBackup.RequestDirData();
         foreach (string file in files)
         {
-            if (file.Substring(file.Length - 4) == ".txt")
-            {
-                GameObject g = Instantiate(ScrollContentPrefab, scrollView.content.transform);
-                string textToShow = "";
-                textToShow = file.Substring(getFolderDataPath().Length + 1);
-                textToShow = textToShow.Substring(0, textToShow.Length - 4);
-                g.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = textToShow;
-            }
-            else
-            {
-                Debug.Log("Unrecognized text file, probably META");
-            }
+             GameObject g = Instantiate(ScrollContentPrefab, scrollView.content.transform);
+             g.GetComponent<SavedFilePrefabScript>().SetFileName(file);                       
         }
+    }
+
+    public async void StartFileReplay()
+    {
+        await ServerBackup.RetrieveDataHoldFromServer(replayname);
+        PlayReplay.instance.StartReplay();
+        gameObject.SetActive(false);
+    }
+
+    public static void Onselect(string name)
+    {
+        instance.replayname = name;
+        instance.StartButton.color = Color.green;
     }
     
     private string getFolderDataPath()
