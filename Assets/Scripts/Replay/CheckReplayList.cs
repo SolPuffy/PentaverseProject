@@ -4,6 +4,7 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Mirror;
 
 public class CheckReplayList : MonoBehaviour
 {    
@@ -16,6 +17,7 @@ public class CheckReplayList : MonoBehaviour
     private void Awake()
     {
         instance = this;
+        Destroy(NetworkManager.singleton.gameObject);
     }
 
     private void Start()
@@ -40,10 +42,9 @@ public class CheckReplayList : MonoBehaviour
         }
     }
 
-    public async void StartFileReplay()
+    public void StartFileReplay()
     {
-        await ServerBackup.RetrieveDataHoldFromServer(replayname);
-        PlayReplay.instance.StartReplay();
+        PlayReplay.instance.ConfirmSelectReplay(replayname);
         gameObject.SetActive(false);
     }
 

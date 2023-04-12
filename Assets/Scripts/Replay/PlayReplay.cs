@@ -35,7 +35,7 @@ public class PlayReplay : MonoBehaviour
     [SerializeField] Sprite BlankSprite;
     [SerializeField] List<Sprite> CardImages = new List<Sprite>();
 
-    BackupData ReplayData;
+    BackupData ReplayData = new BackupData();
 
     public static PlayReplay instance;
     private void Awake()
@@ -69,6 +69,7 @@ public class PlayReplay : MonoBehaviour
 
     IEnumerator PLAY()
     {
+        Debug.Log($"Detected {ReplayData.Actions.Count} actions in replay");
         foreach(Action act in ReplayData.Actions)
         {           
             if (act.actionType =="Hit")
@@ -112,6 +113,12 @@ public class PlayReplay : MonoBehaviour
         
         StartReplay();
     }    
+
+    public async void ConfirmSelectReplay(string replayname)
+    {
+        ReplayData = await ServerBackup.RetrieveDataHoldFromServer(replayname);
+        StartReplay();        
+    }
     
     private void ShowCurrentState(int[] CardCount, int[] CardsonGroundIndexes, int TurnIndex)
     {      
