@@ -362,14 +362,16 @@ public class HitSlapRazboi : NetworkBehaviour
     {
         Success = false;
         ReactionTime = 0;
-        CardValueType fakeSlap = PlayerDecks[IndexOfSlappingPlayer][0];
-        if (!InititalSetupDone) return;
-        if (StopInputAtRoundWin) return;
         
+        if (!InititalSetupDone) return;
+        if (StopInputAtRoundWin) return;       
+
         if (PlayerDecks[IndexOfSlappingPlayer].Count <= 0) return;
         if (CardsOnGround.Count < 2) return;
 
-        if(IndexOfSlappingPlayer == IndexOfActivePlayer)
+        CardValueType fakeSlap = PlayerDecks[IndexOfSlappingPlayer][0];
+
+        if (IndexOfSlappingPlayer == IndexOfActivePlayer)
             RefreshTimerOnAction();
 
         firstPlayer.SlapMojo();
