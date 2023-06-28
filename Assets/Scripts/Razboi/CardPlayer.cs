@@ -11,6 +11,16 @@ public class CardPlayer : NetworkBehaviour
     [SyncVar] public bool HasEntered = false;
     [SyncVar] public int AfkFlagTriggers = 0;
     //List<CardPlayer> cardPlayers = new List<CardPlayer>();
+
+    [Header("LobbyStuff")]
+    [SyncVar] public string matchID;    
+    [SyncVar] public MirrorBasics.Match currentMatch;
+    [SyncVar] public bool SceneLoaded = false;
+    [SyncVar] public int CharacterSelected;
+    [SyncVar] public bool Ready = false;
+    [SyncVar] public bool isHost = false;
+    [SerializeField] GameObject playerLobbyUI;
+    [SyncVar] public bool gameEnded = true;
     private void Start()
     {
         if (isLocalPlayer)
@@ -194,4 +204,28 @@ public class CardPlayer : NetworkBehaviour
         HitSlapRazboi.instance.PlayerNames.Add(Nome);
         Debug.Log($"Setting {name} name to : " + Nome);
     }
+
+    #region LOBBY
+
+    public void StartGame(string map, int difficulty)
+    {
+
+    }
+
+    public void JoinGame(string MatchID)
+    {
+
+    }
+
+    public void HostGame(bool success)
+    {
+
+    }
+
+    public void DisconnectGame()
+    {
+
+    }
+
+    #endregion
 }

@@ -44,6 +44,8 @@ public class CheckReplayList : MonoBehaviour
 
     public void StartFileReplay()
     {
+        if (replayname == null) return;
+
         PlayReplay.instance.ConfirmSelectReplay(replayname);
         gameObject.SetActive(false);
     }
