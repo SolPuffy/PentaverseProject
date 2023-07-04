@@ -14,7 +14,7 @@ public class CardPlayer : NetworkBehaviour
 
     [Header("LobbyStuff")]
     [SyncVar] public string matchID;    
-    [SyncVar] public MirrorBasics.Match currentMatch;
+    [SyncVar] public Match currentMatch;
     [SyncVar] public bool SceneLoaded = false;
     [SyncVar] public int CharacterSelected;
     [SyncVar] public bool Ready = false;

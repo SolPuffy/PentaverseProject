@@ -5,10 +5,8 @@ using System.Text;
 using Mirror;
 using UnityEngine;
 
-namespace MirrorBasics {
-
     [System.Serializable]
-    public class Match {
+    public class Match : NetworkBehaviour {
         public string matchID;
         public bool publicMatch;
         public bool inMatch;
@@ -241,5 +239,3 @@ namespace MirrorBasics {
             return new Guid (hashBytes);
         }
     }
-
-}
