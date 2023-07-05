@@ -10,12 +10,15 @@ public class UILobby : MonoBehaviour {
 
     public static UILobby instance;
 
-    bool GameSelected = false;
+    bool GameSelectedFlag = false;
     bool NameEntered  = false;
     bool Connecting   = false;
+    UILobbyGame GameSelected;
+    string GameSelectedId;
     [SerializeField] InputField Name;
     [SerializeField] GameObject KillMe;
     [SerializeField] ScrollView GamesList;
+    [SerializeField] List<UILobbyGame> CurrentListofGames  = new List<UILobbyGame>();
 
     [Header("Host Join")]
     [SerializeField] GameObject HostGroup;
@@ -105,5 +108,31 @@ public class UILobby : MonoBehaviour {
     public void PressStart()
     {
         
-    }              
+    }   
+    
+    public void SelectGame(UILobbyGame game)
+    {
+        DeselectAllGames();
+        GameSelectedFlag = true;
+        GameSelected = game;
+        GameSelectedId = game.GetGameID();
+    }
+
+    public void DeselectAllGames()
+    {
+        CurrentListofGames.ForEach(game => game.Deselect());
+        GameSelectedFlag = false;
+        GameSelected = null;
+        GameSelectedId = "";
+    }
+
+    public void AddGame(UILobbyGame game)
+    {
+        CurrentListofGames.Add(game);
+    }
+
+    public void TestAdd()
+    {
+         
+    }
 }

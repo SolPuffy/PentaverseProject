@@ -18,6 +18,10 @@ public class UILobbyGame : MonoBehaviour
     {
         BG.color = Normal;
     }
+    private void Start()
+    {
+        UILobby.instance.AddGame(this);
+    }
 
     public void SetName(string details)
     {
@@ -25,11 +29,12 @@ public class UILobbyGame : MonoBehaviour
     }
     public void Select()
     {
+        UILobby.instance.SelectGame(this);
         BG.color = OnSelect;
-        selected = true; 
+        selected = true;        
     }
 
-    public void Deselct()
+    public void Deselect()
     {
         BG.color = Normal;
         selected = false;
